@@ -1,0 +1,13 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mon site web</title>
+        <link rel="stylesheet" href="{% static 'css/ProjetDjango1/styles.css' %}">
+    </head>
+    <body>
+        <h1>Bonjour l'ami {{ prenom|upper }}, tu vas comment en ce beau {{ jour }} de grand froid ?</h1>
+        <h2>Sais-tu qu'aujourd'hui nous sommes le {{ date|date:"D d M Y" }} ?</h2>
+    </body>
+</html>
