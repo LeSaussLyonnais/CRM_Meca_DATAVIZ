@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+
+  web_app:
+    build: .
+    ports:
+    - "8000:8000"
+    volumes:
+      - .:/ProjetDjango1
+    #  - static_data:/var/www/ProjetDjango1/static/
+    #  - socket_data:/tmp/gunicorn/
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    command: redis-server
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+ 
+  celery_beat:
+    build: .
+    command: celery -A ProjetDjango1 worker --beat -l info
+    volumes:
+      - .:/ProjetDjango1
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+#volumes:
+#  static_data:
+#  socket_data:
