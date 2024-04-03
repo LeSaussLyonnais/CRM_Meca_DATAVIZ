@@ -14,7 +14,7 @@ COPY ProjetDjango1 ProjetDjango1
 COPY BlogApp BlogApp
 COPY Dockerfile Dockerfile
 COPY manage.py manage.py
-COPY db.sqlite3 db.sqlite3
+#COPY db.sqlite3 db.sqlite3
 
 
 RUN python3 manage.py collectstatic --no-input

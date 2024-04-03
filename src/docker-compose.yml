@@ -1,6 +1,22 @@
 version: "3.9"
 services:
 
+  db:
+    restart: always
+    image: postgres:14
+    container_name: redensolar-db
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+#    networks:
+#     app_net2:
+#        ipv4_address: 172.25.0.2
+  
   web_app:
     build: .
     ports:
@@ -9,8 +25,14 @@ services:
       - .:/ProjetDjango1
     #  - static_data:/var/www/ProjetDjango1/static/
     #  - socket_data:/tmp/gunicorn/
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    # python manage.py runserver 0.0.0.0:8000
     restart: unless-stopped
+    depends_on:
+      - db
 
   redis:
     image: redis
@@ -28,8 +50,25 @@ services:
       - .:/ProjetDjango1
     depends_on:
       - redis
+      - db
     restart: unless-stopped
 
-#volumes:
+  pgadmin:  
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=reden.icam@reden.solar
+      - PGADMIN_DEFAULT_PASSWORD=reden12345
+      - PGADMIN_ENABLE_CSRF_PROTECTION=True
+      - TZ=Europe/Paris
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    #networks:
+    #  app_net2 :
+    #    ipv4_address : 172.25.0.7
+
+volumes:
+  postgres_data:
 #  static_data:
 #  socket_data:

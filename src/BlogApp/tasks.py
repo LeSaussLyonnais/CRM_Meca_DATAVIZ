@@ -44,7 +44,6 @@ def get_weather_data():
         obj.icon = wthr['weather'][0]['icon'] # Là on fait un [0]['xxx'] parceque la clé 'weather' est une liste dans le JSON
         
         
-        
         #obj.dt = wthr['dt']
         #for wthr in data_wthr:
         #    obj.weather = wthr['main']
