@@ -14,7 +14,7 @@ class Weather(models.Model):
     #id = models.IntegerField(default=0, blank=True)
     #image = models.URLField(blank=True, null=True)
     
-
+    
     def __str__(self):
         return str(self.dt_txt)
     
