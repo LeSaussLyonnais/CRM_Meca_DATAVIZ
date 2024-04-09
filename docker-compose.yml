@@ -1,0 +1,122 @@
+version: "3.9"
+services:
+
+  db:
+    restart: always
+    image: postgres:14
+    container_name: dataviz-db
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./src/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+#    networks:
+#     app_net2:
+#        ipv4_address: 172.25.0.2
+  web_channel:
+    build: ./src/
+    command: >
+      sh -c "python manage.py makemigrations &&
+            python manage.py migrate &&
+            gunicorn --config=gunicorn.channel.conf.py"
+    volumes:
+      - socket_data:/tmp/gunicorn/
+    restart: unless-stopped
+
+  web_app:
+    build: ./src/
+    command: >
+      sh -c "python manage.py makemigrations &&
+            python manage.py migrate &&
+            gunicorn --config=gunicorn.app.conf.py"  
+    volumes:
+      - static_data:/var/www/ProjetDjango1/static/
+      - socket_data:/tmp/gunicorn/
+    restart: unless-stopped
+
+  nginx:
+    depends_on:
+     - web_app
+     - web_channel
+    build: nginx/
+    ports:
+     - 8880:80
+    volumes:
+     - static_data:/var/www/ProjetDjango1/static/:ro
+     - socket_data:/tmp/gunicorn/
+    restart: unless-stopped
+
+
+  #web_app:
+    #build: ./src/
+    #ports:
+    #- "8000:8000"
+    #volumes:
+    #  - .:/ProjetDjango1
+    ##  - static_data:/var/www/ProjetDjango1/static/
+    ##  - socket_data:/tmp/gunicorn/
+    #command: >
+    #  sh -c "python manage.py makemigrations &&
+    #         python manage.py migrate &&
+    #         python manage.py runserver 0.0.0.0:8000"
+    ## python manage.py runserver 0.0.0.0:8000
+    #restart: unless-stopped
+    #depends_on:
+    #  - db
+  
+
+  react:
+    build:
+      context: ./frontend/
+      dockerfile: dockerfile
+    container_name: react-container
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - web_app
+      - web_channel
+      - celery_beat
+
+  redis:
+    image: redis
+    command: redis-server
+    environment:
+      - TZ=Europe/Paris
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+ 
+  celery_beat:
+    build: ./src/
+    command: celery -A ProjetDjango1 worker --beat -l info
+    volumes:
+      - .:/ProjetDjango1
+    depends_on:
+      - redis
+      - db
+    restart: unless-stopped
+
+  pgadmin:  
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=reden.icam@reden.solar
+      - PGADMIN_DEFAULT_PASSWORD=reden12345
+      - PGADMIN_ENABLE_CSRF_PROTECTION=True
+      - TZ=Europe/Paris
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    #networks:
+    #  app_net2 :
+    #    ipv4_address : 172.25.0.7
+
+volumes:
+  postgres_data:
+  static_data:
+  socket_data:
