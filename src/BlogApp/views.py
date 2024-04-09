@@ -1,4 +1,9 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
+from .models import Weather
+from .serializer import *
+from rest_framework.response import Response
+
 import requests
 #from django.http import HttpResponse
 
@@ -21,3 +26,22 @@ def index(request):
 
 def article(request, num_article):
     return render(request, f"BlogApp/article{num_article}.html")
+
+#Vues React
+class WeatherView(APIView):
+    def get(self, request):
+        '''
+        output = [{"dt_txt": output.dt_txt,
+                    "temp": output.temp,
+                    "icon": output.icon}
+                    for output in Weather.objects.all()]
+        '''
+        output = Weather.objects.all()
+        serializer = WeatherSerializer(output, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = WeatherSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)

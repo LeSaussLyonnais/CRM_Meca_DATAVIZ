@@ -1,6 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+ 
 
 class WeatherConsumer(AsyncWebsocketConsumer):
     async def connect(self):
