@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-7bgby^f&a=nqp=(is=ybap38lcn&%)a7xrqxhj@q7qox8*$y7w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', '10.31.24.107:3000', 'localhost:3000']
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']}
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://10.31.24.107:3000']
 
 ROOT_URLCONF = 'ProjetDjango1.urls'
 

@@ -1,0 +1,15 @@
+.header {
+  background-color: #dbe8f4; /* Couleur du bandeau bleu */
+  padding: 20px; /* Marge intérieure pour l'espace autour du contenu */
+  display: flex; /* Affichage en ligne pour aligner le contenu horizontalement */
+  align-items: center; /* Alignement vertical du contenu */
+  width: 100%; /* Largeur de 100% pour occuper toute la largeur de la page */
+  height: 130px;
+  box-sizing: border-box; /* Inclure le padding dans la largeur */
+}
+
+.logo {
+  width: 150px; /* Largeur du logo */
+  height: auto; /* Hauteur automatique pour maintenir les proportions */
+  margin-right: 20px; /* Marge à droite pour l'espace entre le logo et le texte */
+}

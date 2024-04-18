@@ -1,0 +1,55 @@
+/* Définition des styles pour la table */
+#weather-table {
+    width: 68rem; /* Largeur de la table */
+    margin: 0 auto; /* Centre la table horizontalement */
+    border: 1.5px solid #000; /* Ajoute une bordure de 2px solide autour de la table */
+    border-collapse: collapse; /* Fusionne les bordures des cellules */
+}
+
+/* Styles pour les cellules de la table */
+#weather-table th,
+#weather-table td {
+    padding: 30px; /* Ajoute un espacement plus important autour du contenu */
+    text-align: center; /* Centre le texte horizontalement */
+}
+
+/* Styles pour les en-têtes de la table */
+#weather-table th {
+    background-color: #DBE8F4; /* Couleur de fond pour l'en-tête */
+    color: #000000; /* Couleur du texte de l'en-tête */
+    font-weight: bold; /* Texte en gras */
+    font-size: 20px; /* Taille de police légèrement plus grande */
+}
+
+/* Styles pour les cellules de données de la table */
+#weather-table td {
+    background-color: #ffffff; /* Couleur de fond pour les cellules */
+    font-size: 18px; /* Taille de police pour les cellules de données */
+}
+
+/* Styles pour les lignes impaires de la table */
+#weather-table tbody tr:nth-child(odd) {
+    background-color: #d5dbdb; /* Couleur de fond pour les lignes impaires */
+}
+
+/* Styles pour le survol des lignes de la table */
+#weather-table tbody tr:hover {
+    background-color: #bdc3c7; /* Couleur de fond au survol */
+}
+
+/* Styles pour les images dans la table */
+#weather-table img {
+    max-width: 60px; /* Augmente la largeur maximale des icônes */
+    border-radius: 50%; /* Rend les coins des icônes arrondis */
+    transition: transform 0.3s; /* Animation de transition par défaut */
+}
+
+/* Transition pour le survol de toute la ligne */
+#weather-table tbody tr:hover img {
+    transform: scale(2); /* Zoom de l'icône au survol de toute la ligne */
+}
+
+/* Transition inverse lorsque le curseur est retiré de la ligne */
+#weather-table tbody tr img {
+    transform: scale(1); /* Retour à la taille d'origine */
+}
