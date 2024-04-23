@@ -14,6 +14,7 @@ COPY ProjetDjango1 ProjetDjango1
 COPY BlogApp BlogApp
 COPY Dockerfile Dockerfile
 COPY manage.py manage.py
+COPY data data
 COPY gunicorn.app.conf.py gunicorn.app.conf.py
 COPY gunicorn.channel.conf.py gunicorn.channel.conf.py
 #COPY . .

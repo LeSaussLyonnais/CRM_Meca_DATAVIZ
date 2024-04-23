@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    # 'import_export',  # Pas utile finalement 
     'BlogApp',
     'rest_framework',
     'corsheaders'
@@ -89,7 +90,7 @@ ASGI_APPLICATION = 'ProjetDjango1.asgi.application'
 
 
 # Base de donnée par défault de Django
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -109,7 +110,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+'''
 
 # Pour ne pas avoir de conflit sur la connexion à redis et donc une erreur, il faut s'assurer de bien définir 'redis' en 'hosts' comme
 # ci-dessous pour matcher avec l'url du CELERY_BROKER_URL plus bas 
@@ -180,3 +181,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# IMPORT_EXPORT_USE_TRANSACTIONS = True   # Pas utile finalement

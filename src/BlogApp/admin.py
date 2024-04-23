@@ -2,9 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Weather
+from .models import Weather, ListeAttenteOrdo
 
-admin.site.register(Weather)
+admin.site.register(ListeAttenteOrdo)
+
 
 """
 Credentials SuperUser : 
