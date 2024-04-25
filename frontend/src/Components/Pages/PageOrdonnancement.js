@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ListOrdo from '../Ordonnancement/listeOrdo';
 import SelectMachine from '../Ordonnancement/selectMachine';
 import RendementMachine from '../Ordonnancement/RendementMachine';
-import PDGMachine from '../Ordonnancement/PDGMachine'; import FullWidthTabs from '../BarreSites';
+import PDCMachine from '../Ordonnancement/PDCMachine'; import FullWidthTabs from '../BarreSites';
 import { useSiteSelection } from '../SiteSelectionContext';
 
 function PageOrdonnancement() {
@@ -52,7 +52,7 @@ function PageOrdonnancement() {
                 />
                 <div className='col-12 col-lg-6 d-flex justify-content-center align-items-center flex-column'>
                     <RendementMachine />
-                    <PDGMachine />
+                    <PDCMachine />
                 </div>
             </div>
         </div>

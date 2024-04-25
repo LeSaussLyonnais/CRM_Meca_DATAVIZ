@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PDGMachine = () => {
+const PDCMachine = () => {
   return (
     <div className='d-flex flex-column justify-content-center align-items-center'>
    
@@ -9,4 +9,4 @@ const PDGMachine = () => {
   );
 };
 
-export default PDGMachine;
+export default PDCMachine;

@@ -5,14 +5,14 @@ import fraiseuse from '../../Assets/fraiseuse.png';
 import soudure from '../../Assets/soudure.png';
 import peinture from '../../Assets/peinture.png';
 
-const TableContainerPDG = ({ PDGsemaine, semaineSelected, setPDGsemaine, setsemaineSelected }) => {
+const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsemaineSelected }) => {
     useEffect(() => {
         initdata();
-        console.log(PDGsemaine);
+        console.log(PDCsemaine);
     }, []);
 
     const initdata = () => {
-        setPDGsemaine(genereDataAleatoire(5, ["usinage", "soudure", "peinture"], ["soudure", "fraiseuse", "tour", "peinture"], 50, 150));
+        setPDCsemaine(genereDataAleatoire(5, ["usinage", "soudure", "peinture"], ["soudure", "fraiseuse", "tour", "peinture"], 50, 150));
     }
 
     function genereDataAleatoire(nbSemaines, ateliers, typesPostes, chargesMin, chargesMax) {
@@ -42,9 +42,9 @@ const TableContainerPDG = ({ PDGsemaine, semaineSelected, setPDGsemaine, setsema
                     <h1 className='display-perso-4 my-2 p-2'>Plan de charge de la partie usinage</h1>
                 </div>
                 <hr className='text-dark px-5 w-100' />
-                {PDGsemaine.length > 0 ? (
+                {PDCsemaine.length > 0 ? (
                     <div className='d-flex justify-content-center align-items-center flex-wrap gap-5'>
-                        {PDGsemaine.map((semaine) => {
+                        {PDCsemaine.map((semaine) => {
                             if (semaine.semaine === semaineSelected) {
                                 return semaine.postes.map((poste) => (
                                     <div key={poste.poste} className='d-flex justify-content-center align-items-center flex-column m-3'>
@@ -75,4 +75,4 @@ const TableContainerPDG = ({ PDGsemaine, semaineSelected, setPDGsemaine, setsema
   );
 };
 
-export default TableContainerPDG;
+export default TableContainerPDC;

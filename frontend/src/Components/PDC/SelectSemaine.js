@@ -1,17 +1,17 @@
 import React from 'react';
 
-const SelectSemaine = ({ PDGsemaine, semaineSelected, setPDGsemaine, setsemaineSelected }) => {
+const SelectSemaine = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsemaineSelected }) => {
     return (
         <div className='col-12 d-flex justify-content-end align-items-center'>
             <div className='col-8 d-flex justify-content-end align-items-center flex-row gap-3'>
-                {PDGsemaine.length > 0 ? (
-                    PDGsemaine.map((PDG) => (
+                {PDCsemaine.length > 0 ? (
+                    PDCsemaine.map((PDC) => (
                         <div
-                            key={PDG.semaine}
-                            className={'select-semaine px-3 py-1 ' + (semaineSelected === PDG.semaine ? 'active' : '')}
-                            aria-label={`Select week ${PDG.semaine}`}
-                            onClick={() => setsemaineSelected(PDG.semaine)}>
-                            semaine : {PDG.semaine}
+                            key={PDC.semaine}
+                            className={'select-semaine px-3 py-1 ' + (semaineSelected === PDC.semaine ? 'active' : '')}
+                            aria-label={`Select week ${PDC.semaine}`}
+                            onClick={() => setsemaineSelected(PDC.semaine)}>
+                            semaine : {PDC.semaine}
                         </div>
                     ))
                 ) : (

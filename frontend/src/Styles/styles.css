@@ -27,7 +27,7 @@ header img {
   top: 2vh;
   left: 1vw;
   padding: 0;
-  width: 11.25rem; /* Utilisation de rem pour une taille relative */
+  width: 7rem; /* Utilisation de rem pour une taille relative */
 }
 
 /* Navbar */

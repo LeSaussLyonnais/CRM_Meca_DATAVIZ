@@ -7,7 +7,7 @@ function WeatherApp() {
 
     useEffect(() => {
         // Effect hook pour gérer la connexion websocket
-        const socket = new WebSocket(`ws://10.31.67.30:8880/ws/weather/`);
+        const socket = new WebSocket(`ws://10.31.24.117:8880/ws/weather/`);
 
         // Fonction de rappel appelée lors de la réception de messages websocket
         socket.onmessage = function(event) {
