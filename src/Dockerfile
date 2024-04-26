@@ -1,15 +1,39 @@
-FROM python:3.10-alpine
+# Utiliser une image de base Ubuntu
+FROM ubuntu:latest
 
-RUN apk add python3-dev build-base linux-headers pcre-dev libffi-dev
-RUN apk update && \
-    apk add unixodbc unixodbc-dev && \
-    rm -rf /var/cache/apk/*
-#RUN apk update && apk add build-base
+# Mettre à jour les paquets et installer unixodbc
+RUN apt-get update && apt-get install -y unixodbc unixodbc-dev odbcinst unzip python3-pip python3-venv
 
-RUN mkdir /codes/
-WORKDIR /codes
+# Créer un environnement virtuel
+RUN python3 -m venv /venv
 
-COPY requirements.txt /codes
+# Activer l'environnement virtuel
+ENV PATH="/venv/bin:$PATH"
+
+# Copier le pilote HFSQL et les fichiers de configuration ODBC dans le conteneur
+
+COPY ODBC25LINUX64PACK064f.zip /usr/local/lib/ODBC25LINUX64PACK064f.zip
+RUN cd /usr/local/lib/ \
+    && unzip /usr/local/lib/ODBC25LINUX64PACK064f.zip \
+    && chmod 777 -R ./  \
+    && ./install.sh
+
+COPY odbcinst.ini /etc/
+COPY odbc.ini /etc/
+
+ENV ODBCINI=/etc/odbc.ini
+ENV ODBCSYSINI=/etc
+
+# Configurer le pilote ODBC
+RUN odbcinst -i -d -f /etc/odbcinst.ini
+RUN odbcinst -i -s -l -f /etc/odbc.ini
+
+RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/hfsql.conf && ldconfig
+
+# Votre application ici
+WORKDIR /app
+
+COPY requirements.txt /app
 RUN pip install gunicorn uvicorn[standard]
 RUN pip install -r requirements.txt
 
@@ -20,29 +44,9 @@ COPY manage.py manage.py
 #COPY data data
 COPY gunicorn.app.conf.py gunicorn.app.conf.py
 COPY gunicorn.channel.conf.py gunicorn.channel.conf.py
-#COPY ProjetDjango1/ODBCwin32 ODBCwin32
-#COPY ProjetDjango1/ODBCwin64 ODBCwin64
-COPY ODBC_Linux ODBC_Linux
-#COPY . .
-#COPY db.sqlite3 db.sqlite3
-
-# Création ou modification du fichier odbc.ini avec les configurations HFSQL
-RUN echo "[HFSQL_ODBC] \
-my_hfsql_db = HFSQL_ODBC \
-[my_hfsql_db] \
-Driver = HFSQL \
-ServerName = 192.168.0.21 \
-Port = 4900 \
-Database = BAC_A_SABLE \
-UID = admin \
-PWD = Clip_SERENA" > /etc/odbc.ini
-
-# Ajouter une entrée pour le pilote ODBC HFSQL dans odbcinst.ini
-RUN echo "[HFSQL] \
-Description = HFSQL \
-Driver = /codes/ODBC_Linux/wd280hfo64.so" >> /etc/odbcinst.ini
 
 RUN python3 manage.py collectstatic --no-input
+RUN apt-get update && apt-get install -y libiodbc2-dev
 #RUN celery -A ProjetDjango1 worker --beat -l info
 
 EXPOSE 8000
