@@ -19,8 +19,7 @@ services:
   web_channel:
     build: ./src/
     command: >
-      sh -c "python manage.py import_liste_ordo_from_csv data/test_data_liste_ordo.CSV &&
-            python manage.py makemigrations &&
+      sh -c "python manage.py makemigrations &&
             python manage.py migrate &&           
             gunicorn --config=gunicorn.channel.conf.py"
     volumes:
@@ -30,8 +29,7 @@ services:
   web_app:
     build: ./src/
     command: >
-      sh -c "python manage.py import_liste_ordo_from_csv data/test_data_liste_ordo.CSV && 
-            python manage.py makemigrations &&
+      sh -c "python manage.py makemigrations &&
             python manage.py migrate &&
             gunicorn --config=gunicorn.app.conf.py"  
     volumes:

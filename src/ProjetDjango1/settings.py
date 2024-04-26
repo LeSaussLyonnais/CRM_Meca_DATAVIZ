@@ -91,6 +91,7 @@ ASGI_APPLICATION = 'ProjetDjango1.asgi.application'
 
 # Base de donnée par défault de Django
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -110,7 +111,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-'''
+
 
 # Pour ne pas avoir de conflit sur la connexion à redis et donc une erreur, il faut s'assurer de bien définir 'redis' en 'hosts' comme
 # ci-dessous pour matcher avec l'url du CELERY_BROKER_URL plus bas 
@@ -133,6 +134,10 @@ CELERY_BEAT_SCHEDULE = {
     'get_weather_data_10s':  {
         'task': 'BlogApp.tasks.get_weather_data',
         'schedule': 10.0
+    },
+    'get_plancharge_data_30s': {
+        'task': 'BlogApp.tasks.get_plancharge_data',
+        'schedule': 30.0
     }
 }
 

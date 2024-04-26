@@ -24,6 +24,9 @@ def index(request):
     #print(response.json())
     return render(request, "BlogApp/index.html") # ", context={'weather': weather}"
 
+def charge(request):
+    return render(request, "BlogApp/PlanCharge.html")
+
 def ordo(request):
 
     liste_ordo = ListeAttenteOrdo.objects.all()

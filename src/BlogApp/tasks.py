@@ -10,6 +10,8 @@ import requests
 
 from .models import Weather # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
+import pypyodbc
+import pandas
 
 channel_layer = get_channel_layer()
 
@@ -56,3 +58,81 @@ def get_weather_data():
         weathers.append(new_data)
 
     async_to_sync(channel_layer.group_send)('weathers', {'type': 'send_new_data', 'text': weathers})
+
+
+@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_plancharge_data():
+    # Define the Components of the Connection String.
+    server = '192.168.0.21'
+    port = '4900'
+    database = 'BAC_A_SABLE'
+    username = 'admin'
+    password = 'Clip_SERENA'
+    
+    # Utilisez le nom du pilote défini dans odbc.ini
+    driver_name = 'HFSQL'
+
+    # Create a connection object.
+    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={' + driver_name + '}; \
+                            Server Name =' + server + '; \
+                            Server Port=' + port + '; \
+                            DATABASE=' + database + '; \
+                            UID=' + username + '; \
+                            PWD=' + password)
+
+    cursor_object: pypyodbc.Cursor = connection_object.cursor()
+
+    table_name = 'CHARGES'
+    table_name_2 = 'CFRAIS'
+    site = 'ATCRM'
+    atelier = 'TOUR'
+    annee = '2024'
+    semaine = '12'
+
+    # Define the Select Query.
+    sql_select = "SELECT "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
+                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS \
+                    WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
+    cursor_object.execute(sql_select)
+
+    # Define the column names.
+    #columns = [column[0] for column in cursor_object.statistics]
+    columns = [column[0] for column in cursor_object.description]
+
+    # Execute the Query.
+    records = cursor_object.fetchall()
+
+    # Dump to a Pandas DataFrame.
+    donnees_affaires = pandas.DataFrame.from_records(
+        data=records,
+        columns=columns
+    )
+
+    # Convertir le DataFrame en un dictionnaire de groupes de données.
+    grouped_data = donnees_affaires.groupby(["cosect", "annee", "semaine"])
+
+    # Créer une liste de dictionnaires JSON avec la structure requise.
+    json_data = []
+    for (cosect, annee, semaine), group in grouped_data:
+        postes = []
+        for index, row in group.iterrows():
+            poste = {
+                "cofrais": row["cofrais"].strip(),  # Supprimer les espaces avant et après le code de frais
+                "design": row["design"],
+                "vduree": row["vduree"]
+            }
+            postes.append(poste)
+        data_entry = {
+            "cosect": cosect,
+            "annee": int(annee),  # Convertir en entier
+            "semaine": int(semaine),  # Convertir en entier
+            "postes": postes
+        }
+        json_data.append(data_entry)
+
+    # Charger la chaîne JSON en tant qu'objet JSON
+    #data = json.loads(json_data)
+
+    async_to_sync(channel_layer.group_send)('json_data', {'type': 'send_new_data', 'text': json_data})
+
+
