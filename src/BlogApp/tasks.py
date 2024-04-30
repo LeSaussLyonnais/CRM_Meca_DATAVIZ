@@ -10,8 +10,10 @@ import requests
 
 from .models import Weather # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
-import pypyodbc
+from .pypyodbcCRM import * 
 import pandas
+import os
+import subprocess
 
 channel_layer = get_channel_layer()
 
@@ -62,25 +64,29 @@ def get_weather_data():
 
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_plancharge_data():
+    os.environ['ODBCINI'] = '/etc/odbc.ini'
+
     # Define the Components of the Connection String.
     server = '192.168.0.21'
     port = '4900'
     database = 'BAC_A_SABLE'
     username = 'admin'
     password = 'Clip_SERENA'
+    MyDataSource = 'hyperfile'
     
     # Utilisez le nom du pilote défini dans odbc.ini
     driver_name = 'HFSQL'
 
     # Create a connection object.
-    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={' + driver_name + '}; \
-                            Server Name =' + server + '; \
-                            Server Port=' + port + '; \
-                            DATABASE=' + database + '; \
+    connection_object: Connection = connect('DSN='+MyDataSource+'; \
                             UID=' + username + '; \
                             PWD=' + password)
+                            
+                            #Server Name =' + server + '; \
+                            #Server Port=' + port + '; \
+                            #DATABASE=' + database + '; \
 
-    cursor_object: pypyodbc.Cursor = connection_object.cursor()
+    cursor_object: Cursor = connection_object.cursor()
 
     table_name = 'CHARGES'
     table_name_2 = 'CFRAIS'
@@ -136,3 +142,20 @@ def get_plancharge_data():
     async_to_sync(channel_layer.group_send)('json_data', {'type': 'send_new_data', 'text': json_data})
 
 
+@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_plancharge_data_php():
+    #drivers = drivers()
+    #for driver in drivers:
+    #    print(driver)
+    
+    # Chemin vers le script PHP que vous souhaitez exécuter
+    chemin_script_php = "./Test_query_HFSQL.php"
+    chemin_php = "/usr/local/lib/php-8.3.6/php.exe"
+
+    
+    # Exécuter le script PHP et capturer la sortie
+    #subprocess.call([chemin_php, chemin_script_php])
+    resultat = subprocess.check_output([chemin_php, chemin_script_php])
+
+    # Afficher le résultat
+    print(resultat.decode("utf-8"))  # Assurez-vous de décoder la sortie en tant que chaîne Unicode si nécessaire

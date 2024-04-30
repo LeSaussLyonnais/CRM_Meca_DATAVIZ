@@ -131,10 +131,10 @@ CELERY_TIMEZONE = 'Europe/Paris'
 
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
 CELERY_BEAT_SCHEDULE = {
-    'get_weather_data_10s':  {
-        'task': 'BlogApp.tasks.get_weather_data',
-        'schedule': 10.0
-    },
+    #'get_weather_data_10s':  {
+    #    'task': 'BlogApp.tasks.get_weather_data',
+    #    'schedule': 10.0
+    #},
     'get_plancharge_data_30s': {
         'task': 'BlogApp.tasks.get_plancharge_data',
         'schedule': 30.0
