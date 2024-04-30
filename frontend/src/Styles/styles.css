@@ -324,3 +324,32 @@ header img {
   margin-right: auto;
   margin-left: auto;
 }
+.Title_machine{
+  margin-bottom: 0;
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: #000000;
+}
+
+.Subtitle_machine{
+  font-size: 0.8rem;
+  margin-bottom: 0;
+  color: rgba(0, 0, 0,0.45);
+}
+
+.Text_Semaine_PDC{
+  font-size: 0.9rem;
+  color: #000000;
+}
+
+.Value_Semaine_PDC{
+  font-size: 1rem;
+}
+
+.rond_PDC {
+  width: 40px; /* Définissez la largeur de votre cercle */
+  height: 40px; /* Définissez la hauteur de votre cercle */
+  border-radius: 50%; /* Utilisez border-radius avec une valeur de 50% pour créer un cercle */
+  background-color: red; /* Ajoutez une couleur de fond */
+  box-shadow: 10 10 10 10 rgba(0, 0, 0,0.25);
+}

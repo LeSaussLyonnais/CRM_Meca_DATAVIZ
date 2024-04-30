@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import ListOrdo from '../Ordonnancement/listeOrdo';
 import SelectMachine from '../Ordonnancement/selectMachine';
-import RendementMachine from '../Ordonnancement/RendementMachine';
+import { RendementMachine } from '../Ordonnancement/RendementMachine';
 import PDCMachine from '../Ordonnancement/PDCMachine'; import FullWidthTabs from '../BarreSites';
 import { useSiteSelection } from '../SiteSelectionContext';
 
@@ -12,6 +12,8 @@ function PageOrdonnancement() {
     const [AllMachine, setAllMachine] = useState([]);
     const [AllOrdoFixe, setAllOrdoFixe] = useState([]);
     const [AllOrdoVariable, setAllOrdoVariable] = useState([]);
+    const [AllRendementData, setAllRendementData] = useState([]);
+    const [AllPDCData, setAllPDCData] = useState([]);
 
     const handleSiteChange = (newSite) => {
         selectSite(newSite);
@@ -42,7 +44,7 @@ function PageOrdonnancement() {
                 <hr className='text-dark px-5 w-100' />
 
             </div>
-            <div className='container-perso-ordo d-flex justify-content-center align-items-center flex-row'>
+            <div className='container-perso-ordo d-flex justify-content-center align-items-center flex-row gap-4 mb-5'>
                 <ListOrdo
                     AllOrdoFixe={AllOrdoFixe}
                     setAllOrdoFixe={setAllOrdoFixe}
@@ -50,9 +52,17 @@ function PageOrdonnancement() {
                     setAllOrdoVariable={setAllOrdoVariable}
                     SelectedMachine={SelectedMachine}
                 />
-                <div className='col-12 col-lg-6 d-flex justify-content-center align-items-center flex-column'>
-                    <RendementMachine />
-                    <PDCMachine />
+                <div className='col-12 col-lg-4 d-flex justify-content-center align-items-center flex-column gap-2' style={{height: '70vh'}}>
+                    <RendementMachine
+                        AllRendementData={AllRendementData}
+                        setAllRendementData={setAllRendementData}
+                        SelectedMachine={SelectedMachine}
+                    />
+                    <PDCMachine
+                        SelectedMachine={SelectedMachine}
+                        AllPDCData={AllPDCData} 
+                        setAllPDCData={setAllPDCData}
+                    />
                 </div>
             </div>
         </div>
