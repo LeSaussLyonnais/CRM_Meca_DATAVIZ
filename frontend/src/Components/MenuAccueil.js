@@ -13,23 +13,27 @@ function MenuAccueil() {
     };
 
     return (
-        <div className="menu-accueil-container">
-            <div className={`container-link ${selectedSite === 'Blaye-Les-Mines' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Blaye-Les-Mines')}>
-                <img src={BlayeLesMinesImage} alt="BlayeLesMines" className="BlayeLesMines" />
-                <div className="text-overlay-site1">Site de <br /> Blaye-les-mines</div>
-            </div>
-            
-            <div className={`container-link ${selectedSite === 'Site 2' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Site 2')}>
-                <img src={Site2Image} alt="Site 2" className="site2" />
-                <div className="text-overlay-site2">Site 2</div>
+        <div>
+            <div className="menu-accueil-container">
+                <div className={`container-link ${selectedSite === 'Blaye-Les-Mines' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Blaye-Les-Mines')}>
+                    <img src={BlayeLesMinesImage} alt="BlayeLesMines" className="BlayeLesMines" />
+                    <div className="text-overlay-site1">Site de <br /> Blaye-les-mines</div>
+                </div>
+                
+                <div className={`container-link ${selectedSite === 'Site 2' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Site 2')}>
+                    <img src={Site2Image} alt="Site 2" className="site2" />
+                    <div className="text-overlay-site2">Site 2</div>
+                </div>
+
+                <div className={`container-link ${selectedSite === 'Site 3' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Site 3')}>
+                    <img src={Site3Image} alt="Site 3" className="site3" />
+                    <div className="text-overlay-site3">Site 3</div>
+                </div>
             </div>
 
-            <div className={`container-link ${selectedSite === 'Site 3' ? 'agrandi' : ''}`} onClick={() => handleImageClick('Site 3')}>
-                <img src={Site3Image} alt="Site 3" className="site3" />
-                <div className="text-overlay-site3">Site 3</div>
+            <div className="bas-page-container">
+                <img src={BasPageImage} alt="Bas de page" className="bas-page" />
             </div>
-            
-            <img src={BasPageImage} alt="Bas de page" className="bas-page" />
         </div>
     );
 }

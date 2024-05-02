@@ -1,11 +1,11 @@
 // PageVueGlobale.js
-import React, { useState } from 'react';
-import FullWidthTabs from '../BarreSites';
-import { useSiteSelection } from '../SiteSelectionContext';
+import React, { useState, useContext } from 'react';
 import WeatherApp from '../weatherapp';
+import { SiteContext } from '../ContexteSelectionSite';
+
 
 function PageVueGlobale() {
-    const [selectedSite, selectSite] = useState(useSiteSelection());
+    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
     const handleSiteChange = (newSite) => {
         selectSite(newSite);
@@ -20,7 +20,6 @@ function PageVueGlobale() {
     return (
         <>
             <div className={`header-vue-globale ${isActive ? 'active' : ''}`}>
-                <FullWidthTabs selectedSite={selectedSite} onSiteChange={handleSiteChange} />
             </div>
         <WeatherApp/>
         </>

@@ -1,19 +1,21 @@
 // PageOrdonnancement.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import ListOrdo from '../Ordonnancement/listeOrdo';
 import SelectMachine from '../Ordonnancement/selectMachine';
 import { RendementMachine } from '../Ordonnancement/RendementMachine';
-import PDCMachine from '../Ordonnancement/PDCMachine'; import FullWidthTabs from '../BarreSites';
-import { useSiteSelection } from '../SiteSelectionContext';
+import PDCMachine from '../Ordonnancement/PDCMachine';
+import { SiteContext } from '../ContexteSelectionSite';
 
-function PageOrdonnancement() {
-    const [selectedSite, selectSite] = useState(useSiteSelection());
+
+function PageVueMachine() {
     const [SelectedMachine, setSelectedMachine] = useState({});
     const [AllMachine, setAllMachine] = useState([]);
     const [AllOrdoFixe, setAllOrdoFixe] = useState([]);
     const [AllOrdoVariable, setAllOrdoVariable] = useState([]);
     const [AllRendementData, setAllRendementData] = useState([]);
     const [AllPDCData, setAllPDCData] = useState([]);
+    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
+
 
     const handleSiteChange = (newSite) => {
         selectSite(newSite);
@@ -21,19 +23,18 @@ function PageOrdonnancement() {
 
     const [isActive, setIsActive] = React.useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsActive(true);
     }, []);
 
     return (<>
         <div className={`header-ordonnancement ${isActive ? 'active' : ''}`}>
-            <FullWidthTabs selectedSite={selectedSite} onSiteChange={handleSiteChange} />
         </div>
 
         <div className='container-fluid d-flex justify-content-center align-items-center flex-column'>
             <div className='col-12 px-5 m-3'>
                 <div className='col-10 col-lg-5 d-flex justify-content-center align-items-start flex-column'>
-                    <h1 className='display-perso-2 mt-2 mb-0 px-2 text-dark'>Ordonnacement </h1>
+                    <h1 className='display-perso-2 mt-2 mb-0 px-2 text-dark'>Vue Machine </h1>
                 </div>
                 <SelectMachine
                     SelectedMachine={SelectedMachine}
@@ -70,4 +71,4 @@ function PageOrdonnancement() {
     );
 }
 
-export default PageOrdonnancement;
+export default PageVueMachine;
