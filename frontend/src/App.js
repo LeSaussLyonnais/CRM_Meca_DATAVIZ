@@ -3,13 +3,15 @@ import logo from "./Assets/logo_acti.png";
 import Navbar from "./Components/Navbar";
 import PageSelection from "./Components/Pages/PageSelection";
 import PageVueGlobale from "./Components/Pages/PageVueGlobale";
-import PageVueMachine from './Components/Pages/PageVueMachine';
+import PageVuePoste from './Components/Pages/PageVuePoste';
 import PagePlanDeCharge from './Components/Pages/PagePlanDeCharge';
+import './Styles/vueposte.css'
+import './Styles/vueglobale.css'
+import './Styles/plandecharge.css'
 // import PageCommunication from './Components/Pages/PageCommunication';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SiteProvider } from './Components/ContexteSelectionSite';
-import './Styles/styles.css'
 
 function App() {
   return (
@@ -24,7 +26,7 @@ function App() {
             <Routes>
               <Route path="/" element={<PageSelection />} />
               <Route path='/VueGlobale' element={<PageVueGlobale/>} />
-              <Route path='/VueMachine' element={<PageVueMachine/>} />
+              <Route path='/VuePoste' element={<PageVuePoste/>} />
               <Route path='/PlanDeCharge' element={<PagePlanDeCharge/>} />
               {/* <Route path='/Communication' element={<PageCommunication/>} /> */}
             </Routes>

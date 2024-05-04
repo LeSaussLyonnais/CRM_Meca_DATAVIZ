@@ -1,15 +1,15 @@
 // PageOrdonnancement.js
 import React, { useState, useEffect, useContext} from 'react';
-import ListOrdo from '../Ordonnancement/listeOrdo';
-import SelectMachine from '../Ordonnancement/selectMachine';
-import { RendementMachine } from '../Ordonnancement/RendementMachine';
-import PDCMachine from '../Ordonnancement/PDCMachine';
+import ListOrdo from '../VuePoste/listeOrdo';
+import SelectPoste from '../VuePoste/SelectPoste';
+import { RendementPoste } from '../VuePoste/RendementPoste';
+import PDCPoste from '../VuePoste/PDCPoste';
 import { SiteContext } from '../ContexteSelectionSite';
 
 
-function PageVueMachine() {
-    const [SelectedMachine, setSelectedMachine] = useState({});
-    const [AllMachine, setAllMachine] = useState([]);
+function PageVuePoste() {
+    const [SelectedPoste, setSelectedPoste] = useState({});
+    const [AllPoste, setAllPoste] = useState([]);
     const [AllOrdoFixe, setAllOrdoFixe] = useState([]);
     const [AllOrdoVariable, setAllOrdoVariable] = useState([]);
     const [AllRendementData, setAllRendementData] = useState([]);
@@ -32,35 +32,36 @@ function PageVueMachine() {
         </div>
 
         <div className='container-fluid d-flex justify-content-center align-items-center flex-column'>
-            <div className='col-12 px-5 m-3'>
-                <div className='col-10 col-lg-5 d-flex justify-content-center align-items-start flex-column'>
-                    <h1 className='display-perso-2 mt-2 mb-0 px-2 text-dark'>Vue Machine </h1>
+            <div className='col-12 px-5 m-3 d-flex justify-content-between align-items-center flex-row'>
+                <div className='col-5 d-flex justify-content-center align-items-start flex-column'>
+                    <h1 className='display-perso-2 mt-2 mb-0 px-2 text-dark'>Ordonnancement global de l'atelier : </h1>
                 </div>
-                <SelectMachine
-                    SelectedMachine={SelectedMachine}
-                    setSelectedMachine={setSelectedMachine}
-                    AllMachine={AllMachine}
-                    setAllMachine={setAllMachine}
+                <SelectPoste
+                    SelectedPoste={SelectedPoste}
+                    setSelectedPoste={setSelectedPoste}
+                    AllPoste={AllPoste}
+                    setAllPoste={setAllPoste}
                 />
-                <hr className='text-dark px-5 w-100' />
 
             </div>
-            <div className='container-perso-ordo d-flex justify-content-center align-items-center flex-row gap-4 mb-5'>
+            <hr className='text-dark px-5' style={{width: '94.5%'}} />
+
+            <div className='container-perso-ordo d-flex justify-content-center align-items-center flex-row gap-4 mb-5 mt-4'>
                 <ListOrdo
                     AllOrdoFixe={AllOrdoFixe}
                     setAllOrdoFixe={setAllOrdoFixe}
                     AllOrdoVariable={AllOrdoVariable}
                     setAllOrdoVariable={setAllOrdoVariable}
-                    SelectedMachine={SelectedMachine}
+                    SelectedPoste={SelectedPoste}
                 />
-                <div className='col-12 col-lg-4 d-flex justify-content-center align-items-center flex-column gap-2' style={{height: '70vh'}}>
-                    <RendementMachine
+                <div className='col-12 col-lg-4 d-flex justify-content-between align-items-center flex-column gap-2' style={{height: '65vh'}}>
+                    <RendementPoste
                         AllRendementData={AllRendementData}
                         setAllRendementData={setAllRendementData}
-                        SelectedMachine={SelectedMachine}
+                        SelectedPoste={SelectedPoste}
                     />
-                    <PDCMachine
-                        SelectedMachine={SelectedMachine}
+                    <PDCPoste
+                        SelectedPoste={SelectedPoste}
                         AllPDCData={AllPDCData} 
                         setAllPDCData={setAllPDCData}
                     />
@@ -71,4 +72,4 @@ function PageVueMachine() {
     );
 }
 
-export default PageVueMachine;
+export default PageVuePoste;

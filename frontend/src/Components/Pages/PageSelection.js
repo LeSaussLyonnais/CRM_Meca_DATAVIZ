@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { SiteContext } from '../ContexteSelectionSite';
-import '../../Styles/StylePageSelection.css';
+import '../../Styles/selectionatelier.css';
 import BasPageImage from '../../Assets/BasPage.png';
 
 function PageSelection() {

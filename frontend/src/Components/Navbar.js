@@ -24,8 +24,8 @@ function Navbar() {
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link to="/VueMachine" className="nav-link d-flex flex-column align-items-center">
-                                <GoGear size={iconSize} /> <span className="navbar-text">Vue machine</span>
+                            <Link to="/VuePoste" className="nav-link d-flex flex-column align-items-center">
+                                <GoGear size={iconSize} /> <span className="navbar-text">Vue poste</span>
                             </Link>
                         </li>
                         <li className="nav-item">
