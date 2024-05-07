@@ -22,5 +22,20 @@ class Weather(models.Model):
     class Meta:
         ordering = ['dt_txt']
         managed = True  # Assurez-vous que cette ligne est soit absente, soit à True
+
+
+class ListeAttenteOrdo(models.Model):
+    NUM_AFFAIRE = models.IntegerField(default=0, blank=True)
+    DATE_DEBUT_ORDO = models.CharField(max_length=50, default=0, blank=True)
+    CLIENT = models.CharField(max_length=200, blank=True, default='ICAM')
+    ETAT_AFFAIRE = models.CharField(max_length=50, blank=True, default='X')
+    RANG_OF = models.CharField(max_length=50, blank=True, default='X')
+    TEMPS_PREVU = models.CharField(max_length=50, default=0, blank=True)
+    TEMPS_ECOULE = models.CharField(max_length=50, default=0, blank=True)
+    TEMPS_RESTANT = models.CharField(max_length=50, default=0, blank=True)
+
+    def __str__(self):
+        return str(self.NUM_AFFAIRE)
+
     
 

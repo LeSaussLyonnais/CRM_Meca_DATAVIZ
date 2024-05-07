@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    # 'import_export',  # Pas utile finalement 
     'BlogApp',
     'rest_framework',
     'corsheaders'
@@ -89,6 +90,7 @@ ASGI_APPLICATION = 'ProjetDjango1.asgi.application'
 
 
 # Base de donnée par défault de Django
+
 '''
 DATABASES = {
     'default': {
@@ -132,6 +134,10 @@ CELERY_BEAT_SCHEDULE = {
     'get_weather_data_10s':  {
         'task': 'BlogApp.tasks.get_weather_data',
         'schedule': 10.0
+    },
+    'get_plancharge_data_30s': {
+        'task': 'BlogApp.tasks.get_plancharge_data',
+        'schedule': 30.0
     }
 }
 
@@ -180,3 +186,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# IMPORT_EXPORT_USE_TRANSACTIONS = True   # Pas utile finalement
