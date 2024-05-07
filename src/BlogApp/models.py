@@ -37,5 +37,22 @@ class ListeAttenteOrdo(models.Model):
     def __str__(self):
         return str(self.NUM_AFFAIRE)
 
-    
+    class Meta:
+        ordering = ['DATE_DEBUT_ORDO']
+        managed = True  # Assurez-vous que cette ligne est soit absente, soit à True    
 
+
+class PlanChargeAtelier(models.Model):
+    COSECT = models.CharField(max_length=10, default='ATXXX', blank=True)
+    ANNEE = models.IntegerField(default=0, blank=True)
+    SEMAINE = models.IntegerField(default=0, blank=True)
+    COFRAIS = models.CharField(max_length=50, default='XXX', blank=True)
+    DESIGN = models.CharField(max_length=200, default='MACHINE XXX', blank=True)
+    VDUREE = models.FloatField(default=0, blank=True)
+
+    def __str__(self):
+        return str(self.COFRAIS)
+
+    class Meta:
+        ordering = ['COFRAIS']
+        managed = True # Assurez-vous que cette ligne est soit absente, soit à True

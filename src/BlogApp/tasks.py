@@ -8,10 +8,11 @@ from channels.layers import get_channel_layer
 
 import requests
 
-from .models import Weather # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
+from .models import Weather, PlanChargeAtelier # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
-from .pypyodbcCRM import * 
-import pandas
+#from .pypyodbcCRM import * 
+import pypyodbc
+import pandas as pd
 import os
 import subprocess
 
@@ -58,6 +59,7 @@ def get_weather_data():
         new_data.update({'state': state})
 
         weathers.append(new_data)
+        #print(weathers)
 
     async_to_sync(channel_layer.group_send)('weathers', {'type': 'send_new_data', 'text': weathers})
 
@@ -72,13 +74,16 @@ def get_plancharge_data():
     database = 'BAC_A_SABLE'
     username = 'admin'
     password = 'Clip_SERENA'
-    MyDataSource = 'hyperfile'
+    #MyDataSource = 'hyperfile'
     
     # Utilisez le nom du pilote défini dans odbc.ini
     driver_name = 'HFSQL'
 
     # Create a connection object.
-    connection_object: Connection = connect('DSN='+MyDataSource+'; \
+    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={HFSQL}; \
+                            Server Name =' + server + '; \
+                            Server Port=' + port + '; \
+                            DATABASE=' + database + '; \
                             UID=' + username + '; \
                             PWD=' + password)
                             
@@ -86,7 +91,7 @@ def get_plancharge_data():
                             #Server Port=' + port + '; \
                             #DATABASE=' + database + '; \
 
-    cursor_object: Cursor = connection_object.cursor()
+    cursor_object: pypyodbc.Cursor = connection_object.cursor()
 
     table_name = 'CHARGES'
     table_name_2 = 'CFRAIS'
@@ -109,16 +114,20 @@ def get_plancharge_data():
     records = cursor_object.fetchall()
 
     # Dump to a Pandas DataFrame.
-    donnees_affaires = pandas.DataFrame.from_records(
+    plancharge_df = pd.DataFrame.from_records(
         data=records,
         columns=columns
     )
 
+    charge_liste = plancharge_df.to_dict('records')
+
+    charges = []
+
+    '''
     # Convertir le DataFrame en un dictionnaire de groupes de données.
     grouped_data = donnees_affaires.groupby(["cosect", "annee", "semaine"])
 
     # Créer une liste de dictionnaires JSON avec la structure requise.
-    json_data = []
     for (cosect, annee, semaine), group in grouped_data:
         postes = []
         for index, row in group.iterrows():
@@ -134,28 +143,39 @@ def get_plancharge_data():
             "semaine": int(semaine),  # Convertir en entier
             "postes": postes
         }
-        json_data.append(data_entry)
+        charges.append(data_entry)
+    '''
+    
+    for chrg in charge_liste:
+        obj, created = PlanChargeAtelier.objects.get_or_create(COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
 
-    # Charger la chaîne JSON en tant qu'objet JSON
-    #data = json.loads(json_data)
+        obj.COSECT = chrg['cosect']
+        obj.ANNEE = chrg['annee']
+        obj.SEMAINE = chrg['semaine']
+        obj.COFRAIS = chrg['cofrais']
+        obj.DESIGN = chrg['design']
+        obj.VDUREE = chrg['vduree']
 
-    async_to_sync(channel_layer.group_send)('json_data', {'type': 'send_new_data', 'text': json_data})
+        obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'Weather'
+
+        new_data = model_to_dict(obj)
+        new_data.update()
+
+        charges.append(new_data)
+
+        #print(charges)
+
+    async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
 
 
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-def get_plancharge_data_php():
-    #drivers = drivers()
-    #for driver in drivers:
-    #    print(driver)
-    
-    # Chemin vers le script PHP que vous souhaitez exécuter
-    chemin_script_php = "./Test_query_HFSQL.php"
-    chemin_php = "/usr/local/lib/php-8.3.6/php.exe"
+def get_plancharge_data_mdb():
+    site = 'ATCRM'
+    atelier = 'tour'
+    annee = '2024'
+    semaine = '12'
 
-    
-    # Exécuter le script PHP et capturer la sortie
-    #subprocess.call([chemin_php, chemin_script_php])
-    resultat = subprocess.check_output([chemin_php, chemin_script_php])
+    obj = PlanChargeAtelier.objects.filter(COSECT__icontains=site).filter(ANNEE=annee).filter(SEMAINE=semaine).filter(DESIGN=atelier)
+    print(obj)
 
-    # Afficher le résultat
-    print(resultat.decode("utf-8"))  # Assurez-vous de décoder la sortie en tant que chaîne Unicode si nécessaire
+    #async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': obj})

@@ -5,6 +5,8 @@ FROM debian:latest
 RUN apt-get update && apt-get install -y unixodbc unixodbc-dev odbcinst unzip python3-pip python3-venv
 RUN apt-get update && apt-get install -y libiodbc2-dev
 RUN apt-get update && apt-get install -y iodbc
+RUN apt-get update && apt-get install -y php
+RUN apt-get update && apt-get install -y php-pdo
 #unixodbc unixodbc-dev
 
 # Créer un environnement virtuel

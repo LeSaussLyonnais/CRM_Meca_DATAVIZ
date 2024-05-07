@@ -82,7 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ProjetDjango1.wsgi.application'
 ASGI_APPLICATION = 'ProjetDjango1.asgi.application' 
 
-#CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_BROKER_URL = 'redis://localhost:6379'
 
 
 # Database
@@ -91,7 +91,7 @@ ASGI_APPLICATION = 'ProjetDjango1.asgi.application'
 
 # Base de donnée par défault de Django
 
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -111,7 +111,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+'''
 
 # Pour ne pas avoir de conflit sur la connexion à redis et donc une erreur, il faut s'assurer de bien définir 'redis' en 'hosts' comme
 # ci-dessous pour matcher avec l'url du CELERY_BROKER_URL plus bas 
@@ -119,25 +119,26 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('redis', 6379)] 
+            'hosts': [('127.0.0.1', 6379)] 
         }
     }
 }
 
 # Configurer les URLs pour le broker et le backend de Celery avec le mot de passe
-CELERY_BROKER_URL = f'redis://:@redis:6379/0'
-CELERY_RESULT_BACKEND = f'redis://:@redis:6379/0'
-CELERY_TIMEZONE = 'Europe/Paris'
+#CELERY_BROKER_URL = f'redis://:@redis:6379/0'
+#CELERY_RESULT_BACKEND = f'redis://:@redis:6379/0'
+#CELERY_TIMEZONE = 'Europe/Paris'
 
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
+
 CELERY_BEAT_SCHEDULE = {
-    #'get_weather_data_10s':  {
-    #    'task': 'BlogApp.tasks.get_weather_data',
-    #    'schedule': 10.0
-    #},
-    'get_plancharge_data_30s': {
+    'get_weather_data_60s':  {
         'task': 'BlogApp.tasks.get_plancharge_data',
         'schedule': 30.0
+    },
+    'get_plancharge_data_mdb_10s': {
+        'task': 'BlogApp.tasks.get_plancharge_data_mdb',
+        'schedule': 10.0
     }
 }
 
