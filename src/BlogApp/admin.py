@@ -2,9 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Weather, ListeAttenteOrdo
+from .models import Weather, ListeAttenteOrdo, PlanChargeAtelier
 
-admin.site.register(ListeAttenteOrdo)
+admin.site.register(Weather)
+admin.site.register(PlanChargeAtelier)
 
 
 """

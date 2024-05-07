@@ -32,25 +32,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in charge" :key="item.id">
-                                <td class="align-middle">{{ item.cosect }}</td>
-                                <td class="align-middle">{{ item.annee }}</td>
-                                <td class="align-middle">{{ item.semaine }}</td>
-                                <td class="align-middle">
-                                    {% for poste in item.postes %}
-                                        {{ poste.cofrais }}
-                                    {% endfor %}
-                                </td>
-                                <td class="align-middle">
-                                    {% for poste in item.postes %}
-                                        {{ poste.design }}
-                                    {% endfor %}
-                                </td>
-                                <td class="align-middle">
-                                    {% for poste in item.postes %}
-                                        {{ poste.vduree }}
-                                    {% endfor %}
-                                </td>
+                            <tr v-for="chrg in charge" :key="chrg.id">
+                                <td class="align-middle">{{ chrg.COSECT }}</td>
+                                <td class="align-middle">{{ chrg.ANNEE }}</td>
+                                <td class="align-middle">{{ chrg.SEMAINE }}</td>
+                                <td class="align-middle">{{ chrg.COFRAIS }}</td>
+                                <td class="align-middle">{{ chrg.DESIGN }}</td>
+                                <td class="align-middle">{{ chrg.VDUREE }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
