@@ -103,14 +103,25 @@ header img {
 }
 
 /* Images accueil */
+.bas-page-container {
+  position: fixed; /* Utilisez une position fixe pour placer l'image par rapport à la fenêtre */
+  bottom: 0; /* Placez l'élément en bas de la fenêtre */
+  left: 0; /* Placez l'élément tout à gauche */
+  width: 100%; /* Assurez-vous que l'élément occupe toute la largeur de la fenêtre */
+  display: flex;
+  justify-content: center;
+  max-height: 30%;
+}
+
 .bas-page {
-  position: fixed;
-  bottom: 0; /* Position en bas de la fenêtre */
-  left: 0; /* Position à gauche de la fenêtre */
-  width: 100%; /* Largeur de l'image égale à la largeur de la fenêtre */
-  opacity: 0.5; /* Opacité de l'image */
+  width: 100%;
+  opacity: 0.5;
   border-top: black 0.2rem solid;
 }
+
+
+
+
 
 /* Blayes-Les-Mines bouton */
 .BlayeLesMines,

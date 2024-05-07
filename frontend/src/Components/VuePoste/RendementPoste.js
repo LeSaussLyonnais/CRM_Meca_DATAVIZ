@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'chart.js/auto';
 
-export function RendementMachine({ AllRendementData, setAllRendementData, SelectedMachine }) {
+export function RendementPoste({ AllRendementData, setAllRendementData, SelectedPoste }) {
 
   const generateData = () => {
     const data = [];
@@ -50,13 +50,13 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
         barThickness: 10, // Ajustez cette valeur selon vos besoins
       },
       {
-        label: 'Avance Machine',
+        label: 'Avance Poste',
         data: AllRendementData.datainf,
         backgroundColor: '#379740',
         barThickness: 10, // Ajustez cette valeur selon vos besoins
       },
       {
-        label: 'Retard Machine',
+        label: 'Retard Poste',
         data: AllRendementData.datasup,
         backgroundColor: '#CE2626',
         barThickness: 10, // Ajustez cette valeur selon vos besoins
@@ -97,7 +97,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
 
   useEffect(() => {
     setData();
-  }, [SelectedMachine]);
+  }, [SelectedPoste]);
 
   const setData = () => {
     const data = generateData();
@@ -107,11 +107,11 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
   return (
     <div className='col-12 container-perso-content d-flex flex-column justify-content-center align-items-start'>
       <div className='col-12 d-flex flex-column justify-content-center align-items-start px-5'>
-        <p className='Title_machine'>
-          Rendement du poste : {SelectedMachine.machine}
+        <p className='Title_poste'>
+          Rendement du poste : {SelectedPoste.poste}
 
         </p>
-        <p className='Subtitle_machine'>
+        <p className='Subtitle_poste'>
           [Temps passé / temps prévu] pour les 10 derniers OF
         </p>
         <hr className='col-12' />

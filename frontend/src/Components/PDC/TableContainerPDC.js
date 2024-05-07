@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ColorModifiedImage from '../../Tool/ColorPngChange';
+import ColorModifiedImage from '../ColorPngChange';
 import tour from '../../Assets/tour.png';
 import fraiseuse from '../../Assets/fraiseuse.png';
 import soudure from '../../Assets/soudure.png';
