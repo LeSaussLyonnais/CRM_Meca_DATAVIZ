@@ -8,8 +8,13 @@ from channels.layers import get_channel_layer
 
 import requests
 
-from .models import Weather # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
+from .models import Weather, PlanChargeAtelier # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
+#from .pypyodbcCRM import * 
+import pypyodbc
+import pandas as pd
+import os
+import subprocess
 
 channel_layer = get_channel_layer()
 
@@ -54,5 +59,123 @@ def get_weather_data():
         new_data.update({'state': state})
 
         weathers.append(new_data)
+        #print(weathers)
 
     async_to_sync(channel_layer.group_send)('weathers', {'type': 'send_new_data', 'text': weathers})
+
+
+@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_plancharge_data():
+    os.environ['ODBCINI'] = '/etc/odbc.ini'
+
+    # Define the Components of the Connection String.
+    server = '192.168.0.21'
+    port = '4900'
+    database = 'BAC_A_SABLE'
+    username = 'admin'
+    password = 'Clip_SERENA'
+    #MyDataSource = 'hyperfile'
+    
+    # Utilisez le nom du pilote défini dans odbc.ini
+    driver_name = 'HFSQL'
+
+    # Create a connection object.
+    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={HFSQL}; \
+                            Server Name =' + server + '; \
+                            Server Port=' + port + '; \
+                            DATABASE=' + database + '; \
+                            UID=' + username + '; \
+                            PWD=' + password)
+                            
+                            #Server Name =' + server + '; \
+                            #Server Port=' + port + '; \
+                            #DATABASE=' + database + '; \
+
+    cursor_object: pypyodbc.Cursor = connection_object.cursor()
+
+    table_name = 'CHARGES'
+    table_name_2 = 'CFRAIS'
+    site = 'ATCRM'
+    atelier = 'TOUR'
+    annee = '2024'
+    semaine = '12'
+
+    # Define the Select Query.
+    sql_select = "SELECT "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
+                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS \
+                    WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
+    cursor_object.execute(sql_select)
+
+    # Define the column names.
+    #columns = [column[0] for column in cursor_object.statistics]
+    columns = [column[0] for column in cursor_object.description]
+
+    # Execute the Query.
+    records = cursor_object.fetchall()
+
+    # Dump to a Pandas DataFrame.
+    plancharge_df = pd.DataFrame.from_records(
+        data=records,
+        columns=columns
+    )
+
+    charge_liste = plancharge_df.to_dict('records')
+
+    charges = []
+
+    '''
+    # Convertir le DataFrame en un dictionnaire de groupes de données.
+    grouped_data = donnees_affaires.groupby(["cosect", "annee", "semaine"])
+
+    # Créer une liste de dictionnaires JSON avec la structure requise.
+    for (cosect, annee, semaine), group in grouped_data:
+        postes = []
+        for index, row in group.iterrows():
+            poste = {
+                "cofrais": row["cofrais"].strip(),  # Supprimer les espaces avant et après le code de frais
+                "design": row["design"],
+                "vduree": row["vduree"]
+            }
+            postes.append(poste)
+        data_entry = {
+            "cosect": cosect,
+            "annee": int(annee),  # Convertir en entier
+            "semaine": int(semaine),  # Convertir en entier
+            "postes": postes
+        }
+        charges.append(data_entry)
+    '''
+    
+    for chrg in charge_liste:
+        obj, created = PlanChargeAtelier.objects.get_or_create(COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
+
+        obj.COSECT = chrg['cosect']
+        obj.ANNEE = chrg['annee']
+        obj.SEMAINE = chrg['semaine']
+        obj.COFRAIS = chrg['cofrais']
+        obj.DESIGN = chrg['design']
+        obj.VDUREE = chrg['vduree']
+
+        obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'Weather'
+
+        new_data = model_to_dict(obj)
+        new_data.update()
+
+        charges.append(new_data)
+
+        #print(charges)
+
+    async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
+
+
+@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_plancharge_data_mdb():
+    site = 'ATCRM'
+    atelier = 'tour'
+    annee = '2024'
+    semaine = '12'
+
+    obj = PlanChargeAtelier.objects.filter(COSECT__icontains=site).filter(ANNEE=annee).filter(SEMAINE=semaine).filter(DESIGN=atelier)
+    print(obj)
+
+    #async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': obj})

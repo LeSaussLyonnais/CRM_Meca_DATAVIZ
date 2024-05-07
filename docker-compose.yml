@@ -20,7 +20,7 @@ services:
     build: ./src/
     command: >
       sh -c "python manage.py makemigrations &&
-            python manage.py migrate &&
+            python manage.py migrate &&           
             gunicorn --config=gunicorn.channel.conf.py"
     volumes:
       - socket_data:/tmp/gunicorn/

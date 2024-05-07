@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="eng">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'css/BlogApp/styles.css' %}">
+        <script src="https://unpkg.com/vue@3.2.21"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <title>Liste Ordo du Blog du Moss</title>
+    </head>
+    <body>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-6 mx-auto mt-5">
+                    <h3 class="mb-5">Liste Ordonnancement</h3>
+                    
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Numéro d'affaire</th>
+                                <th scope="col">Date de début d'ordonnancement</th>
+                                <th scope="col">Client</th>
+                                <th scope="col">État d'affaire</th>
+                                <th scope="col">Rang OF</th>
+                                <th scope="col">Temps prévu</th>
+                                <th scope="col">Temps écoulé</th>
+                                <th scope="col">Temps restant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in liste_ordo %}
+                            <tr>
+                                <td class="align-middle">{{ item.NUM_AFFAIRE }}</td>
+                                <td class="align-middle">{{ item.DATE_DEBUT_ORDO }}</td>
+                                <td class="align-middle">{{ item.CLIENT }}</td>
+                                <td class="align-middle">{{ item.ETAT_AFFAIRE }}</td>
+                                <td class="align-middle">{{ item.RANG_OF }}</td>
+                                <td class="align-middle">{{ item.TEMPS_PREVU }}</td>
+                                <td class="align-middle">{{ item.TEMPS_ECOULE }}</td>
+                                <td class="align-middle">{{ item.TEMPS_RESTANT }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
