@@ -134,11 +134,11 @@ CHANNEL_LAYERS = {
 CELERY_BEAT_SCHEDULE = {
     'get_weather_data_60s':  {
         'task': 'BlogApp.tasks.get_plancharge_data',
-        'schedule': 30.0
+        'schedule': 60.0
     },
     'get_plancharge_data_mdb_10s': {
         'task': 'BlogApp.tasks.get_plancharge_data_mdb',
-        'schedule': 10.0
+        'schedule': 2.0
     }
 }
 

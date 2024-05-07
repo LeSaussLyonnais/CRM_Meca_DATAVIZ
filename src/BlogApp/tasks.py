@@ -102,10 +102,10 @@ def get_plancharge_data():
 
     # Define the Select Query.
     sql_select = "SELECT "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
-                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS \
-                    WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
+                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS"
+                    #"WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
     cursor_object.execute(sql_select)
-
+    
     # Define the column names.
     #columns = [column[0] for column in cursor_object.statistics]
     columns = [column[0] for column in cursor_object.description]
@@ -121,7 +121,7 @@ def get_plancharge_data():
 
     charge_liste = plancharge_df.to_dict('records')
 
-    charges = []
+    #charges = []
 
     '''
     # Convertir le DataFrame en un dictionnaire de groupes de données.
@@ -147,7 +147,7 @@ def get_plancharge_data():
     '''
     
     for chrg in charge_liste:
-        obj, created = PlanChargeAtelier.objects.get_or_create(COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
+        obj, created = PlanChargeAtelier.objects.get_or_create(COSECT=chrg['cosect'], COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
 
         obj.COSECT = chrg['cosect']
         obj.ANNEE = chrg['annee']
@@ -158,24 +158,26 @@ def get_plancharge_data():
 
         obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'Weather'
 
-        new_data = model_to_dict(obj)
-        new_data.update()
+        #new_data = model_to_dict(obj)
+        #new_data.update() # ici, la fonction new_data.update() n'est pas correctement utilisée, elle ne sert à rien car elle est appelée sans arguments, ce qui signifie qu'elle ne mettra à jour aucun dictionnaire
 
-        charges.append(new_data)
+        #charges.append(new_data)
 
         #print(charges)
 
-    async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
+    #async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
 
 
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_plancharge_data_mdb():
+    
     site = 'ATCRM'
     atelier = 'tour'
     annee = '2024'
     semaine = '12'
 
-    obj = PlanChargeAtelier.objects.filter(COSECT__icontains=site).filter(ANNEE=annee).filter(SEMAINE=semaine).filter(DESIGN=atelier)
-    print(obj)
+    resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
+    
+    charges = list(resultats)
 
-    #async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': obj})
+    async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
