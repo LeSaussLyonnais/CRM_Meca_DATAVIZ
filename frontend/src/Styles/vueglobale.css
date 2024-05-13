@@ -92,8 +92,17 @@ header {
     transition: opacity 0.3s ease; /* Ajout d'une transition pour l'apparition */
   }
   
+  .Title_global{
+    font-size: 1rem;
+    font-family: 'Poppins';
+    font-weight: 500;
+    font-style: normal;
+    color: #000000
+  }
 
-
-
-
+  .Subtitle_global{
+    font-size: 0.8rem;
+    margin-bottom: 0;
+    color: rgba(0, 0, 0,0.45);
+  }
 

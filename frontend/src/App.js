@@ -12,6 +12,7 @@ import './Styles/plandecharge.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SiteProvider } from './Components/ContexteSelectionSite';
+import PageCommunication from './Components/Pages/PageCommunication';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
               <Route path='/VueGlobale' element={<PageVueGlobale/>} />
               <Route path='/VuePoste' element={<PageVuePoste/>} />
               <Route path='/PlanDeCharge' element={<PagePlanDeCharge/>} />
-              {/* <Route path='/Communication' element={<PageCommunication/>} /> */}
+              <Route path='/Communication' element={<PageCommunication/>} />
             </Routes>
           </div>
         </div>

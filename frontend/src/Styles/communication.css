@@ -92,7 +92,69 @@ header {
     transition: opacity 0.3s ease; /* Ajout d'une transition pour l'apparition */
   }
   
+  .croix {
+    position: relative;
+  }
+  
+  .ligne-horizontal,
+  .ligne-vertical {
+    /* border: #D9D9D9 1px solid; */
+    position: absolute;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: #FFFFFF; /* couleur de la croix */
+  }
+  
+  .ligne-horizontal {
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .ligne-vertical {
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
+  .calendar_cell{
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: #D9D9D9 1px solid;
+    /* border-radius: 6px; */
+    color: #ADADAD;
+  }
+
+  .futur_day{
+    background-color: #FFFFFF;
+  }
+  .noAccident_day{
+    background-color: #87DE9F;
+  }
+  .Accident_day{
+    background-color: #DC6060;
+  }
+
+  .legend {
+    width: 40px;
+    height: 20px;
+  }
+  .legend-text{
+    text-align: start;
+    margin: 0;
+    padding: 0;
+  }
+
+  .Month_Icon{
+    width: 2rem;
+    height: 2rem;
+    margin: 0;
+    padding: 0;
+    color: #D9D9D9;
+    cursor: pointer;
+  }
+  
 
 
 

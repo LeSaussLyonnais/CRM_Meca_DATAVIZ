@@ -1,5 +1,5 @@
 // PageOrdonnancement.js
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ListOrdo from '../VuePoste/listeOrdo';
 import SelectPoste from '../VuePoste/SelectPoste';
 import { RendementPoste } from '../VuePoste/RendementPoste';
@@ -44,7 +44,7 @@ function PageVuePoste() {
                 />
 
             </div>
-            <hr className='text-dark px-5' style={{width: '94.5%'}} />
+            <hr className='text-dark px-5' style={{ width: '94.5%' }} />
 
             <div className='container-perso-ordo d-flex justify-content-center align-items-center flex-row gap-4 mb-5 mt-4'>
                 <ListOrdo
@@ -54,7 +54,10 @@ function PageVuePoste() {
                     setAllOrdoVariable={setAllOrdoVariable}
                     SelectedPoste={SelectedPoste}
                 />
-                <div className='col-12 col-lg-4 d-flex justify-content-between align-items-center flex-column gap-2' style={{height: '65vh'}}>
+                <div
+                    className='col-12 col-lg-4 d-flex justify-content-between align-items-center flex-column gap-2'
+                    style={{ height: '70vh' }}
+                >
                     <RendementPoste
                         AllRendementData={AllRendementData}
                         setAllRendementData={setAllRendementData}
@@ -62,7 +65,7 @@ function PageVuePoste() {
                     />
                     <PDCPoste
                         SelectedPoste={SelectedPoste}
-                        AllPDCData={AllPDCData} 
+                        AllPDCData={AllPDCData}
                         setAllPDCData={setAllPDCData}
                     />
                 </div>
