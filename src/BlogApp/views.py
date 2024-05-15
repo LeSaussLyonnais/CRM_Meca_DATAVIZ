@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .models import Weather, ListeAttenteOrdo
+from .models import *
 from .serializer import *
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
+
+
 
 import requests
 #from django.http import HttpResponse
@@ -54,3 +58,31 @@ class WeatherView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+
+
+
+
+@api_view(['POST'])
+def endpoint_pdc(request):
+
+    # Variables globales
+    site = 'ATCRM'
+    atelier = 'TOUR'
+    annee = '2024'
+    semaine = '13'
+
+        # Récupérer les données de la requête
+    request_data = request.data
+
+    # Mettre à jour les variables si elles sont présentes dans la requête
+    # site = request_data.get('site', site)
+    # atelier = request_data.get('atelier', atelier)
+    # annee = request_data.get('annee', annee)
+    semaine = request_data.get('semaine', semaine)
+
+    resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
+
+    charges = list(resultats)
+
+    return Response(resultats)

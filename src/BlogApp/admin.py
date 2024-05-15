@@ -11,5 +11,5 @@ admin.site.register(PlanChargeAtelier)
 """
 Credentials SuperUser : 
 - Username : thoma
-- Password : Lapommedu78
+- Password : lapomme
 """

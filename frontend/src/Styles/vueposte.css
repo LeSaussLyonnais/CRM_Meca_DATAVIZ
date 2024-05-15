@@ -266,4 +266,33 @@ header {
   background-color: #f2f2f2;
 }
 
+.form-perso-select{
+  appearance: none; /* Permet de supprimer les styles par défaut du navigateur */
+  -webkit-appearance: none; /* Pour les navigateurs basés sur WebKit */
+  -moz-appearance: none; /* Pour les navigateurs basés sur Gecko */
+  padding: 8px 10px; /* Ajoute de l'espace intérieur pour le texte */
+  font-size: 16px; /* Taille de la police */
+  border: 1px solid #ccc; /* Bordure */
+  border-radius: 4px; /* Bordure arrondie */
+  background-color: #fff; /* Couleur de fond */
+  width: 200px; /* Largeur de l'input */
+}
+
+/* Style au survol de la souris */
+.form-perso-select:hover {
+  border-color: #999; /* Changement de la couleur de la bordure */
+}
+
+/* Style lorsque l'input est en focus */
+.form-perso-select:focus {
+  border-color: #555; /* Changement de la couleur de la bordure lorsqu'il est en focus */
+  outline: none; /* Supprime la bordure de focus par défaut */
+}
+
+/* Style pour les options dans la liste déroulante */
+.form-perso-select option {
+  padding: 5px; /* Ajoute de l'espace intérieur pour le texte des options */
+  font-size: 14px; /* Taille de la police pour les options */
+}
+
 

@@ -6,7 +6,7 @@ import { SiteContext } from '../ContexteSelectionSite';
 
 function PagePlanDeCharge() {
     const [PDCsemaine, setPDCsemaine] = useState([]); // Ici, définissez correctement PDCsemaine
-    const [semaineSelected, setsemaineSelected] = useState(1);
+    const [semaineSelected, setsemaineSelected] = useState(12);
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
 
