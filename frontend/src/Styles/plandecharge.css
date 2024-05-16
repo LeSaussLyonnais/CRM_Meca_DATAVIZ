@@ -40,7 +40,6 @@ header {
     list-style-type: none;
     justify-content: center; /* Centrer horizontalement les éléments */
     width: 100%;
-    gap: 7rem; /* Utilisation de rem pour une taille relative */
   }
   
   .nav-link {

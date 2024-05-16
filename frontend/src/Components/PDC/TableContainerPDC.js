@@ -11,7 +11,7 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     let site = 'ATCRM'
     let atelier = 'TOUR'
     let annee = '2024'
-    
+
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
     useEffect(() => {
@@ -69,19 +69,19 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     const UpdateFetch = async () => {
         try {
             const response = await fetch('http://localhost:8000/BlogApp/chargeUpdate/', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({"semaine":semaineSelected})
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "semaine": semaineSelected })
             });
-      
+
             const data = await response.json();
             setPDCsemaine(data);
 
-          } catch (error) {
+        } catch (error) {
             console.error('Error:', error);
-          }
+        }
     }
 
     return (
@@ -90,30 +90,30 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
                 <h1 className='display-perso-4 my-2 p-2'>Plan de charge de la partie usinage</h1>
             </div>
             <hr className='text-dark px-5 w-100' />
-            {PDCsemaine.length > 0 ? (
+            {(PDCsemaine && PDCsemaine?.Charge && PDCsemaine.Charge.length > 0) ? (
                 <div className='d-flex justify-content-center align-items-center flex-wrap gap-5'>
-                    {PDCsemaine.map(Poste => {
+                    {PDCsemaine?.Charge.map((Poste, index) => {
                         if (Poste.SEMAINE === semaineSelected) {
-                                return (
-                                    <div key={Poste.COFRAIS} className='d-flex justify-content-center align-items-center flex-column m-3'>
-                                        <h2 className='poste-title text-dark'>Poste : {Poste.COFRAIS}</h2>
-                                        <h2 className='charge-content text-dark'>Charge : {Poste.VDUREE} %</h2>
-                                        <img src='' style={{ maxWidth: '100px' }} alt='' />
-                                        <ColorModifiedImage imageUrl={
-                                            Poste.DESIGN.includes("TOUR") ? tour :
-                                                Poste.DESIGN.includes("SOUDURE") ? soudure :
-                                                    Poste.DESIGN.includes("PEINTURE") ? peinture :
-                                                        fraiseuse
-                                        } color={
-                                            Poste.VDUREE < 80 ? [64, 119, 24] :
-                                                Poste.VDUREE < 100 ? [246, 189, 90] :
-                                                    [237, 33, 22]
-                                        } />
-                                    </div>
-                                );
-                            } else {
-                                return null;
-                            }
+                            return (
+                                <div key={Poste.COFRAIS} className='d-flex justify-content-center align-items-center flex-column m-3'>
+                                    <h2 className='poste-title text-dark'>Poste : {Poste.Poste_ID}</h2>
+                                    <h2 className='charge-content text-dark'>Charge : {Poste.VDUREE} %</h2>
+                                    <img src='' style={{ maxWidth: '100px' }} alt='' />
+                                    <ColorModifiedImage imageUrl={
+                                        PDCsemaine.Poste_ids[index].DESIGN.includes("TOUR") ? tour :
+                                            PDCsemaine.Poste_ids[index].DESIGN.includes("SOUDURE") ? soudure :
+                                                PDCsemaine.Poste_ids[index].DESIGN.includes("PEINTURE") ? peinture :
+                                                    fraiseuse
+                                    } color={
+                                        Poste.VDUREE < 80 ? [64, 119, 24] :
+                                            Poste.VDUREE < 100 ? [246, 189, 90] :
+                                                [237, 33, 22]
+                                    } />
+                                </div>
+                            );
+                        } else {
+                            return null;
+                        }
                     })}
                 </div>
             ) : (

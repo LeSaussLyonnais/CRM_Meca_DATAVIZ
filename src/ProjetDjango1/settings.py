@@ -132,14 +132,13 @@ CHANNEL_LAYERS = {
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
 
 
-
 CELERY_BEAT_SCHEDULE = {
     'get_weather_data_60s':  {
-        'task': 'tasks.get_plancharge_data',
-        'schedule': 120.0
+        'task': 'BlogApp.tasks.get_plancharge_data_erp',
+        'schedule': 30.0
     },
     # 'get_plancharge_data_mdb_10s': {
-    #     'task': tasks.get_plancharge_data_mdb(site , atelier , annee , semaine),
+    #     'task': 'tasks.get_plancharge_data_mdb',
     #     'schedule': 2.0
     # }
 }

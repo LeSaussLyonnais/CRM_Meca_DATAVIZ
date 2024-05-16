@@ -9,7 +9,7 @@ from channels.layers import get_channel_layer
 import requests
 
 
-from .models import Weather, PlanChargeAtelier # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
+from .models import * # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
 #from .pypyodbcCRM import * 
 import pypyodbc
@@ -19,7 +19,7 @@ import subprocess
 
 channel_layer = get_channel_layer()
 
-
+from .models import Weather, PlanChargeAtelier, Site, Poste, Charge # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_weather_data():
     url = 'https://api.openweathermap.org/data/2.5/forecast?lat=43.60&lon=1.433333&appid=86a1d03a37f156f8b34f6be197056295&units=metric'
@@ -64,9 +64,8 @@ def get_weather_data():
 
     async_to_sync(channel_layer.group_send)('weathers', {'type': 'send_new_data', 'text': weathers})
 
-
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-def get_plancharge_data():
+def get_plancharge_data_erp():
     os.environ['ODBCINI'] = '/etc/odbc.ini'
 
     # Define the Components of the Connection String.
@@ -96,13 +95,17 @@ def get_plancharge_data():
 
     table_name = 'CHARGES'
     table_name_2 = 'CFRAIS'
+    site = 'ATCRM'
+    atelier = 'TOUR'
+    annee = '2024'
+    semaine = '12'
 
     # Define the Select Query.
-    sql_select = "SELECT "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
-                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS"
-                    #WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
+    sql_select = "SELECT SECTIONS.LIBELLE, "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
+                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS \
+                        LEFT JOIN SECTIONS ON "+table_name_2+".COSECT = SECTIONS.COSECT"
     cursor_object.execute(sql_select)
-
+    
     # Define the column names.
     #columns = [column[0] for column in cursor_object.statistics]
     columns = [column[0] for column in cursor_object.description]
@@ -121,21 +124,50 @@ def get_plancharge_data():
     #charges = []
     
     for chrg in charge_liste:
-        obj, created = PlanChargeAtelier.objects.get_or_create(COSECT=chrg['cosect'], COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
-        obj.COSECT = chrg['cosect']
-        obj.ANNEE = chrg['annee']
-        obj.SEMAINE = chrg['semaine']
-        obj.COFRAIS = chrg['cofrais']
-        obj.DESIGN = chrg['design']
-        obj.VDUREE = chrg['vduree']
-        obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'PlanChargeAtelier'
+        # Créer ou récupérer le Site correspondant
+        site, site_created = Site.objects.get_or_create(
+            COSECT=chrg['cosect'],
+            #Libelle_Site='libelle'
+            )
 
+        # Créer le Poste correspondant
+        poste, poste_created = Poste.objects.get_or_create(
+            COFRAIS=chrg['cofrais'],
+            #DESIGN=chrg['design'],
+            #VAR_AFF=1,  # On suppose que VAR_AFF est toujours vrai pour un nouveau poste
+            Site_ID=site
+        )
+    
+        # Créer la Charge correspondante
+        charge_obj, pcharge_created = Charge.objects.get_or_create(
+            #VDUREE=chrg['vduree'],
+            ANNEE=chrg['annee'],
+            SEMAINE=chrg['semaine'],
+            Poste_ID=poste
+        )
+
+        #obj, created = PlanChargeAtelier.objects.get_or_create(COSECT=chrg['cosect'], COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
+        site.COSECT = chrg['cosect']
+        site.Libelle_Site = chrg['libelle']
+        poste.Site_ID = site
+        poste.COFRAIS = chrg['cofrais']
+        poste.DESIGN = chrg['design']
+        charge_obj.Poste_ID = poste
+        charge_obj.ANNEE = chrg['annee']
+        charge_obj.SEMAINE = chrg['semaine']
+        charge_obj.VDUREE = chrg['vduree']
+        site.save()
+        poste.save()
+        charge_obj.save() # Pour sauvegarder les objets dans la base de donnée via nos modèles 'PlanChargeAte
+
+
+# from .views import site,semaine,atelier,annee
 
 # @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-# def get_plancharge_data_mdb(site,annee,semaine,atelier):
+# def get_plancharge_data_mdb():
+#     global site,semaine,atelier,annee
     
 #     resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
-#     print(semaine)
 
 #     charges = list(resultats)
 

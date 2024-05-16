@@ -8,10 +8,9 @@ import { SiteContext } from './ContexteSelectionSite';
 
 
 
-
 function Navbar() {
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
-    const iconSize = 40; // Taille désirée pour les icônes
+    const iconSize = "10vw"; // Taille désirée pour les icônes
 
     return (
         <>
