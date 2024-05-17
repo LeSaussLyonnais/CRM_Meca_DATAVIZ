@@ -54,13 +54,13 @@ const RendementProd = ({ AllRendementData, setAllRendementData }) => {
     return (
         <div className="col-12 container-perso-content d-flex flex-column justify-content-center align-items-center px-4 py-3">
             <div className='col-12 d-flex flex-column justify-content-start align-items-start'>
-                <h3 className='Title_global'>Rendement global de production</h3>
+                <h3 className='Title_global_1'>Rendement global de production</h3>
                 <p className='Subtitle_global'>[Temps prévu / Temps passé] pour le mois en cours</p>
                 <hr className='col-12' />
             </div>
             <div
                 className='col-12 d-flex flex-row justify-content-start align-items-center'
-                style={{ height: '30vh' }}
+                style={{ height: '28vh' }}
             >
                 <Doughnut data={data} options={options} />
             </div>

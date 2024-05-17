@@ -5,14 +5,10 @@ import PageSelection from "./Components/Pages/PageSelection";
 import PageVueGlobale from "./Components/Pages/PageVueGlobale";
 import PageVuePoste from './Components/Pages/PageVuePoste';
 import PagePlanDeCharge from './Components/Pages/PagePlanDeCharge';
-import './Styles/vueposte.css'
-import './Styles/vueglobale.css'
-import './Styles/plandecharge.css'
-// import PageCommunication from './Components/Pages/PageCommunication';
+import PageCommunication from './Components/Pages/PageCommunication';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SiteProvider } from './Components/ContexteSelectionSite';
-import PageCommunication from './Components/Pages/PageCommunication';
 
 function App() {
   return (

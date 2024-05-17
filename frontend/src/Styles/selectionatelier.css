@@ -1,97 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-/* Header **************************************************/
-header {
-  position: relative;
-  display: flex;
-  align-items: start;
-  justify-content: center; /* Centrer horizontalement les éléments enfants */
-  flex-direction: row;
-  background: #DBE8F4;
-  height: 9rem; /* Utilisation de rem pour une taille relative */
-  width: 100%;
-}
-
-header img {
-  position: absolute;
-  top: 0rem;
-  right: 0rem;
-  padding: 0;
-  width: 8rem; /* Utilisation de rem pour une taille relative */
-}
-
-/* Navbar **************************************************/
-.navbar-container {
-  padding-inline: 3.125rem; /* Utilisation de rem pour une taille relative */
-  border: #B8DDFF 0.125rem solid; /* Utilisation de rem pour une taille relative */
-  border-top: 0;
-  border-radius: 0 0 0.9375rem 0.9rem; /* Utilisation de rem pour une taille relative */
-  background: #DBE8F4;
-  box-shadow: #B8DDFF 0.3125rem 0.3125rem 0.3125rem 0.125rem; /* Utilisation de rem pour une taille relative */
-  display: flex;
-  align-items: center; /* Centrer verticalement les éléments */
-  height: 7.5rem;
-}
-
-.navbar-container ul {
-  padding: 0.3125rem; /* Utilisation de rem pour une taille relative */
-  display: flex;
-  flex-direction: row;
-  list-style-type: none;
-  justify-content: center; /* Centrer horizontalement les éléments */
-  width: 100%;
-  gap: 7rem; /* Utilisation de rem pour une taille relative */
-}
-
-.nav-link {
-  width: 10rem; /* Utilisation de rem pour une taille relative */
-  height: 5.7rem;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease !important; /* Ajout de l'effet de transition */
-  cursor: pointer; /* Ajout de la propriété cursor pour indiquer que les éléments sont cliquables */
-}
-
-.navbar-nav a:hover {
-  transform: scale(1.2); /* Agrandir l'image de 10% */
-}
-
-.nav-link:hover,
-.nav-link.active,
-.container-link.agrandi .BlayeLesMines,
-.container-link.agrandi .site2,
-.container-link.agrandi .site3 {
-  background: #B8DDFF;
-  border-radius: 0.5rem; /* Utilisation de rem pour une taille relative */
-}
-
-.navbar-nav a .navbar-text {
-  font-size: 1rem;
-}
-
-.navbar-text {
-  margin-top: -0.3125rem; /* Utilisation de rem pour une taille relative */
-  white-space: nowrap; /* Empêche le texte de passer à la ligne */
-  font-family: 'Poppins'; /* Remplacez Arial par le nom de la police de votre choix */
-  font-weight: 300;
-  font-style: normal;
-}
-
-.hidden {
-  opacity: 0; /* Opacité de 0 pour cacher la navbar */
-  transition: opacity 0.3s ease; /* Ajout d'une transition fluide pour la disparition */
-}
-
-/* Ajoutez cette règle pour empêcher les interactions avec la navbar cachée */
-.hidden {
-  pointer-events: none;
-}
-
-/* Ajoutez cette règle pour la transition d'apparition */
-.navbar-container {
-  transition: opacity 0.3s ease; /* Ajout d'une transition pour l'apparition */
-}
-
 /* Phrase Bonjour ******************************************/
 .page-selection-container {
   margin-left: 2rem;  
@@ -121,20 +29,18 @@ header img {
   width: 100%; /* Largeur de l'image égale à la largeur de la page */
   opacity: 0.5; /* Opacité de l'image */
   border-top: 0.15rem solid black; /* Ajoute une bordure noire en haut de l'image */
-  max-height: 25%;
-
+  max-height: 24%;
 }
 
-/* ChoixAtelier ******************************************** */
-
+/* ChoixAtelier ********************************************/
 .rectanglechoix {
   width: 42vw;
   height: 38vh;
-  background-color: #f0f0f0; /* Couleur gris clair */
-  border-radius: 10px; /* Angles arrondis */
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Effet en relief */
-  margin: 0 auto; /* Centre l'élément horizontalement */
-  margin-top: 1rem; /* Espacement vertical */
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  margin-top: 1rem;
   margin-right: 5rem;
   margin-left: 3rem;
   display: flex;
@@ -142,8 +48,24 @@ header img {
   align-items: start;
   justify-content: start;
   padding-top: 0.8rem;
-  opacity: 0; /* Visible par défaut */
-  transition: opacity 0.3s ease; /* Ajoutez une transition d'opacité */
+  opacity: 1; /* Toujours visible */
+  transition: opacity 0.3s ease;
+}
+
+.rectanglechoix.choix-atelier {
+  opacity: 0; /* Initialement caché */
+}
+
+.rectanglechoix.choix-atelier.show {
+  opacity: 1; /* Devient visible */
+}
+
+.rectanglechoix.show {
+  opacity: 1;
+}
+
+.rectanglechoix.hide {
+  opacity: 0;
 }
 
 .container-rectanglechoix {
@@ -159,8 +81,7 @@ header img {
   font-size: 1.5rem;
 }
 
-
-.trait-site{
+.trait-site {
   border-top: 2px solid black; /* Bordure noire en haut */
   opacity: 25%;
   width: 92%;
@@ -219,9 +140,4 @@ header img {
 .liste-ateliers ul li.active {
   color: #007bff; /* Change la couleur du texte au survol ou pour l'élément actif */
   transform: scale(1.2); /* Zoom sur l'élément survolé ou actif */
-}
-
-
-.rectanglechoix.show {
-  opacity: 1;
 }

@@ -2,6 +2,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import TableContainerPDC from '../PDC/TableContainerPDC';
 import SelectSemaine from '../PDC/SelectSemaine';
 import { SiteContext } from '../ContexteSelectionSite';
+import '../../Styles/plandecharge.css'
+
 
 
 function PagePlanDeCharge() {

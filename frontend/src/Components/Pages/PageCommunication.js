@@ -5,6 +5,7 @@ import CroixSecurite from '../Communication/CroixSecurite';
 import AbsenceAtelier from '../Communication/AbsenceAtelier';
 import DescenteInfo from '../Communication/DescenteInfo';
 
+
 const PageCommunication = () => {
 
     return (

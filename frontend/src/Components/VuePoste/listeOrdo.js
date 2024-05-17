@@ -71,7 +71,7 @@ const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVari
     return (
         <div
             className='col-12 col-lg-8 container-perso-content d-flex flex-column justify-content-between align-items-start py-4 px-5 overflow-auto'
-            style={{ height: '70vh' }}
+            style={{ height: '65vh' }}
         >
             <div className='col-12 col-lg-10 d-flex justify-content-center align-items-start flex-column'>
                 <h1 className='Title_poste'>Liste d'ordonnancement</h1>
