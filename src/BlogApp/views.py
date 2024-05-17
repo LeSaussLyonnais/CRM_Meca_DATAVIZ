@@ -1,8 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
-from .models import Weather, ListeAttenteOrdo
+from .models import *
 from .serializer import *
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
+
+
 
 import requests
 #from django.http import HttpResponse
@@ -54,3 +58,40 @@ class WeatherView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+
+
+
+
+@api_view(['POST'])
+def endpoint_pdc(request):
+    # Variables globales
+    site = 'ATCRM'
+    atelier = 'XXX'
+    annee = '2024'
+
+    # Récupérer les données de la requête
+    request_data = request.data
+
+    # Mettre à jour les variables si elles sont présentes dans la requête
+    # site = request_data.get('site', site)
+    # atelier = request_data.get('atelier', atelier)
+    # annee = request_data.get('annee', annee)
+    semaine = request_data.get('semaine', None)
+
+    # Get the atelier object
+    atelier_obj = get_object_or_404(Atelier, INDICATEUR_DESIGN=atelier)
+    
+    # Get the related Poste objects
+    postes = Poste.objects.filter(Atelier_ID=atelier_obj).values('COFRAIS', 'DESIGN')
+    
+    # Get the charges related to these Poste objects
+    charges = Charge.objects.filter(Poste_ID__in=postes.values('COFRAIS'), ANNEE=annee, SEMAINE=semaine).values('ANNEE', 'SEMAINE', 'VDUREE')
+
+    resultat = {
+        'Atelier_id': atelier_obj.INDICATEUR_DESIGN,
+        'Poste_ids': list(postes),
+        'Charge': list(charges)
+    }
+    # charges = list(resultats)
+
+    return Response(resultat)
