@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    # 'import_export',  # Pas utile finalement 
-    'BlogApp',
+    'django_celery_beat',
+    # 'import_export',  # Pas utile finalement
     'rest_framework',
-    'corsheaders'
+    'corsheaders', 
+    'BlogApp.apps.BlogappConfig' #Definition de notre application BlogApp avec sa configuration particuliere definie dans le fichier apps
 ]
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ProjetDjango1.wsgi.application'
 ASGI_APPLICATION = 'ProjetDjango1.asgi.application' 
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
+
 
 
 # Database
@@ -128,19 +129,21 @@ CHANNEL_LAYERS = {
 #CELERY_BROKER_URL = f'redis://:@redis:6379/0'
 #CELERY_RESULT_BACKEND = f'redis://:@redis:6379/0'
 #CELERY_TIMEZONE = 'Europe/Paris'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
-
-CELERY_BEAT_SCHEDULE = {
-    'get_weather_data_60s':  {
-        'task': 'BlogApp.tasks.get_plancharge_data',
-        'schedule': 60.0
-    },
-    'get_plancharge_data_mdb_10s': {
-        'task': 'BlogApp.tasks.get_plancharge_data_mdb',
-        'schedule': 2.0
-    }
-}
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BEAT_SCHEDULE = {
+#     # 'get_plancharge_data_erp_60s':  {
+#     #     'task': 'BlogApp.tasks.get_plancharge_data_erp',
+#     #     'schedule': 60.0
+#     # },
+#     'get_plancharge_data_mdb_10s': {
+#         'task': 'BlogApp.tasks.get_plancharge_data_mdb',
+#         'schedule': 5.0
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

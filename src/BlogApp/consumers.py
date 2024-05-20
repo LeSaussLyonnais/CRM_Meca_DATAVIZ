@@ -20,13 +20,27 @@ class PlanChargeConsumer(AsyncWebsocketConsumer):
         #Cette méthode est appelée lorsque le client WebSocket se connecte au serveur.
         #Elle ajoute le canal (channel) de la connexion à un groupe spécifique nommé 'charge'. Cela permet de regrouper plusieurs connexions WebSocket pour un traitement groupé. Le nom du groupe est arbitraire et peut être défini selon les besoins de votre application.
         #Enfin, elle accepte la connexion WebSocket.
-        await self.channel_layer.group_add('charge', self.channel_name)
+        site = self.scope.get("url_route").get("kwargs").get("nom_site")
+        atelier = self.scope.get("url_route").get("kwargs").get("nom_atelier")
+        annee = self.scope.get("url_route").get("kwargs").get("num_annee")
+        semaine = self.scope.get("url_route").get("kwargs").get("num_semaine")
+        await self.channel_layer.group_add(
+            "charge_"+site+"_"+atelier+"_"+str(annee)+"_"+str(semaine), 
+            self.channel_name
+        )
         await self.accept()
 
     async def disconnect(self, code):
         #Cette méthode est appelée lorsque le client se déconnecte du serveur WebSocket, soit volontairement soit suite à une erreur.
         #Elle retire le canal de la connexion du groupe 'charge'.
-        await self.channel_layer.group_discard('charge', self.channel_name)
+        site = self.scope.get("url_route").get("kwargs").get("nom_site")
+        atelier = self.scope.get("url_route").get("kwargs").get("nom_atelier")
+        annee = self.scope.get("url_route").get("kwargs").get("num_annee")
+        semaine = self.scope.get("url_route").get("kwargs").get("num_semaine")
+        await self.channel_layer.group_discard(
+            "charge_"+site+"_"+atelier+"_"+str(annee)+"_"+str(semaine), 
+            self.channel_name
+        )
 
     async def send_new_data(self, event):
         #Cette méthode est utilisée pour envoyer de nouvelles données à tous les clients connectés au groupe 'charge'.

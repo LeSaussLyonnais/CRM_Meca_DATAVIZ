@@ -2,13 +2,13 @@
 from asgiref.sync import async_to_sync
 
 from django.forms.models import model_to_dict
-
+from django.db.models import F
 from celery import shared_task
 from channels.layers import get_channel_layer
 
 import requests
 
-from .models import Weather, PlanChargeAtelier # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
+from .models import Weather, PlanChargeAtelier, Site, Atelier, Poste, Charge, Setup # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
 #from .pypyodbcCRM import * 
 import pypyodbc
@@ -65,7 +65,7 @@ def get_weather_data():
 
 
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-def get_plancharge_data():
+def get_plancharge_data_erp():
     os.environ['ODBCINI'] = '/etc/odbc.ini'
 
     # Define the Components of the Connection String.
@@ -101,9 +101,10 @@ def get_plancharge_data():
     semaine = '12'
 
     # Define the Select Query.
-    sql_select = "SELECT "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
-                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS"
-                    #"WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
+    sql_select = "SELECT SECTIONS.LIBELLE, "+table_name+".COSECT, "+table_name+".ANNEE, "+table_name+".SEMAINE, "+table_name+".COFRAIS, "+table_name_2+".DESIGN, "+table_name+".VDUREE  \
+                    FROM "+table_name+" LEFT JOIN "+table_name_2+" ON "+table_name+".COFRAIS = "+table_name_2+".COFRAIS \
+                        LEFT JOIN SECTIONS ON "+table_name_2+".COSECT = SECTIONS.COSECT"
+                    #WHERE COSECT like '"+site+"' AND ANNEE = "+annee+" AND SEMAINE = "+semaine+" AND "+table_name_2+".DESIGN like '%"+atelier+"%'"
     cursor_object.execute(sql_select)
     
     # Define the column names.
@@ -122,62 +123,88 @@ def get_plancharge_data():
     charge_liste = plancharge_df.to_dict('records')
 
     #charges = []
-
-    '''
-    # Convertir le DataFrame en un dictionnaire de groupes de données.
-    grouped_data = donnees_affaires.groupby(["cosect", "annee", "semaine"])
-
-    # Créer une liste de dictionnaires JSON avec la structure requise.
-    for (cosect, annee, semaine), group in grouped_data:
-        postes = []
-        for index, row in group.iterrows():
-            poste = {
-                "cofrais": row["cofrais"].strip(),  # Supprimer les espaces avant et après le code de frais
-                "design": row["design"],
-                "vduree": row["vduree"]
-            }
-            postes.append(poste)
-        data_entry = {
-            "cosect": cosect,
-            "annee": int(annee),  # Convertir en entier
-            "semaine": int(semaine),  # Convertir en entier
-            "postes": postes
-        }
-        charges.append(data_entry)
-    '''
     
     for chrg in charge_liste:
-        obj, created = PlanChargeAtelier.objects.get_or_create(COSECT=chrg['cosect'], COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
+        # Créer ou récupérer le Site correspondant
+        site, site_created = Site.objects.get_or_create(
+            COSECT=chrg['cosect'],
+            #Libelle_Site='libelle'
+            )
 
-        obj.COSECT = chrg['cosect']
-        obj.ANNEE = chrg['annee']
-        obj.SEMAINE = chrg['semaine']
-        obj.COFRAIS = chrg['cofrais']
-        obj.DESIGN = chrg['design']
-        obj.VDUREE = chrg['vduree']
-
-        obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'Weather'
-
-        #new_data = model_to_dict(obj)
-        #new_data.update() # ici, la fonction new_data.update() n'est pas correctement utilisée, elle ne sert à rien car elle est appelée sans arguments, ce qui signifie qu'elle ne mettra à jour aucun dictionnaire
-
-        #charges.append(new_data)
-
-        #print(charges)
-
-    #async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
-
-
-@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-def get_plancharge_data_mdb():
+        # Créer le Poste correspondant
+        poste, poste_created = Poste.objects.get_or_create(
+            COFRAIS=chrg['cofrais'],
+            #DESIGN=chrg['design'],
+            #VAR_AFF=1,  # On suppose que VAR_AFF est toujours vrai pour un nouveau poste
+            Site_ID=site
+        )
     
-    site = 'ATCRM'
-    atelier = 'tour'
-    annee = '2024'
-    semaine = '12'
+        # Créer la Charge correspondante
+        charge_obj, pcharge_created = Charge.objects.get_or_create(
+            #VDUREE=chrg['vduree'],
+            ANNEE=chrg['annee'],
+            SEMAINE=chrg['semaine'],
+            Poste_ID=poste
+        )
 
-    resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
+        #obj, created = PlanChargeAtelier.objects.get_or_create(COSECT=chrg['cosect'], COFRAIS=chrg['cofrais'], ANNEE=chrg['annee'], SEMAINE=chrg['semaine'])
+        site.COSECT = chrg['cosect']
+        site.Libelle_Site = chrg['libelle']
+        poste.Site_ID = site
+        poste.COFRAIS = chrg['cofrais']
+        poste.DESIGN = chrg['design']
+        charge_obj.Poste_ID = poste
+        charge_obj.ANNEE = chrg['annee']
+        charge_obj.SEMAINE = chrg['semaine']
+        charge_obj.VDUREE = chrg['vduree']
+        site.save()
+        poste.save()
+        charge_obj.save() # Pour sauvegarder les objets dans la base de donnée via nos modèles 'PlanChargeAtelier'
+
+
+@shared_task(name="get_plancharge_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_plancharge_data_mdb(setup_id):
+    setup = Setup.objects.get(id=setup_id)
+
+    # Do heavy computation with variables in setup model here.
     
+    site = setup.nom_site
+    atelier = setup.nom_atelier
+    annee = setup.num_annee
+    semaine = setup.num_semaine
+
+    # print('Site_' + site + ', Atelier_' + atelier + ', Annee_' + str(annee) + ', Semaine_' + str(semaine))
+
+    # resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
+    
+    # charges = list(resultats)
+
+    resultats = Charge.objects.filter(
+        SEMAINE=semaine,
+        ANNEE=annee,
+        Poste_ID__Atelier_ID__INDICATEUR_DESIGN=atelier,
+        Poste_ID__Site_ID__COSECT=site
+    ).select_related('Poste_ID__Atelier_ID', 'Poste_ID__Site_ID').annotate(
+        COFRAIS=F('Poste_ID__COFRAIS'),
+        DESIGN=F('Poste_ID__DESIGN'),
+        INDICATEUR_DESIGN=F('Poste_ID__Atelier_ID__INDICATEUR_DESIGN'),
+        COSECT=F('Poste_ID__Site_ID__COSECT')
+    ).values(
+        'VDUREE',
+        'SEMAINE',
+        'ANNEE',
+        'COFRAIS',
+        'DESIGN',
+        'INDICATEUR_DESIGN',
+        'COSECT'
+    )
+
     charges = list(resultats)
 
-    async_to_sync(channel_layer.group_send)('charge', {'type': 'send_new_data', 'text': charges})
+    async_to_sync(channel_layer.group_send)(
+        "charge_"+site+"_"+atelier+"_"+str(annee)+"_"+str(semaine), 
+        {
+            'type': 'send_new_data', 
+            'text': charges
+        }
+    )
