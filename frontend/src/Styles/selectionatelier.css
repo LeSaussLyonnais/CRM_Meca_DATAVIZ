@@ -141,3 +141,55 @@
   color: #007bff; /* Change la couleur du texte au survol ou pour l'élément actif */
   transform: scale(1.2); /* Zoom sur l'élément survolé ou actif */
 }
+.btn-perso-add{
+  cursor: pointer;
+  scale: 1;
+  transition: scale 0.3s;
+  fill: rgba(0, 123, 255,0.8);
+  width: 3.5vh;
+  height: 3.5vh;
+}
+.btn-perso-add:hover{
+  scale: 1.4;
+  transition: all 0.3s;
+  fill: rgba(0, 123, 255,1);
+}
+
+.selectable-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 100%;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  overflow-y: scroll;
+  max-height: 35vh;
+}
+
+.list-item {
+  padding: 1vh;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 50%;
+  user-select: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.list-item:hover {
+  background-color: #f0f0f0;
+}
+
+.list-item.selected {
+  background-color: rgb(0,160,77);
+  color: white;
+  border-color: rgb(0,160,77);
+}
+
+.check-icon-poste-ajout{
+  fill: rgb(255, 255, 255);
+}
+
+.bg-modal-perso {
+  background-color: rgba(0, 0, 0, 0.4);
+}

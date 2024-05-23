@@ -20,6 +20,78 @@ import subprocess
 channel_layer = get_channel_layer()
 
 from .models import Weather, PlanChargeAtelier, Site, Poste, Charge # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
+
+def export_tables_to_csv():
+    """
+    Exporte les noms des tables d'une base de données HFSQL vers un fichier CSV.
+
+    Args:
+        driver (str): Le pilote ODBC à utiliser (par exemple, 'HFSQL').
+        server (str): L'adresse du serveur HFSQL.
+        database (str): Le nom de la base de données.
+        user (str): Le nom d'utilisateur pour se connecter à la base de données.
+        password (str): Le mot de passe pour se connecter à la base de données.
+        csv_file (str): Le chemin du fichier CSV dans lequel stocker les noms des tables.
+    """
+    # Connexion à la base de données HFSQL
+    os.environ['ODBCINI'] = '/etc/odbc.ini'
+
+    # Define the Components of the Connection String.
+    server = '192.168.0.21'
+    port = '4900'
+    database = 'BAC_A_SABLE'
+    username = 'admin'
+    password = 'Clip_SERENA'
+    #MyDataSource = 'hyperfile'
+    csv_file = './static/tables.csv'
+    
+    # Utilisez le nom du pilote défini dans odbc.ini
+    driver_name = 'HFSQL'
+
+    # Create a connection object.
+    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={HFSQL}; \
+                            Server Name =' + server + '; \
+                            Server Port=' + port + '; \
+                            DATABASE=' + database + '; \
+                            UID=' + username + '; \
+                            PWD=' + password)
+                            
+                            #Server Name =' + server + '; \
+                            #Server Port=' + port + '; \
+                            #DATABASE=' + database + '; \
+
+    cursor_object: pypyodbc.Cursor = connection_object.cursor()
+
+    # Création d'un curseur
+
+    try:
+        # Exécution de la requête pour obtenir la liste des tables
+        cursor_object.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'")
+
+        # Récupération des résultats
+        tables = cursor_object.fetchall()
+
+        # Extraction des noms des tables dans une liste
+        table_names = [table.TABLE_NAME for table in tables]
+
+        # Création d'un DataFrame pandas
+        df = pd.DataFrame(table_names, columns=['Table_Name'])
+
+        # Écriture du DataFrame dans un fichier CSV
+        df.to_csv(csv_file, index=False)
+        
+        print(f"Les noms des tables ont été exportés avec succès vers '{csv_file}'.")
+    
+    except Exception as e:
+        print(f"Une erreur s'est produite : {e}")
+
+    finally:
+        # Fermeture du curseur et de la connexion
+        cursor_object.close()
+        connection_object.close()
+
+export_tables_to_csv()
+
 @shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_weather_data():
     url = 'https://api.openweathermap.org/data/2.5/forecast?lat=43.60&lon=1.433333&appid=86a1d03a37f156f8b34f6be197056295&units=metric'
