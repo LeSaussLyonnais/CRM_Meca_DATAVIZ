@@ -131,12 +131,23 @@ def get_plancharge_data_erp():
             #Libelle_Site='libelle'
             )
 
+        # Récupérer ou créer l'atelier avec Libelle_Atelier = 'DEFAULT'
+        atelier_default = 'DEFAULT'
+
+        atelier, created = Atelier.objects.get_or_create(
+            Libelle_Atelier='DEFAULT',
+            VAR_AFF_AT=0
+        )
+
         # Créer le Poste correspondant
         poste, poste_created = Poste.objects.get_or_create(
             COFRAIS=chrg['cofrais'],
             #DESIGN=chrg['design'],
             #VAR_AFF=1,  # On suppose que VAR_AFF est toujours vrai pour un nouveau poste
-            Site_ID=site
+            Site_ID=site,
+            defaults={
+                'Atelier_ID': atelier
+            }
         )
     
         # Créer la Charge correspondante
@@ -162,32 +173,56 @@ def get_plancharge_data_erp():
         charge_obj.save() # Pour sauvegarder les objets dans la base de donnée via nos modèles 'PlanChargeAtelier'
 
 
+@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+def get_ordo_data_erp():
+    os.environ['ODBCINI'] = '/etc/odbc.ini'
+
+    # Define the Components of the Connection String.
+    server = '192.168.0.21'
+    port = '4900'
+    database = 'BAC_A_SABLE'
+    username = 'admin'
+    password = 'Clip_SERENA'
+    #MyDataSource = 'hyperfile'
+    
+    # Utilisez le nom du pilote défini dans odbc.ini
+    driver_name = 'HFSQL'
+
+    # Create a connection object.
+    connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={HFSQL}; \
+                            Server Name =' + server + '; \
+                            Server Port=' + port + '; \
+                            DATABASE=' + database + '; \
+                            UID=' + username + '; \
+                            PWD=' + password)
+                            
+                            #Server Name =' + server + '; \
+                            #Server Port=' + port + '; \
+                            #DATABASE=' + database + '; \
+
+    cursor_object: pypyodbc.Cursor = connection_object.cursor()
+
+
 @shared_task(name="get_plancharge_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_plancharge_data_mdb(setup_id):
+
     setup = Setup.objects.get(id=setup_id)
 
     # Do heavy computation with variables in setup model here.
-    
     site = setup.nom_site
     atelier = setup.nom_atelier
     annee = setup.num_annee
     semaine = setup.num_semaine
 
-    # print('Site_' + site + ', Atelier_' + atelier + ', Annee_' + str(annee) + ', Semaine_' + str(semaine))
-
-    # resultats = PlanChargeAtelier.objects.filter(COSECT__startswith=site, ANNEE=annee, SEMAINE=semaine, DESIGN__icontains=atelier).values('COSECT', 'ANNEE', 'SEMAINE', 'COFRAIS', 'DESIGN', 'VDUREE')
-    
-    # charges = list(resultats)
-
     resultats = Charge.objects.filter(
         SEMAINE=semaine,
         ANNEE=annee,
-        Poste_ID__Atelier_ID__INDICATEUR_DESIGN=atelier,
+        Poste_ID__Atelier_ID__Libelle_Atelier=atelier,
         Poste_ID__Site_ID__COSECT=site
     ).select_related('Poste_ID__Atelier_ID', 'Poste_ID__Site_ID').annotate(
         COFRAIS=F('Poste_ID__COFRAIS'),
         DESIGN=F('Poste_ID__DESIGN'),
-        INDICATEUR_DESIGN=F('Poste_ID__Atelier_ID__INDICATEUR_DESIGN'),
+        Libelle_Atelier=F('Poste_ID__Atelier_ID__Libelle_Atelier'),
         COSECT=F('Poste_ID__Site_ID__COSECT')
     ).values(
         'VDUREE',
@@ -195,7 +230,7 @@ def get_plancharge_data_mdb(setup_id):
         'ANNEE',
         'COFRAIS',
         'DESIGN',
-        'INDICATEUR_DESIGN',
+        'Libelle_Atelier',
         'COSECT'
     )
 

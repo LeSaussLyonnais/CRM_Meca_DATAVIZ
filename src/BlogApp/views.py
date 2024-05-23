@@ -1,17 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
+from django.views import View
+from django.http import JsonResponse
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
+
 from rest_framework.views import APIView
-from .models import Weather, ListeAttenteOrdo, Setup
-from .serializer import *
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+from .models import Weather, ListeAttenteOrdo, Setup, Atelier, Poste, Site
+from .serializer import *
 from .tasks import get_plancharge_data_mdb
 from .enums import TimeInterval, SetupStatus
 
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
-#from ProjetDjango1.celery import obtenir_valeur_de_x
-import json
 import requests
-from django.http import HttpResponse
-from django.views import View
+import json
+
 
 # Create your views here.
 def index(request):
@@ -30,27 +34,6 @@ def index(request):
     #print(response.json())
     return render(request, "BlogApp/index.html") # ", context={'weather': weather}"
 
-def charge(request):
-    return render(request, "BlogApp/PlanCharge.html")
-
-def ordo(request):
-    # Appeler la fonction pour obtenir la valeur de x
-    global valeur_de_x
-    # Incrémentez la valeur de x
-    valeur_de_x += 1
-    # Appelez la tâche planifiée en passant la valeur de x
-    # get_plancharge_data_mdb.apply_async(args=(valeur_de_x,))
-    # Répondez avec un message de confirmation ou toute autre réponse appropriée
-    return HttpResponse("La tâche a été planifiée avec succès avec la valeur de x : {}".format(valeur_de_x))
-
-
-
-def article(request, num_semaine):
-    interval = IntervalSchedule.objects.get(every=10, period='seconds')
-    task = PeriodicTask.objects.create(interval=interval, name=f"pdc_task_semaine_{num_semaine}", task='BlogApp.tasks.get_plancharge_data_mdb', args = json.dumps((num_semaine,)))
-    #return render(request, f"BlogApp/article{num_semaine}.html")
-    return HttpResponse(f"Tâche {num_semaine} créée")
-
 class TachePDCView(View):
     def dispatch(self, request, *args, **kwargs):
         # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
@@ -60,14 +43,17 @@ class TachePDCView(View):
         self.nom_site = kwargs.get('nom_site')
         self.interval = TimeInterval.five_secs
         self.title = f"Setup_{self.nom_site}_{self.nom_atelier}_{self.num_annee}_{self.num_semaine}"
-        self.setup_pdc = Setup.objects.create(
+        # Utiliser get_or_create pour éviter de dupliquer l'objet
+        self.setup_pdc, created = Setup.objects.get_or_create(
             title=self.title, 
-            time_interval=self.interval, 
-            nom_site=self.nom_site, 
-            nom_atelier=self.nom_atelier, 
-            num_annee=self.num_annee, 
-            num_semaine=self.num_semaine
-            )
+            defaults={
+                'time_interval': self.interval,
+                'nom_site': self.nom_site, 
+                'nom_atelier': self.nom_atelier, 
+                'num_annee': self.num_annee, 
+                'num_semaine': self.num_semaine
+            }
+        )
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -78,8 +64,8 @@ class TachePDCView(View):
                 'nom_atelier': self.nom_atelier,
                 'num_annee': self.num_annee, 
                 'num_semaine': self.num_semaine
-                }
-                )
+            }
+        )
 
     def delete(self, request, *args, **kwargs):
         # Supprimer la tâche périodique lorsque l'utilisateur quitte la vue
@@ -92,6 +78,55 @@ class TachePDCView(View):
 
 
 #Vues React
+
+
+
+@api_view(['POST'])
+def endpt_popup_addatelier(request):
+    # Récupérer les données de la requête
+    request_data = request.data
+
+    # Mettre à jour les variables si elles sont présentes dans la requête
+    site = request_data.get('site', None)
+
+    # Get the related Poste objects
+    postes = Poste.objects.filter(
+        Site_ID__COSECT=site
+    ).values(
+        'COFRAIS',
+        'DESIGN'
+    )
+
+    resultat = {
+        'Postes': list(postes)
+    }
+
+
+@api_view(['POST'])
+def endpt_addatelier(request):
+    # Récupérer les données de la requête
+    request_data = request.data
+
+    # Mettre à jour les variables si elles sont présentes dans la requête
+    site = request_data.get('site', None)
+    atelier = request_data.get('atelier', None)
+    postes = request_data.get['postes']
+
+    new_atelier = Atelier.objects.create(
+        Libelle_Atelier=atelier,
+        At_Site_ID=site
+    )
+
+    for poste in postes:
+        poste_obj = get_object_or_404(Poste, COFRAIS=poste['cofrais'])
+
+        # Mettre à jour les champs du poste
+        poste_obj.Atelier_ID = atelier
+
+        # Sauvegarder les modifications
+        poste_obj.save()
+
+
 
 class WeatherView(APIView):
     def get(self, request):

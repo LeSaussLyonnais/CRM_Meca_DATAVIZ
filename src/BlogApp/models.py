@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django_enum_choices.fields import EnumChoiceField
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
+from django.core.exceptions import ObjectDoesNotExist
 
 from .enums import TimeInterval, SetupStatus
 
@@ -79,23 +80,33 @@ class Site(models.Model):
 
 
 class Atelier(models.Model):
-    INDICATEUR_DESIGN = models.CharField(max_length=50, default='XXX', blank=True, unique=True)
-    Libelle_Atelier = models.CharField(max_length=50, default='Atelier XXX', blank=True)
+    Libelle_Atelier = models.CharField(max_length=50, default='XXX', blank=True) # , unique=True
+    VAR_AFF_AT = models.BooleanField(default=1)
+    # Libelle_Atelier = models.CharField(max_length=50, default='Atelier XXx', blank=True)
+    At_Site_ID = models.ForeignKey(Site, on_delete=models.CASCADE, to_field='COSECT', default='ATCRM')
 
     def __str__(self):
-        return str(self.INDICATEUR_DESIGN)
+        return str(self.Libelle_Atelier)
 
     class Meta:
-        ordering = ['INDICATEUR_DESIGN']
+        ordering = ['Libelle_Atelier']
         managed = True # Assurez-vous que cette ligne est soit absente, soit à True
 
+
+# def get_first_atelier():
+#     try:
+#         return Atelier.objects.order_by('id').first().id
+#     except (Atelier.DoesNotExist, AttributeError):
+#         # Créer un Atelier par défaut si aucun n'existe
+#         default_atelier = Atelier.objects.create(Libelle_Atelier='XXX', VAR_AFF_AT=0)
+#         return default_atelier.id
 
 class Poste(models.Model):
     COFRAIS = models.CharField(max_length=10, default='XXX', blank=True, unique=True)
     DESIGN = models.CharField(max_length=50, default='Machine XXX', blank=True)
     VAR_AFF = models.BooleanField(default=1)
     Site_ID = models.ForeignKey(Site, on_delete=models.CASCADE, to_field='COSECT')
-    Atelier_ID = models.ForeignKey(Atelier, on_delete=models.CASCADE, to_field='INDICATEUR_DESIGN', default='XXX')
+    Atelier_ID = models.ForeignKey(Atelier, on_delete=models.CASCADE) # , to_field='INDICATEUR_DESIGN', default='XXx'
 
     def __str__(self):
         return str(self.COFRAIS)
