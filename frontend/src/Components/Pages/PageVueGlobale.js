@@ -1,30 +1,42 @@
 // PageVueGlobale.js
-import React, { useState } from 'react';
-import FullWidthTabs from '../BarreSites';
-import { useSiteSelection } from '../SiteSelectionContext';
-import WeatherApp from '../weatherapp';
+import React, { useState, useEffect, useContext } from 'react';
+// import WeatherApp from '../weatherapp';
+import { SiteContext } from '../ContexteSelectionSite';
+import GraphAffaire from '../VueGlobal/GraphAffaire';
+import TRS from '../VueGlobal/TRS';
+import RendementProd from '../VueGlobal/RendementProd';
+import '../../Styles/vueglobale.css'
+
+
 
 function PageVueGlobale() {
-    const [selectedSite, selectSite] = useState(useSiteSelection());
+    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
+    const [AllAffaireData, setAllAffaireData] = useState([]);
+    const [AllRendementData, setAllRendementData] = useState([]);
+    const [AllTRSData, setAllTRSData] = useState([]);
 
     const handleSiteChange = (newSite) => {
         selectSite(newSite);
     };
 
-    const [isActive, setIsActive] = React.useState(false);
+    const [isActive, setIsActive] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsActive(true);
     }, []);
 
     return (
-        <>
-            <div className={`header-vue-globale ${isActive ? 'active' : ''}`}>
-                <FullWidthTabs selectedSite={selectedSite} onSiteChange={handleSiteChange} />
+        <div className='container-fluid d-flex justify-content-center align-items-center flex-column mb-5 mt-4 px-5 gap-2'>
+            <GraphAffaire AllAffaireData={AllAffaireData} setAllAffaireData={setAllAffaireData} />
+            <div className='col-12 d-flex justify-content-between align-items-center flex-row gap-2'>
+                <div className='taille-camemberts'>
+                    <RendementProd AllRendementData={AllRendementData} setAllRendementData={setAllRendementData} />
+                </div>
+                <div className='taille-camemberts'>
+                    <TRS AllTRSData={AllTRSData} setAllTRSData={setAllTRSData}/>
+                </div>
             </div>
-        <WeatherApp/>
-        </>
-
+        </div>
     );
 }
 

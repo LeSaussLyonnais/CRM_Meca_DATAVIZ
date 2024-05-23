@@ -67,6 +67,9 @@ class PlanChargeAtelier(models.Model):
         managed = True # Assurez-vous que cette ligne est soit absente, soit à True
 
 
+###############################################################################################################
+####################################""Nouvelle BDD ########################################################
+
 class Site(models.Model):
     COSECT = models.CharField(max_length=10, default='ATXXX', blank=True, unique=True)
     Libelle_Site = models.CharField(max_length=50, default='Site XXX', blank=True)

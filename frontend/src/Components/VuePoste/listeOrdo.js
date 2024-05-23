@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVariable, SelectedMachine }) => {
+const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
 
     const ListOrdoHeader = [
         'Debut Ordo',
@@ -66,33 +66,38 @@ const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVari
 
     useEffect(() => {
         SetData();
-    }, [SelectedMachine])
+    }, [SelectedPoste])
 
     return (
-        <div className='col-12 col-lg-8 container-perso-content d-flex flex-column justify-content-between align-items-start py-4 px-5' style={{height: '70vh'}}>
+        <div
+            className='col-12 col-lg-8 container-perso-content d-flex flex-column justify-content-between align-items-start py-4 px-5 overflow-auto'
+            style={{ height: '65vh' }}
+        >
             <div className='col-12 col-lg-10 d-flex justify-content-center align-items-start flex-column'>
-                <h1 className='Title_machine'>Liste d'ordonnancement</h1>
-                <p className='Subtitle_machine'>Liste fixe pour les 3 prochaines semaines et variable pour les 3 suivantes</p>
+                <h1 className='Title_poste'>Liste d'ordonnancement</h1>
+                <p className='Subtitle_poste'>Liste fixe pour les 3 prochaines semaines et variable pour les 3 suivantes</p>
             </div>
             <hr className='text-dark px-5 w-100' />
             <table className='table table-hover table-perso-1 mt-4'>
                 <thead className='thead-perso-1'>
-                    <tr>
+                    <tr className='text-center'>
                         {ListOrdoHeader.map((header, index) => (
-                            <th key={index}>{header}</th>
-
+                            header === "Debut Ordo" ?
+                                <th key={index} className='text-start'>{header}</th>
+                                :
+                                <th key={index}>{header}</th>
                         ))}
                     </tr>
                 </thead>
-                <div className='col-12 d-flex justify-content-center align-items-start flex-column mt-2'>
+                <div className='col-12 d-flex justify-content-center align-items-start flex-column mt-2 ps-2'>
                     <p className='display-perso-5 mb-0'>Ordonnancement fixe</p>
                     <hr className='text-dark px-5 w-100' />
                 </div>
 
-                <tbody className='text-center'>
+                <tbody>
                     {AllOrdoFixe.map((ordo, index) => (
-                        <tr key={index}>
-                            <td>{ordo.debut_Ordo}</td>
+                        <tr key={index} className='text-center'>
+                            <td className='text-start'>{ordo.debut_Ordo}</td>
                             <td>{ordo.client}</td>
                             <td>{ordo.affaire}</td>
                             <td>{ordo.Etat}</td>
@@ -105,14 +110,14 @@ const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVari
                         </tr>
                     ))}
                 </tbody>
-                <div className='col-12 d-flex justify-content-center align-items-start flex-column mt-2'>
+                <div className='col-12 d-flex justify-content-center align-items-start flex-column mt-2 ps-2'>
                     <p className='display-perso-5 mb-0'>Ordonnancement variable</p>
                     <hr className='text-dark px-5 w-100' />
                 </div>
-                <tbody className='text-center'>
+                <tbody>
                     {AllOrdoVariable.map((ordo, index) => (
-                        <tr key={index}>
-                            <td>{ordo.debut_Ordo}</td>
+                        <tr key={index} className='text-center'>
+                            <td className='text-start'>{ordo.debut_Ordo}</td>
                             <td>{ordo.client}</td>
                             <td>{ordo.affaire}</td>
                             <td>{ordo.Etat}</td>

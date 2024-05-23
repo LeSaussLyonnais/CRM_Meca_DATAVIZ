@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Phrase Bonjour ******************************************/
+.page-selection-container {
+  margin-left: 2rem;  
+  margin-top: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+}
+
+.divider {
+  width: 98%;
+  border: 1px solid black;
+}
+
+.description {
+  font-size: 1.2rem;
+  opacity: 60%;
+}
+
+/* BasPageImage ********************************************/
+
+.bas-page {
+  position: fixed; /* Position absolue pour positionner l'image */
+  bottom: 0; /* Position en bas de la page */
+  left: 0; /* Position à gauche de la page */
+  width: 100%; /* Largeur de l'image égale à la largeur de la page */
+  opacity: 0.5; /* Opacité de l'image */
+  border-top: 0.15rem solid black; /* Ajoute une bordure noire en haut de l'image */
+  max-height: 24%;
+}
+
+/* ChoixAtelier ********************************************/
+.rectanglechoix {
+  width: 42vw;
+  height: 38vh;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  margin-top: 1rem;
+  margin-right: 5rem;
+  margin-left: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  padding-top: 0.8rem;
+  opacity: 1; /* Toujours visible */
+  transition: opacity 0.3s ease;
+}
+
+.rectanglechoix.choix-atelier {
+  opacity: 0; /* Initialement caché */
+}
+
+.rectanglechoix.choix-atelier.show {
+  opacity: 1; /* Devient visible */
+}
+
+.rectanglechoix.show {
+  opacity: 1;
+}
+
+.rectanglechoix.hide {
+  opacity: 0;
+}
+
+.container-rectanglechoix {
+  display: flex;
+  justify-content: space-between; /* Espace équitablement les éléments */
+  width: 100%;
+  margin: 0 auto; /* Centre la div horizontalement */
+}
+
+.rectanglechoix h2 {
+  margin-bottom: 0;
+  margin-left: 4%;
+  font-size: 1.5rem;
+}
+
+.trait-site {
+  border-top: 2px solid black; /* Bordure noire en haut */
+  opacity: 25%;
+  width: 92%;
+  margin-left: 4%;
+}
+
+.liste-sites ul,
+.liste-ateliers ul {
+  list-style-type: none; /* Supprime les puces de la liste */
+  margin-top: 1rem; /* Espacement par rapport au trait */
+}
+
+.liste-sites ul li,
+.liste-ateliers ul li {
+  font-size: 1.2rem;
+  font-family: 'Poppins';
+  font-weight: 300;
+  font-style: normal;
+  padding-left: 2rem;
+  position: relative; /* Permet de positionner les pseudo-éléments */
+  transition: transform 0.2s ease; /* Ajoute une transition lisse */
+  cursor: pointer; /* Définit le curseur comme une main pour indiquer que l'élément est cliquable */
+}
+
+/* Effet de survol sur les éléments */
+.liste-sites ul li:hover::before,
+.liste-ateliers ul li:hover::before,
+.liste-sites ul li.active::before,
+.liste-ateliers ul li.active::before {
+  background-color: #007bff; /* Change la couleur de la barre de survol */
+}
+
+/* Trait au survol */
+.liste-sites ul li::before,
+.liste-ateliers ul li::before {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* Déplace le trait vers le bas pour qu'il soit sous le texte */
+  left: 2rem;
+  width: 100%; /* Largeur du rectangle */
+  height: 2px; /* Hauteur du rectangle */
+  background-color: transparent; /* Couleur du rectangle par défaut */
+  transition: background-color 0.2s ease; /* Transition de la couleur de fond */
+}
+
+/* Effet de survol sur les éléments actifs */
+.liste-sites ul li.active::before,
+.liste-ateliers ul li.active::before {
+  width: 100%; /* Définit la largeur de la barre de survol à 100% pour les éléments actifs */
+}
+
+/* Style du texte au survol et pour les éléments actifs */
+.liste-sites ul li:hover,
+.liste-ateliers ul li:hover,
+.liste-sites ul li.active,
+.liste-ateliers ul li.active {
+  color: #007bff; /* Change la couleur du texte au survol ou pour l'élément actif */
+  transform: scale(1.2); /* Zoom sur l'élément survolé ou actif */
+}
+.btn-perso-add{
+  cursor: pointer;
+  scale: 1;
+  transition: scale 0.3s;
+  fill: rgba(0, 123, 255,0.8);
+  width: 3.5vh;
+  height: 3.5vh;
+}
+.btn-perso-add:hover{
+  scale: 1.4;
+  transition: all 0.3s;
+  fill: rgba(0, 123, 255,1);
+}
+
+.selectable-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 100%;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  overflow-y: scroll;
+  max-height: 35vh;
+}
+
+.list-item {
+  padding: 1vh;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 50%;
+  user-select: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.list-item:hover {
+  background-color: #f0f0f0;
+}
+
+.list-item.selected {
+  background-color: rgb(0,160,77);
+  color: white;
+  border-color: rgb(0,160,77);
+}
+
+.check-icon-poste-ajout{
+  fill: rgb(255, 255, 255);
+}
+
+.bg-modal-perso {
+  background-color: rgba(0, 0, 0, 0.4);
+}

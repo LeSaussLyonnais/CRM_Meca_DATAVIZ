@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Header **************************************************/
+header {
+    position: relative;
+    display: flex;
+    align-items: start;
+    justify-content: center; /* Centrer horizontalement les éléments enfants */
+    flex-direction: row;
+    background: #DBE8F4;
+    height: 9rem; /* Utilisation de rem pour une taille relative */
+    width: 100%;
+  }
+  
+  header img {
+    position: absolute;
+    top: 0rem;
+    right: 0rem;
+    padding: 0;
+    width: 8rem; /* Utilisation de rem pour une taille relative */
+  }
+
+/* Navbar **************************************************/
+.navbar-container {
+    padding-inline: 3.125rem;
+    border: #B8DDFF 0.125rem solid;
+    border-top: 0;
+    border-radius: 0 0 0.9375rem 0.9rem;
+    background: #DBE8F4;
+    box-shadow: #B8DDFF 0.3125rem 0.3125rem 0.3125rem 0.125rem;
+    display: flex;
+    align-items: center;
+    height: 7.5rem;
+    opacity: 0; /* Opacité initiale à 0 */
+    transition: opacity 0.5s ease; /* Transition de l'opacité */
+  }
+  
+  .navbar-container.hide {
+    opacity: 0;
+  }
+  
+  .navbar-container.show {
+    opacity: 1;
+  }
+  
+  .navbar-container ul {
+    padding: 0.3125rem;
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    justify-content: center;
+    width: 50vw;
+    gap: 5vw;
+    opacity: 0;
+    transition: opacity 0.5s ease; /* Transition de l'opacité */
+  }
+  
+  .navbar-container.show ul {
+    opacity: 1;
+  }
+  
+  .nav-link {
+    width: 10rem; /* Utilisation de rem pour une taille relative */
+    height: 5.7rem;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease !important; /* Ajout de l'effet de transition */
+    cursor: pointer; /* Ajout de la propriété cursor pour indiquer que les éléments sont cliquables */
+  }
+  
+  .navbar-nav a:hover {
+    transform: scale(1.2); /* Agrandir l'image de 10% */
+  }
+  
+  .nav-link:hover,
+  .nav-link.active,
+  .container-link.agrandi .BlayeLesMines,
+  .container-link.agrandi .site2,
+  .container-link.agrandi .site3 {
+    background: #B8DDFF;
+    border-radius: 0.5rem; /* Utilisation de rem pour une taille relative */
+  }
+  
+  .navbar-nav a .navbar-text {
+    font-size: 1rem;
+  }
+  
+  .navbar-text {
+    margin-top: -0.3125rem;
+    white-space: nowrap;
+    font-family: 'Poppins';
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .hidden {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  
+  .navbar-nav.hide {
+    opacity: 0; /* Définit l'opacité à 0 pour cacher la navbar */
+    pointer-events: none; /* Désactive les événements de pointage pour empêcher les interactions */
+  }
+  
+  .navbar-nav.show {
+    opacity: 1; /* Définit l'opacité à 1 pour afficher la navbar */
+    pointer-events: auto; /* Active les événements de pointage pour permettre les interactions */
+  }
+  
+  .navbar-nav li {
+    transition: opacity 0.3s ease; /* Ajoute une transition en douceur pour l'opacité */
+  }
+  
+  .navbar-nav.show li {
+    opacity: 1; /* Définit l'opacité à 1 pour afficher les éléments de la navbar */
+  }
+  
+  .navbar-nav.hide li {
+    opacity: 0; /* Définit l'opacité à 0 pour cacher les éléments de la navbar */
+  }
+  

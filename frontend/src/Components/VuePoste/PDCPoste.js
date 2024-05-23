@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const PDCMachine = ({ SelectedMachine, AllPDCData, setAllPDCData }) => {
+const PDCPoste = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
 
   const generePDC = () => {
     //Génération de la liste de PDC
@@ -27,16 +27,16 @@ const PDCMachine = ({ SelectedMachine, AllPDCData, setAllPDCData }) => {
 
   useEffect(() => {
     setData();
-  }, [SelectedMachine])
+  }, [SelectedPoste])
 
 
   return (
     <div className='col-12 container-perso-content d-flex flex-column justify-content-center align-items-start'>
       <div className='col-12 d-flex flex-column justify-content-center align-items-start px-5'>
-        <p className='Title_machine'>
-          Plan de charge : {SelectedMachine.machine}
+        <p className='Title_poste'>
+          Plan de charge : {SelectedPoste.poste}
         </p>
-        <p className='Subtitle_machine'>
+        <p className='Subtitle_poste'>
           Liste prévisionnelle pour les 6 prochaines semaines
         </p>
         <hr className='col-12' />
@@ -46,9 +46,9 @@ const PDCMachine = ({ SelectedMachine, AllPDCData, setAllPDCData }) => {
         {AllPDCData.map((data, index) => {
           return (
             <div className='col d-flex flex-column justify-content-center align-items-center gap-1'>
-              <p className='Text_Semaine_PDC'>
-                Semaine {data.semaine}
-              </p>
+              <div className='Text_Semaine_PDC'>
+                S {data.semaine}
+              </div>
               <div className='rond_PDC' style={data.pdc <= 100 ? { backgroundColor: '#379740' } : { backgroundColor: '#CE2626' }} />
               <p className='Value_Semaine_PDC' style={data.pdc <= 100 ? { color: '#379740' } : { color: '#CE2626' }}>
                 {data.pdc}%
@@ -63,4 +63,4 @@ const PDCMachine = ({ SelectedMachine, AllPDCData, setAllPDCData }) => {
   );
 };
 
-export default PDCMachine;
+export default PDCPoste;

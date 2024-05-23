@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+  
+
+  /* Graphiques ***********************************************/
+
+
+  .display-perso-5{
+    font-size: 0.8rem;
+    font-family: 'Poppins'; 
+    font-weight: 500;
+    font-style: normal;
+    color: #999999;
+  }
+
+  .display-perso-2{
+    font-size: 1.2rem;
+    font-family: 'Poppins'; 
+    font-weight: 600;
+    font-style: normal;
+    color: #000000;
+  }
+  
+  .container-perso-content{
+    background-color: rgba(217, 217, 217,0.31);
+    border-radius: 15px;
+    border: 2px solid rgba(0, 0, 0,0.07);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* Ajout de l'effet de relief avec une ombre */
+  }
+
+  .table-perso-1{
+    --bs-table-color: #000000;
+    --bs-table-bg: transparent !important;
+    --bs-table-border-color: transparent !important;
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-color: #000000;
+    --bs-table-striped-bg: rgba(0, 0, 0,0.05) !important;
+    --bs-table-active-color: #000000;
+    font-family: 'Poppins'; 
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .table-perso-1 thead tr th,
+  .table-perso-1 tbody tr td{
+    padding-right : 0.8rem;
+    font-size: 0.8rem;
+    
+  
+  }
+  .container-perso-ordo{
+    /* width: 100%; */
+    width: 100%;
+    padding-left: 3.7rem;
+    padding-right: 3.7rem;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .Title_poste{
+    margin-bottom: 0;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: #000000;
+    font-family: 'Poppins'; 
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .Subtitle_poste{
+    font-size: 0.8rem;
+    margin-bottom: 0;
+    color: #999999;
+    font-family: 'Poppins'; 
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .Text_Semaine_PDC{
+    font-size: 1rem;
+    color: #000000;
+    font-family: 'Poppins'; 
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .Value_Semaine_PDC{
+    font-size: 1rem;
+    font-family: 'Poppins'; 
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .rond_PDC {
+    width: 40px; /* Définissez la largeur de votre cercle */
+    height: 40px; /* Définissez la hauteur de votre cercle */
+    border-radius: 50%; /* Utilisez border-radius avec une valeur de 50% pour créer un cercle */
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.25); /* Ajoutez une ombre en arrière-plan */
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px; /* Largeur de la barre de défilement */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Couleur de fond de la barre de défilement */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888; /* Couleur de la poignée de la barre de défilement */
+    border-radius: 5px; /* Arrondi de la poignée */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Couleur de la poignée au survol */
+}
+
+
+.header-ordonnancement.active {
+  /* Ajoutez des styles ici si nécessaire */
+}
+
+.display-perso-2 {
+  font-size: 1.2rem;
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-style: normal;
+  color: #000000;
+}
+
+.hr-custom {
+  margin-top: -0.5rem; /* Retirer la marge supérieure */
+  margin-bottom: 0rem; /* Ajuster la marge inférieure si nécessaire */
+  width: 94.5%; /* Assurez-vous que la largeur reste inchangée */
+}
+
+.container-fluid {
+  padding-top: 0; /* Ajuster le padding supérieur si nécessaire */
+}
+
+.container-fluid .col-12 {
+  padding-bottom: 0; /* Ajuster le padding inférieur si nécessaire */
+}
+
+/* Style pour les éléments de la liste */
+.select-items li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Style au survol des éléments de la liste */
+.select-items li:hover {
+  background-color: #f2f2f2;
+}
+
+.form-perso-select{
+  appearance: none; /* Permet de supprimer les styles par défaut du navigateur */
+  -webkit-appearance: none; /* Pour les navigateurs basés sur WebKit */
+  -moz-appearance: none; /* Pour les navigateurs basés sur Gecko */
+  padding: 8px 10px; /* Ajoute de l'espace intérieur pour le texte */
+  font-size: 16px; /* Taille de la police */
+  border: 1px solid #ccc; /* Bordure */
+  border-radius: 4px; /* Bordure arrondie */
+  background-color: #fff; /* Couleur de fond */
+  width: 200px; /* Largeur de l'input */
+}
+
+/* Style au survol de la souris */
+.form-perso-select:hover {
+  border-color: #999; /* Changement de la couleur de la bordure */
+}
+
+/* Style lorsque l'input est en focus */
+.form-perso-select:focus {
+  border-color: #555; /* Changement de la couleur de la bordure lorsqu'il est en focus */
+  outline: none; /* Supprime la bordure de focus par défaut */
+}
+
+/* Style pour les options dans la liste déroulante */
+.form-perso-select option {
+  padding: 5px; /* Ajoute de l'espace intérieur pour le texte des options */
+  font-size: 14px; /* Taille de la police pour les options */
+}
+
+

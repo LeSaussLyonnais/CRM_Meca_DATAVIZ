@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import TableContainerPDC from '../PDC/TableContainerPDC';
 import SelectSemaine from '../PDC/SelectSemaine';
-import FullWidthTabs from '../BarreSites';
-import { useSiteSelection } from '../SiteSelectionContext';
+import { SiteContext } from '../ContexteSelectionSite';
+import '../../Styles/plandecharge.css'
+
+
 
 function PagePlanDeCharge() {
-    const [selectedSite, selectSite] = useState(useSiteSelection());
     const [PDCsemaine, setPDCsemaine] = useState([]); // Ici, définissez correctement PDCsemaine
-    const [semaineSelected, setsemaineSelected] = useState(1);
+    const [semaineSelected, setsemaineSelected] = useState(12);
+    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
-    const handleSiteChange = (newSite) => {
-        selectSite(newSite);
-    };
 
     const [isActive, setIsActive] = React.useState(false);
 
@@ -22,7 +21,6 @@ function PagePlanDeCharge() {
     return (
         <>
             <div className={`header-plandecharge ${isActive ? 'active' : ''}`}>
-                <FullWidthTabs selectedSite={selectedSite} onSiteChange={handleSiteChange} />
             </div>
             <div className='container-fluid d-flex justify-content-center align-items-center flex-column'>
                 <div className='col-12 px-5 m-3'>
