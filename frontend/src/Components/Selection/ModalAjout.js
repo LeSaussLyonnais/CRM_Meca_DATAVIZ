@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 
 
-const ModalAjout = ({ show , setshow, site, AllDispoPoste }) => {
+const ModalAjout = ({ show , setshow, site, AllDispoPoste, setNewAteliers }) => {
 
 
     const [selectedItems, setselectedItems] = useState([]);
@@ -40,15 +40,31 @@ const ModalAjout = ({ show , setshow, site, AllDispoPoste }) => {
         }
     }
 
-    const SaveAtelier = () => {
+    const SaveAtelier = async () => {
         // Code pour enregistrer l'atelier
         const confirm_Ajout = window.confirm("Voulez-vous enregistrer l'atelier ?");
         if (confirm_Ajout) {
             const New_Atelier={
-                site,
-                NomAtelier:NomAtelier,
-                Machines:selectedItems
+                site:site.COSECT,
+                atelier:NomAtelier,
+                postes:selectedItems
             }
+
+            try {
+                const response = await fetch('http://localhost:8000/BlogApp/AjoutAtelier', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(New_Atelier),
+                });
+                const data = await response.json();
+                console.log(data);
+                setNewAteliers(true);
+              }
+              catch (error) {
+                console.error('Error adding atelier:', error);
+              }
     
             console.log('Atelier enregistré:', New_Atelier);
             handleClose();
@@ -78,13 +94,13 @@ const ModalAjout = ({ show , setshow, site, AllDispoPoste }) => {
                                 <div className="form-group">
                                     <label htmlFor="SelectionMachine">Machine à affecter</label>
                                     <div className="selectable-list" id="SelectionMachine">
-                                        {items.map(item => (
+                                        {AllDispoPoste && AllDispoPoste.Postes && AllDispoPoste?.Postes.map(item => (
                                             <div
-                                                key={item}
-                                                className={`list-item ${selectedItems.includes(item) ? 'selected' : ''}`}
-                                                onClick={() => toggleSelectItem(item)}
+                                                key={item.COFRAIS}
+                                                className={`list-item ${selectedItems.includes(item.COFRAIS) ? 'selected' : ''}`}
+                                                onClick={() => toggleSelectItem(item.COFRAIS)}
                                             >
-                                               {selectedItems.includes(item) ? (<FaCheck className="check-icon-poste-ajout me-1"/>) : ""} {item}
+                                               {selectedItems.includes(item.COFRAIS) ? (<FaCheck className="check-icon-poste-ajout me-1"/>) : ""} {item.COFRAIS}
                                             </div>
                                         ))}
                                     </div>

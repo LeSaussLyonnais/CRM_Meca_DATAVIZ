@@ -8,33 +8,25 @@ import ModalAjout from '../Selection/ModalAjout';
 
 function PageSelection() {
   const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
-  const [ateliers, setAteliers] = useState([]);
+  const [new_ateliers, setNewAteliers] = useState(false);
   const [PosteDisponibles, setPosteDisponibles] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [SitesDisponibles, setSitesDisponibles] = useState(['Blaye-Les-Mines', 'Site 2', 'Site 3']);
+  const [SitesDisponibles, setSitesDisponibles] = useState([]);
   const [AteliersDisponibles, setAteliersDisponibles] = useState(['Usinage', 'Mécano soudure', 'Peinture', 'Retouches', 'Assemblage', 'Contrôle']);
 
   useEffect(() => {
     if (selectedSite) {
-      const ateliersAleatoires = [];
-      const nombreAteliers = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-
-      for (let i = 0; i < nombreAteliers; i++) {
-        const randomIndex = Math.floor(Math.random() * AteliersDisponibles.length);
-        ateliersAleatoires.push(AteliersDisponibles[randomIndex]);
-        AteliersDisponibles.splice(randomIndex, 1);
-      }
-
-      setAteliersDisponibles(ateliersAleatoires);
+      fetchAtelier();
+      setNewAteliers(false);
     } else {
-      setAteliersDisponibles([...AteliersDisponibles]);
+      setAteliersDisponibles([]);
       setSelectedWorkshop(null);
+      setNewAteliers(false);
     }
-  }, [selectedSite]);
+  }, [selectedSite, new_ateliers]);
 
   useEffect(() => {
     fetchSite();
-    fetchAtelier();
   }, []);
 
   const handleSiteClick = (site) => {
@@ -47,19 +39,19 @@ function PageSelection() {
   };
 
   const handleClick = () => {
-    setShowModal(true);
     fetchPostes();
+    setShowModal(true);
   }
 
   const fetchPostes = async () => {
     try {
-      const response = await fetch('http://localhost:8000/BlogApp/PopupAjoutAtelier/', {
+      const response = await fetch('http://localhost:8000/BlogApp/PopupAjoutAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          site: selectedSite,
+          site: selectedSite.COSECT,
         }),
       });
       const data = await response.json();
@@ -72,37 +64,37 @@ function PageSelection() {
 
   const fetchSite = async () => {
     try {
-      const response = await fetch('http://localhost:8000/BlogApp/getSite/', {
+      const response = await fetch('http://localhost:8000/BlogApp/getSite', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
       const data = await response.json();
-      const tempSiteList = [...SitesDisponibles, ...data];
-      setSitesDisponibles(tempSiteList);
+      console.log(data);
+      // const tempSiteList = [...SitesDisponibles, ...data];
+      setSitesDisponibles(data);
     }
     catch (error) {
-      console.error('Error fetching postes:', error);
+      console.error('Error fetching sites:', error);
     }
   }
   const fetchAtelier = async () => {
     try {
-      const response = await fetch('http://localhost:8000/BlogApp/getAtelier/', {
+      const response = await fetch('http://localhost:8000/BlogApp/getAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          site: selectedSite,
+          site: selectedSite.COSECT,
         })
       });
       const data = await response.json();
-      const tempAtelierList = [...AteliersDisponibles, ...data];
-      setAteliersDisponibles(tempAtelierList);
+      setAteliersDisponibles(data);
     }
     catch (error) {
-      console.error('Error fetching postes:', error);
+      console.error('Error fetching ateliers:', error);
     }
   }
 
@@ -123,8 +115,8 @@ function PageSelection() {
           <div>
             <div className="liste-sites">
               <ul>
-                {SitesDisponibles.map((site, index) => (
-                  <li key={index} className={selectedSite === site ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{ marginBottom: (6 / SitesDisponibles.length) + 'rem' }}>{site}</li>
+                {SitesDisponibles && SitesDisponibles.Sites && SitesDisponibles.Sites.map((site, index) => (
+                  <li key={index} className={(selectedSite && selectedSite.COSECT === site.COSECT ) ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{ marginBottom: (6 / SitesDisponibles.Sites.length) + 'rem' }}>{site.Libelle_Site}</li>
                 ))}
               </ul>
             </div>
@@ -141,8 +133,8 @@ function PageSelection() {
           <div>
             <div className="liste-ateliers">
               <ul className='d-flex flex-column justify-content-start align-items-start'>
-                {AteliersDisponibles.map((atelier, index) => (
-                  <li key={index} className={selectedWorkshop === atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} style={{ marginBottom: (6 / AteliersDisponibles.length) + 'rem' }}>{atelier}</li>
+                {AteliersDisponibles && AteliersDisponibles.Ateliers && AteliersDisponibles.Ateliers.map((atelier, index) => (
+                  <li key={index} className={selectedWorkshop && selectedWorkshop.Libelle_Atelier === atelier.Libelle_Atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} style={{ marginBottom: (6 / AteliersDisponibles.Ateliers.length) + 'rem' }}>{atelier.Libelle_Atelier}</li>
                 ))}
               </ul>
             </div>
@@ -150,7 +142,7 @@ function PageSelection() {
         </div>
       </div>
       <img src={BasPageImage} alt="Bas de page" className="bas-page" />
-      <ModalAjout show={showModal} setshow={setShowModal} site={selectedSite} AllDispoPoste={PosteDisponibles} />
+      <ModalAjout show={showModal} setshow={setShowModal} site={selectedSite} AllDispoPoste={PosteDisponibles} setNewAteliers={setNewAteliers}/>
     </div>
   );
 }

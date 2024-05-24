@@ -131,7 +131,7 @@ def get_plancharge_data_erp():
             )
 
         # Récupérer ou créer l'atelier avec Libelle_Atelier = 'DEFAULT'
-        atelier_default = 'DEFAULT'
+        # atelier_default = 'DEFAULT'
 
         atelier, created = Atelier.objects.get_or_create(
             Libelle_Atelier='DEFAULT',

@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views import View
 from django.http import JsonResponse
+from django.forms.models import model_to_dict
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 from rest_framework.views import APIView
@@ -78,7 +79,42 @@ class TachePDCView(View):
 
 
 #Vues React
+@api_view(['GET'])
+def endpt_getsite(request):
+    request_data = request.data
 
+    sites = Site.objects.values(
+        'COSECT',
+        'Libelle_Site'
+    )
+
+    resultat = {
+        'Sites': list(sites)
+    }
+    # print(resultat)
+
+    return Response(resultat)
+
+
+@api_view(['POST'])
+def endpt_getatelier(request):
+    request_data = request.data
+    print(request_data)
+
+    site = request_data.get('site', None)
+
+    ateliers = Atelier.objects.filter(
+        At_Site_ID__COSECT=site
+    ).values(
+        'Libelle_Atelier'
+    )
+
+    resultat = {
+        'Ateliers': list(ateliers)
+    }
+    print(resultat)
+
+    return Response(resultat)
 
 
 @api_view(['POST'])
@@ -91,15 +127,19 @@ def endpt_popup_addatelier(request):
 
     # Get the related Poste objects
     postes = Poste.objects.filter(
-        Site_ID__COSECT=site
+        Site_ID__COSECT=site,
+        Atelier_ID__Libelle_Atelier = 'DEFAULT'
     ).values(
-        'COFRAIS',
-        'DESIGN'
+        'COFRAIS'
+        # 'DESIGN'
     )
 
     resultat = {
         'Postes': list(postes)
     }
+    # print(resultat)
+
+    return Response(resultat)
 
 
 @api_view(['POST'])
@@ -110,21 +150,38 @@ def endpt_addatelier(request):
     # Mettre à jour les variables si elles sont présentes dans la requête
     site = request_data.get('site', None)
     atelier = request_data.get('atelier', None)
-    postes = request_data.get['postes']
+    postes = request_data.get('postes', None)
 
-    new_atelier = Atelier.objects.create(
-        Libelle_Atelier=atelier,
-        At_Site_ID=site
-    )
+    # Vérifier que les données nécessaires sont présentes
+    if not site or not atelier:
+        return Response({'error': 'Site and atelier are required'}, status=400)
 
-    for poste in postes:
-        poste_obj = get_object_or_404(Poste, COFRAIS=poste['cofrais'])
+    try:
+        # Créer ou récupérer l'atelier
+        new_atelier, created = Atelier.objects.get_or_create(
+            Libelle_Atelier=atelier,
+            At_Site_ID__COSECT=site
+        )
 
-        # Mettre à jour les champs du poste
-        poste_obj.Atelier_ID = atelier
+        # Récupérer l'ID de l'atelier
+        # atelier_created = new_atelier.id
 
-        # Sauvegarder les modifications
-        poste_obj.save()
+        # Si des postes sont fournis, les associer à l'atelier
+        if postes:
+            for poste in postes:
+                poste_obj = get_object_or_404(Poste, COFRAIS=poste)
+
+                # Mettre à jour les champs du poste
+                poste_obj.Atelier_ID = new_atelier
+
+                # Sauvegarder les modifications
+                poste_obj.save()
+
+        return Response({'atelier_id': new_atelier}, status=201)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
 
 
 
