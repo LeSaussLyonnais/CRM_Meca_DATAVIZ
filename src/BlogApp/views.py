@@ -177,7 +177,7 @@ def endpt_addatelier(request):
                 # Sauvegarder les modifications
                 poste_obj.save()
 
-        return Response({'atelier_id': new_atelier}, status=201)
+        return Response({'atelier_id': new_atelier.Libelle_Atelier}, status=201)
 
     except Exception as e:
         return Response({'error': str(e)}, status=500)

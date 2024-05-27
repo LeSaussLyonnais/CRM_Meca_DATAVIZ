@@ -18,6 +18,7 @@ function PageSelection() {
     if (selectedSite) {
       fetchAtelier();
       setNewAteliers(false);
+      console.log("new atelier");
     } else {
       setAteliersDisponibles([]);
       setSelectedWorkshop(null);
