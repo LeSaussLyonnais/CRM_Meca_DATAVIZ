@@ -12,17 +12,17 @@ app.autodiscover_tasks()
 app.conf.broker_connection_retry_on_startup = True
 
 
-app.conf.beat_schedule = {
-    'get_plancharge_data_erp_300s': {
-        'task': 'BlogApp.tasks.get_plancharge_data_erp',
-        'schedule': 300.0
-        #'args': (obtenir_valeur_de_x(),),  # Appel de la fonction pour obtenir la valeur de x
-    },
-    'get_ordo_data_erp_300s': {
-        'task': 'BlogApp.tasks.get_ordo_data_erp',
-        'schedule': 300.0
-    }
-}
+# app.conf.beat_schedule = {
+#     'get_plancharge_data_erp_300s': {
+#         'task': 'BlogApp.tasks.get_plancharge_data_erp',
+#         'schedule': 300.0
+#         #'args': (obtenir_valeur_de_x(),),  # Appel de la fonction pour obtenir la valeur de x
+#     },
+#     'get_ordo_data_erp_300s': {
+#         'task': 'BlogApp.tasks.get_ordo_data_erp',
+#         'schedule': 300.0
+#     }
+# }
 
 @app.task(bind=True)
 def debug_task(self):

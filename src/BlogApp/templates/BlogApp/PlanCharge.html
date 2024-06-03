@@ -67,6 +67,7 @@
                     const numSemaine = "{{ num_semaine }}";
                     const socket = new WebSocket(`ws://${window.location.host}/ws/charge/${nomSite}/${nomAtelier}/${numAnnee}/${numSemaine}/`);
 
+                    
                     let _this = this;
 
                     socket.onmessage = function(event){

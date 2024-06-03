@@ -35,6 +35,7 @@ def index(request):
     #print(response.json())
     return render(request, "BlogApp/index.html") # ", context={'weather': weather}"
 
+@api_view(['GET'])
 class TachePDCView(View):
     def dispatch(self, request, *args, **kwargs):
         # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
