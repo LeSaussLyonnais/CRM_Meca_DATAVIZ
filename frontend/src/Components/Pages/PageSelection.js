@@ -5,10 +5,13 @@ import BasPageImage from '../../Assets/BasPage.png';
 import ColorModifiedImage from '../ColorPngChange';
 import { CiCirclePlus } from "react-icons/ci";
 import ModalAjout from '../Selection/ModalAjout';
+import { TfiTrash } from "react-icons/tfi";
+
 
 function PageSelection() {
   const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
   const [new_ateliers, setNewAteliers] = useState(false);
+  const [del_atelier, setdel_atelier] = useState(false);
   const [PosteDisponibles, setPosteDisponibles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [SitesDisponibles, setSitesDisponibles] = useState([]);
@@ -18,13 +21,15 @@ function PageSelection() {
     if (selectedSite) {
       fetchAtelier();
       setNewAteliers(false);
+      setdel_atelier(false);
       console.log("new atelier");
     } else {
       setAteliersDisponibles([]);
       setSelectedWorkshop(null);
       setNewAteliers(false);
+      setdel_atelier(false);
     }
-  }, [selectedSite, new_ateliers]);
+  }, [selectedSite, new_ateliers, del_atelier]);
 
   useEffect(() => {
     fetchSite();
@@ -98,6 +103,32 @@ function PageSelection() {
       console.error('Error fetching ateliers:', error);
     }
   }
+  const fetchDeleteAtelier = async (atelier) => {
+    try {
+      const response = await fetch('http://localhost:8000/BlogApp/DeleteAtelier', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          site: selectedSite.COSECT,
+          atelier: atelier.Libelle_Atelier,
+        })
+      });
+      // const data = await response.json();
+      setdel_atelier(true);
+    }
+    catch (error) {
+      console.error('Error fetching ateliers:', error);
+    }
+  }
+
+  const DeleteAtelier = (atelier)=>{
+    const confirmdelete = window.confirm('Etes-vous sûr de vouloir supprimer cet atelier ?');
+    if (confirmdelete){
+      fetchDeleteAtelier(atelier);
+    }
+  }
 
   return (
     <div className="page-selection-container">
@@ -117,7 +148,7 @@ function PageSelection() {
             <div className="liste-sites">
               <ul>
                 {SitesDisponibles && SitesDisponibles.Sites && SitesDisponibles.Sites.map((site, index) => (
-                  <li key={index} className={(selectedSite && selectedSite.COSECT === site.COSECT ) ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{ marginBottom: (6 / SitesDisponibles.Sites.length) + 'rem' }}>{site.Libelle_Site}</li>
+                  <li key={index} className={(selectedSite && selectedSite.COSECT === site.COSECT) ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{ marginBottom: (6 / SitesDisponibles.Sites.length) + 'rem' }}>{site.Libelle_Site}</li>
                 ))}
               </ul>
             </div>
@@ -131,11 +162,14 @@ function PageSelection() {
             </div>
             <div className='trait-site'></div>
           </div>
-          <div>
+          <div className='col-12'>
             <div className="liste-ateliers">
               <ul className='d-flex flex-column justify-content-start align-items-start'>
                 {AteliersDisponibles && AteliersDisponibles.Ateliers && AteliersDisponibles.Ateliers.map((atelier, index) => (
-                  <li key={index} className={selectedWorkshop && selectedWorkshop.Libelle_Atelier === atelier.Libelle_Atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} style={{ marginBottom: (6 / AteliersDisponibles.Ateliers.length) + 'rem' }}>{atelier.Libelle_Atelier}</li>
+                  <div className='col-12 d-flex flex-row justify-content-between align-items-center pe-4'style={{ marginBottom: (6 / AteliersDisponibles.Ateliers.length) + 'rem' }}>
+                    <li key={index} className={selectedWorkshop && selectedWorkshop.Libelle_Atelier === atelier.Libelle_Atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} >{atelier.Libelle_Atelier}</li>
+                    <TfiTrash style={{cursor:"pointer"}} fill='red' onClick={()=>DeleteAtelier(atelier)}/>
+                  </div>
                 ))}
               </ul>
             </div>
@@ -143,7 +177,7 @@ function PageSelection() {
         </div>
       </div>
       <img src={BasPageImage} alt="Bas de page" className="bas-page" />
-      <ModalAjout show={showModal} setshow={setShowModal} site={selectedSite} AllDispoPoste={PosteDisponibles} setNewAteliers={setNewAteliers}/>
+      <ModalAjout show={showModal} setshow={setShowModal} site={selectedSite} AllDispoPoste={PosteDisponibles} setNewAteliers={setNewAteliers} />
     </div>
   );
 }

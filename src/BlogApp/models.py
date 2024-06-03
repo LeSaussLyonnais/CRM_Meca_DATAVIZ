@@ -119,19 +119,29 @@ class Poste(models.Model):
         managed = True # Assurez-vous que cette ligne est soit absente, soit à True
 
 
-class Ordres_Frabrication(models.Model):
-    Ref_OF = models.CharField(max_length=50, default='XXX', blank=True, unique=True)
-    Nom_Piece = models.CharField(max_length=50, default='Piece XXX', blank=True)
-    Temps_Prevu = models.FloatField(default=0, blank=True)
-    Date_Debut = models.DateTimeField(blank=True)
-    Phase_OF = models.IntegerField(default=0, blank=True)
-    Rang_OF = models.CharField(max_length=50, default='X', blank=True)
+class Ordre_Frabrication(models.Model):
+    GACLEUNIK = models.CharField(max_length=50, default='XXX', blank=True) # , unique=True
+    DATE_CHARGE = models.DateField(blank=True, null=True)
+    DATE_ORDO = models.DateField(blank=True, null=True)
+    HEURE_ORDO = models.TimeField(blank=True, null=True)
+    CLIENT_NOM = models.CharField(max_length=50, default='XXX', blank=True)
+    NAF = models.CharField(max_length=50, default='XXX', blank=True)
+    ETATAF = models.CharField(max_length=10, default='X', blank=True)
+    RANG = models.CharField(max_length=50, default='XXX', blank=True)
+    EN_PIECE = models.CharField(max_length=100, default='XXX', blank=True)
+    PHASE = models.IntegerField(default=0, blank=True)
+    QTEAF = models.FloatField(default=0, blank=True)
+    GA_PREP = models.FloatField(default=0, blank=True)
+    GA_NBH = models.FloatField(default=0, blank=True)
+    GA_NBHR = models.FloatField(default=0, blank=True)
+    TYPEAF = models.CharField(max_length=2, default='XXX', blank=True)
+    OF_Poste_ID = models.ForeignKey(Poste, on_delete=models.CASCADE, to_field='COFRAIS', default='C35-2')
 
     def __str__(self):
-        return str(self.Ref_OF)
+        return str(self.GACLEUNIK)
 
     class Meta:
-        ordering = ['Ref_OF']
+        ordering = ['GACLEUNIK']
         managed = True # Assurez-vous que cette ligne est soit absente, soit à True
 
 
@@ -201,11 +211,6 @@ class Infos_Des(models.Model):
         ordering = ['Libelle_Info_Des']
         managed = True # Assurez-vous que cette ligne est soit absente, soit à True
 
-
-class Asso_Postes_OF(models.Model):
-    Poste_ID = models.ForeignKey(Poste, on_delete=models.CASCADE, to_field='COFRAIS')
-    OF_ID = models.ForeignKey(Ordres_Frabrication, on_delete=models.CASCADE, to_field='Ref_OF')
-
 class Asso_Atelier_Info_Desc(models.Model):
     Atelier_ID = models.ForeignKey(Atelier, on_delete=models.CASCADE, to_field='id')
     Info_Des_ID = models.ForeignKey(Infos_Des, on_delete=models.CASCADE, to_field='id')
@@ -244,6 +249,60 @@ class Setup(models.Model):
         self.task = PeriodicTask.objects.create(
             name=self.title,
             task='get_plancharge_data_mdb',
+            interval=self.interval_schedule,
+            args=json.dumps([self.id]),
+            start_time=timezone.now()
+        )
+        self.save()
+
+    @property
+    def interval_schedule(self):
+        if self.time_interval == TimeInterval.five_secs:
+            return IntervalSchedule.objects.get(every=5, period='seconds')
+        if self.time_interval == TimeInterval.ten_secs:
+            return IntervalSchedule.objects.get(every=10, period='seconds')
+        if self.time_interval == TimeInterval.thirty_secs:
+            return IntervalSchedule.objects.get(every=30, period='seconds')
+        if self.time_interval == TimeInterval.one_min:
+            return IntervalSchedule.objects.get(every=1, period='minutes')
+        if self.time_interval == TimeInterval.five_mins:
+            return IntervalSchedule.objects.get(every=5, period='minutes')
+        if self.time_interval == TimeInterval.one_hour:
+            return IntervalSchedule.objects.get(every=1, period='hours')
+
+        raise NotImplementedError(
+            '''Interval Schedule for {interval} is not added.'''.format(
+                interval=self.time_interval.value))
+
+
+class Setup_OF(models.Model):
+    class Meta:
+        verbose_name = 'Setup_OF'
+        verbose_name_plural = 'Setups_OF'
+
+    title = models.CharField(max_length=70, blank=False)
+    status = EnumChoiceField(SetupStatus, default=SetupStatus.active)
+    created_at = models.DateTimeField(auto_now_add=True)
+    time_interval = EnumChoiceField(
+        TimeInterval, default=TimeInterval.ten_secs)
+    nom_poste = models.CharField(max_length=70, default='C35-2', blank=False)
+    task = models.OneToOneField(
+        PeriodicTask,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    def delete(self, *args, **kwargs):
+        if self.task is not None:
+            self.task.delete()
+
+        return super(self.__class__, self).delete(*args, **kwargs)
+
+    def setup_task(self):
+        self.task = PeriodicTask.objects.create(
+            name=self.title,
+            task='get_ordo_data_mdb',
             interval=self.interval_schedule,
             args=json.dumps([self.id]),
             start_time=timezone.now()

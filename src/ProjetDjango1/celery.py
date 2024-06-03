@@ -17,6 +17,10 @@ app.conf.beat_schedule = {
         'task': 'BlogApp.tasks.get_plancharge_data_erp',
         'schedule': 300.0
         #'args': (obtenir_valeur_de_x(),),  # Appel de la fonction pour obtenir la valeur de x
+    },
+    'get_ordo_data_erp_300s': {
+        'task': 'BlogApp.tasks.get_ordo_data_erp',
+        'schedule': 300.0
     }
 }
 

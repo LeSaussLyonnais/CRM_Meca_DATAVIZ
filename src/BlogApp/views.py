@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Weather, ListeAttenteOrdo, Setup, Atelier, Poste, Site
+from .models import *
 from .serializer import *
 from .tasks import get_plancharge_data_mdb
 from .enums import TimeInterval, SetupStatus
@@ -78,6 +78,31 @@ class TachePDCView(View):
             return HttpResponse(f"Setup {self.num_semaine} non trouvée", status=404)
 
 
+class TacheListeOrdoView(View):
+    def dispatch(self, request, *args, **kwargs):
+        # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
+        self.nom_poste = kwargs.get('nom_poste')
+        self.interval = TimeInterval.five_secs
+        self.title = f"Setup_OF_{self.nom_poste}"
+        # Utiliser get_or_create pour éviter de dupliquer l'objet
+        self.setup_OF, created = Setup_OF.objects.get_or_create(
+            title=self.title, 
+            defaults={
+                'time_interval': self.interval,
+                'nom_poste': self.nom_poste
+            }
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, 'BlogApp/ListeOrdo.html',
+            context={
+                'nom_poste': self.nom_poste
+            }
+        )
+
+
 #Vues React
 @api_view(['GET'])
 def endpt_getsite(request):
@@ -99,12 +124,12 @@ def endpt_getsite(request):
 @api_view(['POST'])
 def endpt_getatelier(request):
     request_data = request.data
-    print(request_data)
 
     site = request_data.get('site', None)
 
     ateliers = Atelier.objects.filter(
-        At_Site_ID__COSECT=site
+        At_Site_ID__COSECT=site,
+        VAR_AFF_AT=1
     ).values(
         'Libelle_Atelier'
     )
@@ -112,7 +137,6 @@ def endpt_getatelier(request):
     resultat = {
         'Ateliers': list(ateliers)
     }
-    print(resultat)
 
     return Response(resultat)
 
@@ -157,10 +181,13 @@ def endpt_addatelier(request):
         return Response({'error': 'Site and atelier are required'}, status=400)
 
     try:
+        # Récupérer l'instance du site correspondant au COSECT fourni
+        site_instance = get_object_or_404(Site, COSECT=site)
+        
         # Créer ou récupérer l'atelier
         new_atelier, created = Atelier.objects.get_or_create(
             Libelle_Atelier=atelier,
-            At_Site_ID__COSECT=site
+            At_Site_ID=site_instance
         )
 
         # Récupérer l'ID de l'atelier
@@ -182,6 +209,52 @@ def endpt_addatelier(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
+
+@api_view(['DELETE'])
+def endpt_delatelier(request):
+    # Récupérer les données de la requête
+    request_data = request.data
+
+    # Mettre à jour les variables si elles sont présentes dans la requête
+    site = request_data.get('site', None)
+    atelier = request_data.get('atelier', None)
+
+    # Vérifier que les données nécessaires sont présentes
+    if not site or not atelier:
+        return Response({'error': 'Site and atelier are required'}, status=400)
+
+    try:
+        atelier_default = Atelier.objects.get(
+            Libelle_Atelier='DEFAULT'
+        )
+        
+        postes = Poste.objects.filter(
+            Atelier_ID__Libelle_Atelier=atelier
+        ).values_list(
+            'COFRAIS',
+            flat=True
+        )
+
+        for poste in postes:
+            poste_obj = get_object_or_404(Poste, COFRAIS=poste)
+
+            # Mettre à jour les champs du poste
+            poste_obj.Atelier_ID = atelier_default
+
+            # Sauvegarder les modifications
+            poste_obj.save()
+
+        # Récupérer et supprimer l'atelier
+        atelier_del = Atelier.objects.get(
+            Libelle_Atelier=atelier,
+            At_Site_ID__COSECT=site
+        )
+        atelier_del.delete()
+        return Response({'message': 'atelier supprimé'}, status=204)
+    # except Atelier.DoesNotExist:
+    #     return Response({'error_atelier_del': f"Setup {atelier_del.Libelle_Atelier} non trouvé"}, status=404)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 
 
