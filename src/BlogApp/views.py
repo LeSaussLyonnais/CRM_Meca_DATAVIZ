@@ -117,7 +117,7 @@ def endpt_getsite(request):
     resultat = {
         'Sites': list(sites)
     }
-    # print(resultat)
+    print(resultat)
 
     return Response(resultat)
 
