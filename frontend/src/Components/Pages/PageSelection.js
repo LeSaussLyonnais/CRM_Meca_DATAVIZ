@@ -83,6 +83,8 @@ function PageSelection() {
     }
     catch (error) {
       console.error('Error fetching sites:', error);
+    } finally {
+      // Réinitialisez l'état de votre application ici
     }
   }
   const fetchAtelier = async () => {

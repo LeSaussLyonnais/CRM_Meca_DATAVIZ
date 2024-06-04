@@ -59,8 +59,8 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']}
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://10.31.24.107:3000']
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = ['*','http://localhost:3000', 'http://10.31.24.107:3000', 'http://10.31.64.47:3000']
 
 ROOT_URLCONF = 'ProjetDjango1.urls'
 
