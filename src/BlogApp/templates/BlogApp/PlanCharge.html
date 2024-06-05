@@ -24,6 +24,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Site</th>
+                                <th scope="col">Atelier</th>
                                 <th scope="col">Annee</th>
                                 <th scope="col">Semaine</th>
                                 <th scope="col">Ref_CF</th>
@@ -34,6 +35,7 @@
                         <tbody>
                             <tr v-for="chrg in charge" :key="chrg.id">
                                 <td class="align-middle">{{ chrg.COSECT }}</td>
+                                <td class="align-middle">{{ chrg.Libelle_Atelier }}</td>
                                 <td class="align-middle">{{ chrg.ANNEE }}</td>
                                 <td class="align-middle">{{ chrg.SEMAINE }}</td>
                                 <td class="align-middle">{{ chrg.COFRAIS }}</td>
@@ -59,8 +61,13 @@
                         charge: null
                     }
                 }, created(){
-                    const socket = new WebSocket(`ws://${window.location.host}/ws/charge/`);
+                    const nomSite = "{{ nom_site }}";
+                    const nomAtelier = "{{ nom_atelier }}";
+                    const numAnnee = "{{ num_annee }}";
+                    const numSemaine = "{{ num_semaine }}";
+                    const socket = new WebSocket(`ws://${window.location.host}/ws/charge/${nomSite}/${nomAtelier}/${numAnnee}/${numSemaine}/`);
 
+                    
                     let _this = this;
 
                     socket.onmessage = function(event){

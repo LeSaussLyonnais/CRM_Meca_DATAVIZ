@@ -25,12 +25,13 @@ SECRET_KEY = 'django-insecure-7bgby^f&a=nqp=(is=ybap38lcn&%)a7xrqxhj@q7qox8*$y7w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '10.31.24.107:3000', 'localhost:3000']
+ALLOWED_HOSTS = ['*', '10.31.24.107:3000', 'http://127.0.0.1:3000']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,27 +40,60 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    # 'import_export',  # Pas utile finalement 
-    'BlogApp',
-    'rest_framework',
-    'corsheaders'
+    'django_celery_beat',
+    # 'import_export',  # Pas utile finalement
+    'rest_framework', 
+    'BlogApp.apps.BlogappConfig' #Definition de notre application BlogApp avec sa configuration particuliere definie dans le fichier apps
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
 ]
 
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny']}
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://10.31.24.107:3000']
+# CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+    # "http://localhost:8000",
+    # "http://127.0.0.1:8000",
+    # "null",
+    # 'http://localhost:3000',
+    # 'http://localhost:8000',
+    # 'https://localhost:3000',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'Access-Control-Allow-Origin',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'ProjetDjango1.urls'
 
@@ -82,7 +116,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ProjetDjango1.wsgi.application'
 ASGI_APPLICATION = 'ProjetDjango1.asgi.application' 
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
+
 
 
 # Database
@@ -128,20 +162,21 @@ CHANNEL_LAYERS = {
 #CELERY_BROKER_URL = f'redis://:@redis:6379/0'
 #CELERY_RESULT_BACKEND = f'redis://:@redis:6379/0'
 #CELERY_TIMEZONE = 'Europe/Paris'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
-
-
-CELERY_BEAT_SCHEDULE = {
-    'get_weather_data_60s':  {
-        'task': 'BlogApp.tasks.get_plancharge_data_erp',
-        'schedule': 30.0
-    },
-    # 'get_plancharge_data_mdb_10s': {
-    #     'task': 'tasks.get_plancharge_data_mdb',
-    #     'schedule': 2.0
-    # }
-}
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BEAT_SCHEDULE = {
+#     # 'get_plancharge_data_erp_60s':  {
+#     #     'task': 'BlogApp.tasks.get_plancharge_data_erp',
+#     #     'schedule': 60.0
+#     # },
+#     'get_plancharge_data_mdb_10s': {
+#         'task': 'BlogApp.tasks.get_plancharge_data_mdb',
+#         'schedule': 5.0
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

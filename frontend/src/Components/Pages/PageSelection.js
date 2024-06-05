@@ -2,30 +2,38 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SiteContext } from '../ContexteSelectionSite';
 import '../../Styles/selectionatelier.css';
 import BasPageImage from '../../Assets/BasPage.png';
+import ColorModifiedImage from '../ColorPngChange';
+import { CiCirclePlus } from "react-icons/ci";
+import ModalAjout from '../Selection/ModalAjout';
+import { TfiTrash } from "react-icons/tfi";
+
 
 function PageSelection() {
   const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
-  const [ateliers, setAteliers] = useState([]);
-  const ateliersDisponibles = ['Usinage', 'Mécano soudure', 'Peinture', 'Retouches', 'Assemblage', 'Contrôle'];
-  const sitesDisponibles = ['Blaye-Les-Mines', 'Site 2', 'Site 3'];
+  const [new_ateliers, setNewAteliers] = useState(false);
+  const [del_atelier, setdel_atelier] = useState(false);
+  const [PosteDisponibles, setPosteDisponibles] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [SitesDisponibles, setSitesDisponibles] = useState([]);
+  const [AteliersDisponibles, setAteliersDisponibles] = useState(['Usinage', 'Mécano soudure', 'Peinture', 'Retouches', 'Assemblage', 'Contrôle']);
 
   useEffect(() => {
     if (selectedSite) {
-      const ateliersAleatoires = [];
-      const nombreAteliers = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
-
-      for (let i = 0; i < nombreAteliers; i++) {
-        const randomIndex = Math.floor(Math.random() * ateliersDisponibles.length);
-        ateliersAleatoires.push(ateliersDisponibles[randomIndex]);
-        ateliersDisponibles.splice(randomIndex, 1);
-      }
-
-      setAteliers(ateliersAleatoires);
+      fetchAtelier();
+      setNewAteliers(false);
+      setdel_atelier(false);
+      console.log("new atelier");
     } else {
-      setAteliers([]);
+      setAteliersDisponibles([]);
       setSelectedWorkshop(null);
+      setNewAteliers(false);
+      setdel_atelier(false);
     }
-  }, [selectedSite]);
+  }, [selectedSite, new_ateliers, del_atelier]);
+
+  useEffect(() => {
+    fetchSite();
+  }, []);
 
   const handleSiteClick = (site) => {
     setSelectedSite(site);
@@ -35,6 +43,94 @@ function PageSelection() {
   const handleWorkshopClick = (workshop) => {
     setSelectedWorkshop(workshop);
   };
+
+  const handleClick = () => {
+    fetchPostes();
+    setShowModal(true);
+  }
+
+  const fetchPostes = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/BlogApp/PopupAjoutAtelier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          site: selectedSite.COSECT,
+        }),
+      });
+      const data = await response.json();
+      setPosteDisponibles(data);
+    }
+    catch (error) {
+      console.error('Error fetching postes:', error);
+    }
+  }
+
+  const fetchSite = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/BlogApp/getSite', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      // const tempSiteList = [...SitesDisponibles, ...data];
+      setSitesDisponibles(data);
+    }
+    catch (error) {
+      console.error('Error fetching sites:', error);
+    } finally {
+      // Réinitialisez l'état de votre application ici
+    }
+  }
+  const fetchAtelier = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/BlogApp/getAtelier', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          site: selectedSite.COSECT,
+        })
+      });
+      const data = await response.json();
+      setAteliersDisponibles(data);
+    }
+    catch (error) {
+      console.error('Error fetching ateliers:', error);
+    }
+  }
+  const fetchDeleteAtelier = async (atelier) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/BlogApp/DeleteAtelier', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          site: selectedSite.COSECT,
+          atelier: atelier.Libelle_Atelier,
+        })
+      });
+      // const data = await response.json();
+      setdel_atelier(true);
+    }
+    catch (error) {
+      console.error('Error fetching ateliers:', error);
+    }
+  }
+
+  const DeleteAtelier = (atelier)=>{
+    const confirmdelete = window.confirm('Etes-vous sûr de vouloir supprimer cet atelier ?');
+    if (confirmdelete){
+      fetchDeleteAtelier(atelier);
+    }
+  }
 
   return (
     <div className="page-selection-container">
@@ -53,8 +149,8 @@ function PageSelection() {
           <div>
             <div className="liste-sites">
               <ul>
-                {sitesDisponibles.map((site, index) => (
-                  <li key={index} className={selectedSite === site ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{marginBottom:(6/sitesDisponibles.length)+'rem'}}>{site}</li>
+                {SitesDisponibles && SitesDisponibles.Sites && SitesDisponibles.Sites.map((site, index) => (
+                  <li key={index} className={(selectedSite && selectedSite.COSECT === site.COSECT) ? 'active' : ''} onClick={() => handleSiteClick(site)} style={{ marginBottom: (6 / SitesDisponibles.Sites.length) + 'rem' }}>{site.Libelle_Site}</li>
                 ))}
               </ul>
             </div>
@@ -62,14 +158,20 @@ function PageSelection() {
         </div>
         <div className={`rectanglechoix choix-atelier ${selectedSite ? 'show' : ''}`}>
           <div className='col-12 d-flex flex-column justify-content-center align-items-start gap-4 mt-2'>
-            <h2>Choix de l'atelier</h2>
+            <div className='col-12 d-flex flex-row justify-content-between align-items-center px-4'>
+              <h2 className='p-0 m-0'>Choix de l'atelier</h2>
+              <CiCirclePlus className="btn-perso-add" onClick={() => handleClick()} />
+            </div>
             <div className='trait-site'></div>
           </div>
-          <div>
+          <div className='col-12'>
             <div className="liste-ateliers">
               <ul className='d-flex flex-column justify-content-start align-items-start'>
-                {ateliers.map((atelier, index) => (
-                  <li key={index} className={selectedWorkshop === atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} style={{marginBottom:(6/ateliers.length)+'rem'}}>{atelier}</li>
+                {AteliersDisponibles && AteliersDisponibles.Ateliers && AteliersDisponibles.Ateliers.map((atelier, index) => (
+                  <div className='col-12 d-flex flex-row justify-content-between align-items-center pe-4'style={{ marginBottom: (6 / AteliersDisponibles.Ateliers.length) + 'rem' }}>
+                    <li key={index} className={selectedWorkshop && selectedWorkshop.Libelle_Atelier === atelier.Libelle_Atelier ? 'active' : ''} onClick={() => handleWorkshopClick(atelier)} >{atelier.Libelle_Atelier}</li>
+                    <TfiTrash style={{cursor:"pointer"}} fill='red' onClick={()=>DeleteAtelier(atelier)}/>
+                  </div>
                 ))}
               </ul>
             </div>
@@ -77,6 +179,7 @@ function PageSelection() {
         </div>
       </div>
       <img src={BasPageImage} alt="Bas de page" className="bas-page" />
+      <ModalAjout show={showModal} setshow={setShowModal} site={selectedSite} AllDispoPoste={PosteDisponibles} setNewAteliers={setNewAteliers} />
     </div>
   );
 }

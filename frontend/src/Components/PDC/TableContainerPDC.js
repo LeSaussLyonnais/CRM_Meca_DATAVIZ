@@ -8,19 +8,24 @@ import SelectSemaine from './SelectSemaine';
 import { SiteContext } from '../ContexteSelectionSite';
 
 const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsemaineSelected }) => {
-    let site = 'ATCRM'
-    let atelier = 'TOUR'
+
     let annee = '2024'
 
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
     useEffect(() => {
-        UpdateFetch()
+        if (semaineSelected){
+            UpdateFetch()
+            fetchData()
+        }
         console.log(PDCsemaine);
     }, []);
 
     useEffect(() => {
-        UpdateFetch()
+        if (semaineSelected){
+            UpdateFetch()
+            fetchData()
+        }
     }, [semaineSelected]);
 
     // const initdata = () => {
@@ -49,35 +54,41 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     //     return data;
     // };
 
-    // const fetchData = async () => {
-    //     // Effect hook pour gérer la connexion websocket
-    //     const socket = new WebSocket(`ws://localhost:8000/ws/charge/`);
+    const fetchData = async () => {
+        // Effect hook pour gérer la connexion websocket
+        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`); //${window.location.host}
 
-    //     // Fonction de rappel appelée lors de la réception de messages websocket
-    //     socket.onmessage = function (event) {
-    //         // Mise à jour de l'état weather avec les données reçues du websocket
-    //         console.log('Received data:', event.data);
-    //         // return JSON.parse(event.data);
-    //     }
+        // Fonction de rappel appelée lors de la réception de messages websocket
+        socket.onmessage = function (event) {
+            // Mise à jour de l'état weather avec les données reçues du websocket
+            console.log('Received data:', event.data);
+            setPDCsemaine(event.data)
+            // return JSON.parse(event.data);
+        }
 
-    //     // Nettoyage de la connexion websocket lors du démontage du composant
-    //     return () => {
-    //         socket.close();
-    //     };
-    // }
+        // Nettoyage de la connexion websocket lors du démontage du composant
+        return () => {
+            socket.close();
+        };
+    }
 
     const UpdateFetch = async () => {
         try {
-            const response = await fetch('http://localhost:8000/BlogApp/chargeUpdate/', {
+            const response = await fetch('http://127.0.0.1:8000/BlogApp/PDC_Atelier_Tache', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ "semaine": semaineSelected })
+                body: JSON.stringify({
+                    nom_site: selectedSite.COSECT,
+                    nom_atelier: selectedWorkshop.Libelle_Atelier,
+                    num_annee: annee,
+                    num_semaine: semaineSelected,
+                }),
             });
 
             const data = await response.json();
-            setPDCsemaine(data);
+            console.log(data);
 
         } catch (error) {
             console.error('Error:', error);
