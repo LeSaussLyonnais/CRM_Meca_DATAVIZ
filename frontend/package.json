@@ -28,7 +28,7 @@
     "typescript": "4.4.4"
   },
   "scripts": {
-    "start": "HOST=10.31.24.130 react-scripts start",
+    "start": "react-scripts start --host 10.31.24.130",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

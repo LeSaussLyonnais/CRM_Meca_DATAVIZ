@@ -1,0 +1,26 @@
+.bouton-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: #DBE8F4;
+    border: none;
+    cursor: pointer;
+    z-index: 900; /* Mettre le bouton en dessous de la sidebar */
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.bouton-sidebar img {
+    width: 30px;
+    height: 30px;
+}
+
+.bouton-sidebar:hover {
+    background: #B8DDFF;
+}
