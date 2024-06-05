@@ -9,6 +9,7 @@ urlpatterns = [
     path('getSite', endpt_getsite, name="page_upload_sites"),
     path('getAtelier', endpt_getatelier, name="page_upload_ateliers"),
     path('PopupAjoutAtelier', endpt_popup_addatelier, name="page_popup_ajout_atelier"),
-    # path('Site_<str:nom_site>/Atelier_<str:nom_atelier>/Annee_<str:num_annee>/Semaine_<str:num_semaine>/', TachePDCView.as_view(), name="blog-tache"),
+    path('PDC_Atelier_Tache', endpt_pdc_tache,name="page_PDC_Atelier"),
+    path('Site_<str:nom_site>/Atelier_<str:nom_atelier>/Annee_<str:num_annee>/Semaine_<str:num_semaine>/', TachePDCView, name="blog-tache"),
     path('Ordo_Poste_<str:nom_poste>/', TacheListeOrdoView.as_view(), name="blog-tache-Ordo")
 ]

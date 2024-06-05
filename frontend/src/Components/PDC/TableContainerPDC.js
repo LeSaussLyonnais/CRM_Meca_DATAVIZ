@@ -14,14 +14,18 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
     useEffect(() => {
-        UpdateFetch()
-        fetchData()
+        if (semaineSelected){
+            UpdateFetch()
+            fetchData()
+        }
         console.log(PDCsemaine);
     }, []);
 
     useEffect(() => {
-        UpdateFetch()
-        fetchData()
+        if (semaineSelected){
+            UpdateFetch()
+            fetchData()
+        }
     }, [semaineSelected]);
 
     // const initdata = () => {
@@ -52,7 +56,7 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
 
     const fetchData = async () => {
         // Effect hook pour gérer la connexion websocket
-        const socket = new WebSocket(`ws://${window.location.host}/ws/charge/${selectedSite}/${selectedWorkshop}/${annee}/${semaineSelected}/`);
+        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`); //${window.location.host}
 
         // Fonction de rappel appelée lors de la réception de messages websocket
         socket.onmessage = function (event) {
@@ -70,18 +74,17 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
 
     const UpdateFetch = async () => {
         try {
-            const response = await fetch('http://localhost:8000/BlogApp/Site_'+
-            selectedSite+
-            '/Atelier_'+
-            selectedWorkshop+
-            '/Annee_'+
-            annee+
-            '/Semaine_'+
-            semaineSelected+'/', {
-                method: 'GET',
+            const response = await fetch('http://127.0.0.1:8000/BlogApp/PDC_Atelier_Tache', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                body: JSON.stringify({
+                    nom_site: selectedSite.COSECT,
+                    nom_atelier: selectedWorkshop.Libelle_Atelier,
+                    num_annee: annee,
+                    num_semaine: semaineSelected,
+                }),
             });
 
             const data = await response.json();

@@ -35,7 +35,33 @@ def index(request):
     #print(response.json())
     return render(request, "BlogApp/index.html") # ", context={'weather': weather}"
 
-@api_view(['GET'])
+
+
+@api_view(['POST'])
+def endpt_pdc_tache(request):
+    request_data = request.data
+
+    num_semaine = request_data.get('num_semaine')
+    num_annee = request_data.get('num_annee')
+    nom_atelier = request_data.get('nom_atelier')
+    nom_site = request_data.get('nom_site')
+    interval = TimeInterval.five_secs
+    title = f"Setup_{nom_site}_{nom_atelier}_{num_annee}_{num_semaine}"
+
+    setup_pdc, created = Setup.objects.get_or_create(
+        title=title, 
+        defaults={
+            'time_interval': interval,
+            'nom_site': nom_site, 
+            'nom_atelier': nom_atelier, 
+            'num_annee': num_annee, 
+            'num_semaine': num_semaine
+        }
+    )
+
+    return Response({'PDC_Semaine': "PDC Semaine "+str(num_semaine)+" generated"}, status=201)
+
+@api_view(['POST'])
 class TachePDCView(View):
     def dispatch(self, request, *args, **kwargs):
         # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
@@ -102,6 +128,26 @@ class TacheListeOrdoView(View):
                 'nom_poste': self.nom_poste
             }
         )
+
+@api_view(['POST'])
+def endpt_ordo_getposte(request):
+    request_data = request.data
+
+    atelier = request_data.get('atelier', None)
+
+    postes = Poste.objects.filter(
+        Atelier_ID__Libelle_Atelier = atelier
+    ).values(
+        'COFRAIS'
+        # 'DESIGN'
+    )
+
+    resultat = {
+        'Postes': list(postes)
+    }
+    # print(resultat)
+
+    return Response(resultat)
 
 
 #Vues React

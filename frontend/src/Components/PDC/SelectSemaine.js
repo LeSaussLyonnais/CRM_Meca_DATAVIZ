@@ -9,11 +9,11 @@ const SelectSemaine = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsemaineS
     };
 
     // Obtenir la date actuelle
-    // const currentDate = new Date();
+    const currentDate = new Date();
 
     // Obtenir le numéro de la semaine en cours
-    const currentWeekNumber = 12;
-    // const currentWeekNumber = getWeekNumber(currentDate);
+    // const currentWeekNumber = 12;
+    const currentWeekNumber = getWeekNumber(currentDate);
     useEffect(() => {
         setsemaineSelected(currentWeekNumber);
     },[])
