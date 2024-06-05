@@ -1,99 +1,81 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import ColorModifiedImage from '../ColorPngChange';
 import tour from '../../Assets/tour.png';
 import fraiseuse from '../../Assets/fraiseuse.png';
 import soudure from '../../Assets/soudure.png';
 import peinture from '../../Assets/peinture.png';
-import SelectSemaine from './SelectSemaine';
 import { SiteContext } from '../ContexteSelectionSite';
 
-const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsemaineSelected }) => {
-
-    let annee = '2024'
-
-    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
-
-    useEffect(() => {
-        if (semaineSelected){
-            UpdateFetch()
-            fetchData()
-        }
-        console.log(PDCsemaine);
-    }, []);
+const TableContainerPDC = ({ semaineSelected }) => {
+    const [PDCsemaine, setPDCsemaine] = useState([]);
+    const annee = '2024';
+    const { selectedSite, selectedWorkshop } = useContext(SiteContext);
 
     useEffect(() => {
-        if (semaineSelected){
-            UpdateFetch()
-            fetchData()
-        }
-    }, [semaineSelected]);
+        const fetchData = async () => {
+            if (!selectedSite || !selectedWorkshop) {
+                console.error("selectedSite or selectedWorkshop is null");
+                return;
+            }
 
-    // const initdata = () => {
-    //     setPDCsemaine(genereDataAleatoire(5, ["usinage", "soudure", "peinture"], ["soudure", "fraiseuse", "tour", "peinture"], 50, 150));
-    // }
+            const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`);
 
-    // function genereDataAleatoire(nbSemaines, ateliers, typesPostes, chargesMin, chargesMax) {
-    //     const data = [];
-    //     for (let semaine = 1; semaine <= nbSemaines; semaine++) {
-    //         const atelier = ateliers[Math.floor(Math.random() * ateliers.length)];
-    //         const nbPostes = Math.floor(Math.random() * 10) + 1;
-    //         const postes = [];
-    //         for (let i = 0; i < nbPostes; i++) {
-    //             postes.push({
-    //                 poste: i + 1,
-    //                 type: typesPostes[Math.floor(Math.random() * typesPostes.length)],
-    //                 charge: Math.floor(Math.random() * (chargesMax - chargesMin + 1)) + chargesMin
-    //             });
-    //         }
-    //         data.push({
-    //             semaine,
-    //             atelier,
-    //             postes
-    //         });
-    //     }
-    //     return data;
-    // };
+            socket.onmessage = function (event) {
+                console.log('Received data:', event.data);
+                const parsedData = JSON.parse(event.data);
+                setPDCsemaine(parsedData);
+            };
 
-    const fetchData = async () => {
-        // Effect hook pour gérer la connexion websocket
-        const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`); //${window.location.host}
+            socket.onopen = () => {
+                console.log('WebSocket connected');
+            };
 
-        // Fonction de rappel appelée lors de la réception de messages websocket
-        socket.onmessage = function (event) {
-            // Mise à jour de l'état weather avec les données reçues du websocket
-            console.log('Received data:', event.data);
-            setPDCsemaine(event.data)
-            // return JSON.parse(event.data);
-        }
+            socket.onerror = (error) => {
+                console.error('WebSocket Error: ', error);
+            };
 
-        // Nettoyage de la connexion websocket lors du démontage du composant
-        return () => {
-            socket.close();
+            return () => {
+                socket.close();
+            };
         };
-    }
 
-    const UpdateFetch = async () => {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/BlogApp/PDC_Atelier_Tache', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    nom_site: selectedSite.COSECT,
-                    nom_atelier: selectedWorkshop.Libelle_Atelier,
-                    num_annee: annee,
-                    num_semaine: semaineSelected,
-                }),
-            });
+        const UpdateFetch = async () => {
+            if (!selectedSite || !selectedWorkshop) {
+                console.error("selectedSite or selectedWorkshop is null");
+                return;
+            }
 
-            const data = await response.json();
-            console.log(data);
+            try {
+                const response = await fetch('http://127.0.0.1:8000/BlogApp/PDC_Atelier_Tache', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nom_site: selectedSite.COSECT,
+                        nom_atelier: selectedWorkshop.Libelle_Atelier,
+                        num_annee: annee,
+                        num_semaine: semaineSelected,
+                    }),
+                });
 
-        } catch (error) {
-            console.error('Error:', error);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('UpdateFetch response data:', data);
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        if (semaineSelected && selectedSite && selectedWorkshop) {
+            UpdateFetch();
+            fetchData();
         }
-    }
+    }, [semaineSelected, selectedSite, selectedWorkshop]);
 
     return (
         <div className='d-flex flex-column justify-content-center align-items-center container-perso-content m-3 p-3'>
@@ -101,34 +83,29 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
                 <h1 className='display-perso-4 my-2 p-2'>Plan de charge de la partie usinage</h1>
             </div>
             <hr className='text-dark px-5 w-100' />
-            {(PDCsemaine && PDCsemaine?.Charge && PDCsemaine.Charge.length > 0) ? (
+            {PDCsemaine.length > 0 ? (
                 <div className='d-flex justify-content-center align-items-center flex-wrap gap-5'>
-                    {PDCsemaine?.Charge.map((Poste, index) => {
-                        if (Poste.SEMAINE === semaineSelected) {
-                            return (
-                                <div key={Poste.COFRAIS} className='d-flex justify-content-center align-items-center flex-column m-3'>
-                                    <h2 className='poste-title text-dark'>Poste : {Poste.Poste_ID}</h2>
-                                    <h2 className='charge-content text-dark'>Charge : {Poste.VDUREE} %</h2>
-                                    <img src='' style={{ maxWidth: '100px' }} alt='' />
-                                    <ColorModifiedImage imageUrl={
-                                        PDCsemaine.Poste_ids[index].DESIGN.includes("TOUR") ? tour :
-                                            PDCsemaine.Poste_ids[index].DESIGN.includes("SOUDURE") ? soudure :
-                                                PDCsemaine.Poste_ids[index].DESIGN.includes("PEINTURE") ? peinture :
-                                                    fraiseuse
-                                    } color={
-                                        Poste.VDUREE < 80 ? [64, 119, 24] :
-                                            Poste.VDUREE < 100 ? [246, 189, 90] :
-                                                [237, 33, 22]
-                                    } />
-                                </div>
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
+                    {PDCsemaine.map((Poste, index) => (
+                        Poste.SEMAINE === semaineSelected && (
+                            <div key={Poste.COFRAIS} className='d-flex justify-content-center align-items-center flex-column m-3'>
+                                <h2 className='poste-title text-dark'>Poste : {Poste.COFRAIS}</h2>
+                                <h2 className='charge-content text-dark'>Charge : {Poste.VDUREE} %</h2>
+                                <ColorModifiedImage imageUrl={
+                                    Poste.COFRAIS.includes("TOUR") ? tour :
+                                    Poste.COFRAIS.includes("SOUDURE") ? soudure :
+                                    Poste.COFRAIS.includes("PEINTURE") ? peinture :
+                                    fraiseuse
+                                } color={
+                                    Poste.VDUREE < 80 ? [64, 119, 24] :
+                                    Poste.VDUREE < 100 ? [246, 189, 90] :
+                                    [237, 33, 22]
+                                } />
+                            </div>
+                        )
+                    ))}
                 </div>
             ) : (
-                <p>No data for this weeks.</p>
+                <p>No data for this week.</p>
             )}
         </div>
     );
