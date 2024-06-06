@@ -12,6 +12,7 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     let annee = '2024'
 
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
+    const socketRef = useRef(null); // Ref to store the current WebSocket connection
 
     useEffect(() => {
         if (semaineSelected){
@@ -22,9 +23,9 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     }, []);
 
     useEffect(() => {
-        if (semaineSelected){
-            UpdateFetch()
-            fetchData()
+        if (semaineSelected) {
+            UpdateFetch();
+            setupWebSocket();
         }
     }, [semaineSelected]);
 
@@ -54,23 +55,39 @@ const TableContainerPDC = ({ PDCsemaine, semaineSelected, setPDCsemaine, setsema
     //     return data;
     // };
 
-    const fetchData = async () => {
+    const setupWebSocket = () => {
+        // Clean up the previous WebSocket connection if exists
+        if (socketRef.current) {
+            socketRef.current.close();
+        }
+
         // Effect hook pour gérer la connexion websocket
         const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`); //${window.location.host}
 
-        // Fonction de rappel appelée lors de la réception de messages websocket
         socket.onmessage = function (event) {
-            // Mise à jour de l'état weather avec les données reçues du websocket
             console.log('Received data:', event.data);
-            setPDCsemaine(event.data)
-            // return JSON.parse(event.data);
+            setPDCsemaine(JSON.parse(event.data)); // Assuming the received data is JSON
         }
 
-        // Nettoyage de la connexion websocket lors du démontage du composant
-        return () => {
-            socket.close();
-        };
+        socket.onclose = function (event) {
+            console.log('WebSocket closed:', event);
+        }
+
+        socket.onerror = function (error) {
+            console.error('WebSocket error:', error);
+        }
+
+        socketRef.current = socket;
     }
+
+    // Cleanup WebSocket connection when the component unmounts
+    useEffect(() => {
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.close();
+            }
+        }
+    }, []);
 
     const UpdateFetch = async () => {
         try {

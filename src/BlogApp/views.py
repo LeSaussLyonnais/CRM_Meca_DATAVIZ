@@ -61,7 +61,7 @@ def endpt_pdc_tache(request):
 
     return Response({'PDC_Semaine': "PDC Semaine "+str(num_semaine)+" generated"}, status=201)
 
-@api_view(['POST'])
+# @api_view(['POST'])
 class TachePDCView(View):
     def dispatch(self, request, *args, **kwargs):
         # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
@@ -128,6 +128,24 @@ class TacheListeOrdoView(View):
                 'nom_poste': self.nom_poste
             }
         )
+
+@api_view(['POST'])
+def endpt_ordo_tache(request):
+    request_data = request.data
+
+    nom_poste = request_data.get('nom_poste')
+    interval = TimeInterval.five_secs
+    title = f"Setup_OF_{nom_poste}"
+
+    setup_OF, created = Setup_OF.objects.get_or_create(
+        title=self.title, 
+        defaults={
+            'time_interval': self.interval,
+            'nom_poste': self.nom_poste
+        }
+    )
+
+    return Response({'Ordo_Poste': "Ordo Poste "+nom_poste+" generated"}, status=201)
 
 @api_view(['POST'])
 def endpt_ordo_getposte(request):

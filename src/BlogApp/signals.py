@@ -14,11 +14,11 @@ def create_or_update_periodic_task(sender, instance, created, **kwargs):
             instance.task.enabled = instance.status == SetupStatus.active
             instance.task.save()
 
-# @receiver(post_save, sender=Setup_OF)
-# def create_or_update_periodic_task(sender, instance, created, **kwargs):
-#     if created:
-#         instance.setup_task()
-#     else:
-#         if instance.task is not None:
-#             instance.task.enabled = instance.status == SetupStatus.active
-#             instance.task.save()
+@receiver(post_save, sender=Setup_OF)
+def create_or_update_periodic_task(sender, instance, created, **kwargs):
+    if created:
+        instance.setup_task()
+    else:
+        if instance.task is not None:
+            instance.task.enabled = instance.status == SetupStatus.active
+            instance.task.save()
