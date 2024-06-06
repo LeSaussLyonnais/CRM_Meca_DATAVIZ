@@ -10,15 +10,15 @@ header {
     background: #DBE8F4;
     height: 9rem; /* Utilisation de rem pour une taille relative */
     width: 100%;
-  }
-  
-  header img {
+}
+
+header img {
     position: absolute;
     top: 0rem;
     right: 0rem;
     padding: 0;
     width: 8rem; /* Utilisation de rem pour une taille relative */
-  }
+}
 
 /* Navbar **************************************************/
 .navbar-container {
@@ -33,17 +33,17 @@ header {
     height: 7.5rem;
     opacity: 0; /* Opacité initiale à 0 */
     transition: opacity 0.5s ease; /* Transition de l'opacité */
-  }
-  
-  .navbar-container.hide {
+}
+
+.navbar-container.hide {
     opacity: 0;
-  }
-  
-  .navbar-container.show {
+}
+
+.navbar-container.show {
     opacity: 1;
-  }
-  
-  .navbar-container ul {
+}
+
+.navbar-container ul {
     padding: 0.3125rem;
     display: flex;
     flex-direction: row;
@@ -53,71 +53,75 @@ header {
     gap: 5vw;
     opacity: 0;
     transition: opacity 0.5s ease; /* Transition de l'opacité */
-  }
-  
-  .navbar-container.show ul {
+}
+
+.navbar-container.show ul {
     opacity: 1;
-  }
-  
-  .nav-link {
+}
+
+.nav-link {
     width: 10rem; /* Utilisation de rem pour une taille relative */
     height: 5.7rem;
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease !important; /* Ajout de l'effet de transition */
     cursor: pointer; /* Ajout de la propriété cursor pour indiquer que les éléments sont cliquables */
-  }
-  
-  .navbar-nav a:hover {
+}
+
+.navbar-nav a:hover {
     transform: scale(1.2); /* Agrandir l'image de 10% */
-  }
-  
-  .nav-link:hover,
-  .nav-link.active,
-  .container-link.agrandi .BlayeLesMines,
-  .container-link.agrandi .site2,
-  .container-link.agrandi .site3 {
+}
+
+.nav-link:hover,
+.nav-link.active,
+.container-link.agrandi .BlayeLesMines,
+.container-link.agrandi .site2,
+.container-link.agrandi .site3 {
     background: #B8DDFF;
     border-radius: 0.5rem; /* Utilisation de rem pour une taille relative */
-  }
-  
-  .navbar-nav a .navbar-text {
+}
+
+.navbar-nav a .navbar-text {
     font-size: 1rem;
-  }
-  
-  .navbar-text {
+}
+
+.navbar-text {
     margin-top: -0.3125rem;
     white-space: nowrap;
     font-family: 'Poppins';
     font-weight: 300;
     font-style: normal;
-  }
-  
-  .hidden {
+}
+
+.hidden {
     opacity: 0;
     transition: opacity 0.5s ease;
     pointer-events: none;
-  }
-  
-  .navbar-nav.hide {
+}
+
+.navbar-nav.hide {
     opacity: 0; /* Définit l'opacité à 0 pour cacher la navbar */
     pointer-events: none; /* Désactive les événements de pointage pour empêcher les interactions */
-  }
-  
-  .navbar-nav.show {
+}
+
+.navbar-nav.show {
     opacity: 1; /* Définit l'opacité à 1 pour afficher la navbar */
     pointer-events: auto; /* Active les événements de pointage pour permettre les interactions */
-  }
-  
-  .navbar-nav li {
+}
+
+.navbar-nav li {
     transition: opacity 0.3s ease; /* Ajoute une transition en douceur pour l'opacité */
-  }
-  
-  .navbar-nav.show li {
+}
+
+.navbar-nav.show li {
     opacity: 1; /* Définit l'opacité à 1 pour afficher les éléments de la navbar */
-  }
-  
-  .navbar-nav.hide li {
+}
+
+.navbar-nav.hide li {
     opacity: 0; /* Définit l'opacité à 0 pour cacher les éléments de la navbar */
-  }
-  
+}
+
+.nav-item.active .nav-link {
+    background: #B8DDFF; /* Met en évidence l'onglet actif */
+    border-radius: 0.5rem;
+}

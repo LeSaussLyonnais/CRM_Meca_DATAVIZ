@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react';
-import '../../Styles/vueposte.css'; // Assurez-vous que le chemin du fichier CSS est correct
+import '../../Styles/vuemachine.css'; // Assurez-vous que le chemin du fichier CSS est correct
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
-export default function SelectPoste({ SelectedPoste, setSelectedPoste, AllPoste, setAllPoste }) {
-    const generePoste = () => {
-        let poste = [];
+export default function SelectMachine({ SelectedMachine, setSelectedMachine, AllMachine, setAllMachine }) {
+    const genereMachine = () => {
+        let machine = [];
         for (let i = 1; i <= 6; i++) {
-            poste.push({ poste: `Poste ${i}`, value: `Poste ${i}` });
+            machine.push({ machine: `Machine ${i}`, value: `Machine ${i}` });
         }
-        return poste;
+        return machine;
     }
 
     const initData = () => {
-        setAllPoste(generePoste());
-        setSelectedPoste(generePoste()[0]);
+        setAllMachine(genereMachine());
+        setSelectedMachine(genereMachine()[0]);
     }
 
     useEffect(() => {
@@ -24,8 +24,8 @@ export default function SelectPoste({ SelectedPoste, setSelectedPoste, AllPoste,
     }, []);
 
     const handleChange = (event) => {
-        const findPoste = AllPoste.find(poste => poste.poste === event.target.value);
-        setSelectedPoste(findPoste);
+        const findMachine = AllMachine.find(machine => machine.machine === event.target.value);
+        setSelectedMachine(findMachine);
     }
 
     return (
@@ -44,15 +44,15 @@ export default function SelectPoste({ SelectedPoste, setSelectedPoste, AllPoste,
                             },
                         }}
                     >
-                        Poste
+                        Machine
                     </InputLabel>
                     <Select
                         labelId="demo-simple-select-autowidth-label"
                         id="demo-simple-select-autowidth"
-                        value={SelectedPoste.poste}
+                        value={SelectedMachine.machine}
                         onChange={handleChange}
                         autoWidth
-                        label="Poste"
+                        label="Machine"
                         sx={{
                             fontSize: '1rem',
                             fontFamily: 'Poppins',
@@ -63,10 +63,10 @@ export default function SelectPoste({ SelectedPoste, setSelectedPoste, AllPoste,
                             },
                         }}
                     >
-                        {AllPoste.map((poste, index) => (
+                        {AllMachine.map((machine, index) => (
                             <MenuItem
                                 key={index}
-                                value={poste.value}
+                                value={machine.value}
                                 sx={{
                                     fontSize: '1rem',
                                     fontFamily: 'Poppins',
@@ -74,7 +74,7 @@ export default function SelectPoste({ SelectedPoste, setSelectedPoste, AllPoste,
                                     fontStyle: 'normal',
                                 }}
                             >
-                                {poste.poste}
+                                {machine.machine}
                             </MenuItem>
                         ))}
                     </Select>

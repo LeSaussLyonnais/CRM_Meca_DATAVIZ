@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
+const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVariable, SelectedMachine }) => {
 
     const ListOrdoHeader = [
         'Debut Ordo',
@@ -66,7 +66,7 @@ const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVari
 
     useEffect(() => {
         SetData();
-    }, [SelectedPoste])
+    }, [SelectedMachine])
 
     return (
         <div
@@ -74,8 +74,8 @@ const ListOrdo = ({ AllOrdoFixe, setAllOrdoFixe, AllOrdoVariable, setAllOrdoVari
             style={{ height: '65vh' }}
         >
             <div className='col-12 col-lg-10 d-flex justify-content-center align-items-start flex-column'>
-                <h1 className='Title_poste'>Liste d'ordonnancement</h1>
-                <p className='Subtitle_poste'>Liste fixe pour les 3 prochaines semaines et variable pour les 3 suivantes</p>
+                <h1 className='Title_machine'>Liste d'ordonnancement</h1>
+                <p className='Subtitle_machine'>Liste fixe pour les 3 prochaines semaines et variable pour les 3 suivantes</p>
             </div>
             <hr className='text-dark px-5 w-100' />
             <table className='table table-hover table-perso-1 mt-4'>

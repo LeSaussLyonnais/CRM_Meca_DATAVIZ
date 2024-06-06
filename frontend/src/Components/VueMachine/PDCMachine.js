@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const PDCPoste = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
+const PDCMachine = ({ SelectedMachine, AllPDCData, setAllPDCData }) => {
 
   const generePDC = () => {
     //Génération de la liste de PDC
@@ -27,16 +27,16 @@ const PDCPoste = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
 
   useEffect(() => {
     setData();
-  }, [SelectedPoste])
+  }, [SelectedMachine])
 
 
   return (
     <div className='col-12 container-perso-content d-flex flex-column justify-content-center align-items-start'>
       <div className='col-12 d-flex flex-column justify-content-center align-items-start px-5'>
-        <p className='Title_poste'>
-          Plan de charge : {SelectedPoste.poste}
+        <p className='Title_machine'>
+          Plan de charge : {SelectedMachine.machine}
         </p>
-        <p className='Subtitle_poste'>
+        <p className='Subtitle_machine'>
           Liste prévisionnelle pour les 6 prochaines semaines
         </p>
         <hr className='col-12' />
@@ -63,4 +63,4 @@ const PDCPoste = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
   );
 };
 
-export default PDCPoste;
+export default PDCMachine;

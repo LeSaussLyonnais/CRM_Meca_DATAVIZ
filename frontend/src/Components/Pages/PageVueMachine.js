@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import ListOrdo from '../VuePoste/listeOrdo';
-import SelectPoste from '../VuePoste/SelectPoste';
-import { RendementPoste } from '../VuePoste/RendementPoste';
-import PDCPoste from '../VuePoste/PDCPoste';
+import ListOrdo from '../VueMachine/listeOrdo';
+import SelectMachine from '../VueMachine/SelectMachine';
+import { RendementMachine } from '../VueMachine/RendementMachine';
+import PDCMachine from '../VueMachine/PDCMachine';
 import { SiteContext } from '../ContexteSelectionSite';
-import '../../Styles/vueposte.css'
+import '../../Styles/vuemachine.css'
 
-function PageVuePoste() {
-    const [SelectedPoste, setSelectedPoste] = useState({});
-    const [AllPoste, setAllPoste] = useState([]);
+function PageVueMachine() {
+    const [SelectedMachine, setSelectedMachine] = useState({});
+    const [AllMachine, setAllMachine] = useState([]);
     const [AllOrdoFixe, setAllOrdoFixe] = useState([]);
     const [AllOrdoVariable, setAllOrdoVariable] = useState([]);
     const [AllRendementData, setAllRendementData] = useState([]);
@@ -36,11 +36,11 @@ function PageVuePoste() {
                             Ordonnancement global de l'atelier :
                         </h1>
                     </div>
-                    <SelectPoste
-                        SelectedPoste={SelectedPoste}
-                        setSelectedPoste={setSelectedPoste}
-                        AllPoste={AllPoste}
-                        setAllPoste={setAllPoste}
+                    <SelectMachine
+                        SelectedMachine={SelectedMachine}
+                        setSelectedMachine={setSelectedMachine}
+                        AllMachine={AllMachine}
+                        setAllMachine={setAllMachine}
                     />
                 </div>
                 <hr className='text-dark hr-custom' />
@@ -51,19 +51,19 @@ function PageVuePoste() {
                         setAllOrdoFixe={setAllOrdoFixe}
                         AllOrdoVariable={AllOrdoVariable}
                         setAllOrdoVariable={setAllOrdoVariable}
-                        SelectedPoste={SelectedPoste}
+                        SelectedMachine={SelectedMachine}
                     />
                     <div
                         className='col-12 col-lg-4 d-flex justify-content-between align-items-center flex-column gap-2'
                         style={{ height: '65vh' }}
                     >
-                        <RendementPoste
+                        <RendementMachine
                             AllRendementData={AllRendementData}
                             setAllRendementData={setAllRendementData}
-                            SelectedPoste={SelectedPoste}
+                            SelectedMachine={SelectedMachine}
                         />
-                        <PDCPoste
-                            SelectedPoste={SelectedPoste}
+                        <PDCMachine
+                            SelectedMachine={SelectedMachine}
                             AllPDCData={AllPDCData}
                             setAllPDCData={setAllPDCData}
                         />
@@ -74,4 +74,4 @@ function PageVuePoste() {
     );
 }
 
-export default PageVuePoste;
+export default PageVueMachine;
