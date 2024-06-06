@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import ColorModifiedImage from '../ColorPngChange';
 import tour from '../../Assets/tour.png';
 import fraiseuse from '../../Assets/fraiseuse.png';
