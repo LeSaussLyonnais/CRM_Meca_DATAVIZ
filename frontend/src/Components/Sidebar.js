@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import sedeconnecter from '../Assets/sedeconnecter.png';
+import accueil from '../Assets/accueil.png'; // Importer l'image accueil
 import { SiteContext } from './ContexteSelectionSite';
 import '../Styles/sidebar.css';
 
@@ -16,10 +17,18 @@ function Sidebar({ isOpen, toggleSidebar }) {
         setSelectedWorkshop(workshop);
     };
 
+    const handleAccueilClick = () => {
+        window.location.href = '/'; // Rediriger vers la page d'accueil
+    };
+
     return (
         <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
             <button className="close-btn" onClick={toggleSidebar}>X</button>
             <div className="sidebar-content">
+                <button className="home-btn" onClick={handleAccueilClick}>
+                    <img src={accueil} alt="Accueil" className="home-icon" />
+                    Accueil
+                </button>
                 <button className="logout-btn">
                     <img src={sedeconnecter} alt="Déconnexion" className="logout-icon" />
                     Se déconnecter

@@ -4,6 +4,8 @@ import SelectMachine from '../VueMachine/SelectMachine';
 import { RendementMachine } from '../VueMachine/RendementMachine';
 import PDCMachine from '../VueMachine/PDCMachine';
 import { SiteContext } from '../ContexteSelectionSite';
+import Sidebar from '../Sidebar';
+import BoutonSidebar from '../BoutonSidebar';
 import '../../Styles/vuemachine.css'
 
 function PageVueMachine() {
@@ -15,11 +17,13 @@ function PageVueMachine() {
     const [AllPDCData, setAllPDCData] = useState([]);
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
-    const handleSiteChange = (newSite) => {
-        selectSite(newSite);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
     };
 
-    const [isActive, setIsActive] = React.useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     useEffect(() => {
         setIsActive(true);
@@ -28,6 +32,9 @@ function PageVueMachine() {
     return (
         <>
             <div className={`header-ordonnancement ${isActive ? 'active' : ''}`}></div>
+
+            <BoutonSidebar toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
             <div className='container-fluid d-flex justify-content-center align-items-center flex-column'>
                 <div className='col-12 px-5 m-3 d-flex justify-content-between align-items-center flex-row'>
