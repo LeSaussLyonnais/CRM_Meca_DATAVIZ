@@ -79,10 +79,10 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
     useEffect(() => {
 
         const setupWebSocket = () => {
-            if (!selectedSite || !selectedWorkshop || !SelectedPoste || !SelectedPoste.COFRAIS) {
+            if (!selectedSite || !selectedWorkshop || !SelectedPoste.COFRAIS) { 
                 console.error("selectedSite, selectedWorkshop, or SelectedPoste is null or SelectedPoste.COFRAIS is undefined");
                 return;
-            }
+            } //|| !SelectedPoste || !SelectedPoste.COFRAIS
 
             // Clean up the previous WebSocket connection if exists
             if (socketRef.current) {
@@ -109,7 +109,7 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
         }
 
         const UpdateFetch = async () => {
-            if (!selectedSite || !selectedWorkshop || !SelectedPoste || !SelectedPoste.COFRAIS) {
+            if (!selectedSite || !selectedWorkshop || !SelectedPoste.COFRAIS) {
                 console.error("selectedSite, selectedWorkshop, or SelectedPoste is null or SelectedPoste.COFRAIS is undefined");
                 return;
             }
@@ -141,7 +141,7 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
             UpdateFetch();
             setupWebSocket();
         }
-    }, [SelectedPoste, selectedSite, selectedWorkshop]);
+    }, [SelectedPoste]);
 
     // Cleanup WebSocket connection when the component unmounts
     useEffect(() => {
