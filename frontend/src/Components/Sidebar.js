@@ -1,19 +1,68 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import sedeconnecter from '../Assets/sedeconnecter.png';
 import accueil from '../Assets/accueil.png'; // Importer l'image accueil
 import { SiteContext } from './ContexteSelectionSite';
 import '../Styles/sidebar.css';
 
 function Sidebar({ isOpen, toggleSidebar }) {
-    const { selectedSite, setSelectedWorkshop } = useContext(SiteContext);
+    const [SitesDisponibles, setSitesDisponibles] = useState([]);
+    const [AllAteliers, setAllAteliers] = useState({});
+    const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
-    const sitesAteliers = {
-        'Blaye-Les-Mines': ['Usinage', 'Mécano soudure', 'Peinture'],
-        'Site 2': ['Mécano soudure', 'Peinture'],
-        'Site 3': ['Usinage', 'Mécano soudure']
+    useEffect(() => {
+        fetchSite();
+    }, []);
+
+    useEffect(() => {
+        if (SitesDisponibles && SitesDisponibles.Sites) {
+            SitesDisponibles.Sites.forEach((site) => {
+                if (site.COSECT) {
+                    fetchAtelier(site);
+                }
+            });
+        }
+    }, [SitesDisponibles]);
+
+    const fetchSite = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/BlogApp/getSite', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            console.log(data);
+            setSitesDisponibles(data);
+        } catch (error) {
+            console.error('Error fetching sites:', error);
+        }
     };
 
-    const handleWorkshopClick = (workshop) => {
+    const fetchAtelier = async (site) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/BlogApp/getAtelier', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    site: site.COSECT,
+                }),
+            });
+            const data = await response.json();
+            console.log(data);
+            setAllAteliers((prevAteliers) => ({
+                ...prevAteliers,
+                [site.Libelle_Site]: data.Ateliers.map((atelier) => atelier.Libelle_Atelier),
+            }));
+        } catch (error) {
+            console.error('Error fetching ateliers:', error);
+        }
+    };
+
+    const handleWorkshopClick = (workshop, site) => {
+        setSelectedSite(site)
         setSelectedWorkshop(workshop);
     };
 
@@ -35,11 +84,13 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 </button>
                 <hr />
                 <ul>
-                    {Object.keys(sitesAteliers).map((site, index) => (
+                    {Object.keys(AllAteliers).map((site, index) => (
                         <React.Fragment key={index}>
-                            <li className="site">{site}</li>
-                            {sitesAteliers[site].map((atelier, idx) => (
-                                <li key={idx} className="atelier" onClick={() => handleWorkshopClick(atelier)}>{atelier}</li>
+                            <li className="site" onClick={() => setSelectedSite(site)}>{site}</li>
+                            {AllAteliers[site].map((atelier, idx) => (
+                                <li key={idx} className="atelier" onClick={() => handleWorkshopClick(atelier, site)}>
+                                    {atelier}
+                                </li>
                             ))}
                         </React.Fragment>
                     ))}
