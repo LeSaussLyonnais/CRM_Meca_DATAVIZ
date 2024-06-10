@@ -62,8 +62,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
     };
 
     const handleWorkshopClick = (workshop, site) => {
-        setSelectedSite(site)
-        setSelectedWorkshop(workshop);
+        setSelectedSite(SitesDisponibles.Sites.find(item =>item.Libelle_Site === site))
+        setSelectedWorkshop({"Libelle_Atelier":workshop});
     };
 
     const handleAccueilClick = () => {
@@ -86,7 +86,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 <ul>
                     {Object.keys(AllAteliers).map((site, index) => (
                         <React.Fragment key={index}>
-                            <li className="site" onClick={() => setSelectedSite(site)}>{site}</li>
+                            <li className="site" onClick={() => setSelectedSite(SitesDisponibles.Sites.find(item =>item.Libelle_Site === site))}>{site}</li>
                             {AllAteliers[site].map((atelier, idx) => (
                                 <li key={idx} className="atelier" onClick={() => handleWorkshopClick(atelier, site)}>
                                     {atelier}

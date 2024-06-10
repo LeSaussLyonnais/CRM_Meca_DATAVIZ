@@ -12,6 +12,8 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
         'Rang',
         'Pièce mère',
         'Phase',
+        'Phase Precedente',
+        'Phase Suivante',
         'Qté restante',
         'Temps prévu',
         'Temps écoulé'
@@ -191,6 +193,8 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
                             <td>{ordo.RANG}</td>
                             <td>{ordo.EN_PIECE}</td>
                             <td>{ordo.PHASE}</td>
+                            <td>{ordo.PHASE_AVANT}</td>
+                            <td>{ordo.PHASE_SUIVANTE}</td>
                             <td>{ordo.QTEAF}</td>
                             <td>{ordo.TOTAL_TEMPS}h</td>
                             <td>{ordo.GA_NBHR}h</td>
