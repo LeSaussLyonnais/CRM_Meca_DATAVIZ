@@ -79,8 +79,8 @@
                         ordo: null
                     }
                 }, created(){
-                    const nomPoste = "{{ nom_poste }}";
-                    const socket = new WebSocket(`ws://${window.location.host}/ws/ordo/${nomPoste}/`);
+                    const nom_poste = "{{ nom_poste }}";
+                    const socket = new WebSocket(`ws://${window.location.host}/ws/ordo/${nom_poste}/`);
 
                     let _this = this;
 

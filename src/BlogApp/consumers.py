@@ -3,19 +3,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.cache import cache
 from .models import Setup, Setup_OF
- 
-
-class WeatherConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.channel_layer.group_add('weathers', self.channel_name)
-        await self.accept()
-
-    async def disconnect(self, code):
-        await self.channel_layer.group_discard('weathers', self.channel_name)
-
-    async def send_new_data(self, event):
-        new_data = event['text']
-        await self.send(json.dumps(new_data))
 
 
 class PlanChargeConsumer(AsyncWebsocketConsumer):
@@ -27,7 +14,13 @@ class PlanChargeConsumer(AsyncWebsocketConsumer):
         self.atelier = self.scope.get("url_route").get("kwargs").get("nom_atelier")
         self.annee = self.scope.get("url_route").get("kwargs").get("num_annee")
         self.semaine = self.scope.get("url_route").get("kwargs").get("num_semaine")
-        self.group_name = f"charge_{self.site}_{self.atelier}_{self.annee}_{self.semaine}"
+
+        self.ch_site = self.site.strip()
+        self.ch_atelier = self.atelier.strip()
+        self.ch_annee = self.annee.strip()
+        self.ch_semaine = self.semaine.strip()
+
+        self.group_name = f"charge_{self.ch_site}_{self.ch_atelier}_{self.ch_annee}_{self.ch_semaine}"
         await self.channel_layer.group_add(
             self.group_name, 
             self.channel_name
@@ -36,8 +29,8 @@ class PlanChargeConsumer(AsyncWebsocketConsumer):
         cache_key = f"{self.group_name}_count"
         current_count = cache.get(cache_key, 0)
         cache.set(cache_key, current_count + 1)
-        print(current_count)
         await self.accept()
+        print(current_count)
 
     async def disconnect(self, code):
         #Cette méthode est appelée lorsque le client se déconnecte du serveur WebSocket, soit volontairement soit suite à une erreur.
@@ -81,8 +74,11 @@ class ListeOrdoConsumer(AsyncWebsocketConsumer):
         #Cette méthode est appelée lorsque le client WebSocket se connecte au serveur.
         #Elle ajoute le canal (channel) de la connexion à un groupe spécifique nommé 'charge'. Cela permet de regrouper plusieurs connexions WebSocket pour un traitement groupé. Le nom du groupe est arbitraire et peut être défini selon les besoins de votre application.
         #Enfin, elle accepte la connexion WebSocket.
-        self.nom_poste = self.scope.get("url_route").get("kwargs").get("nom_poste")
-        self.group_name = f"ordo_{self.nom_poste}"
+        self.nom_poste = self.scope.get("url_route").get("kwargs").get("nom_poste") 
+
+        self.ch_nom_poste = self.nom_poste.strip()
+
+        self.group_name = f"ordo_{self.ch_nom_poste}"
         await self.channel_layer.group_add(
             self.group_name, 
             self.channel_name
@@ -91,8 +87,8 @@ class ListeOrdoConsumer(AsyncWebsocketConsumer):
         cache_key = f"{self.group_name}_count"
         current_count = cache.get(cache_key, 0)
         cache.set(cache_key, current_count + 1)
-        print(current_count)
         await self.accept()
+        print(current_count)
 
     async def disconnect(self, code):
         #Cette méthode est appelée lorsque le client se déconnecte du serveur WebSocket, soit volontairement soit suite à une erreur.

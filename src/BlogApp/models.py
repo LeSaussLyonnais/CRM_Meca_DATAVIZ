@@ -285,7 +285,7 @@ class Setup_OF(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     time_interval = EnumChoiceField(
         TimeInterval, default=TimeInterval.ten_secs)
-    nom_poste = models.CharField(max_length=70, default='C35-2', blank=False)
+    nom_poste = models.CharField(max_length=70, blank=False)
     task = models.OneToOneField(
         PeriodicTask,
         on_delete=models.CASCADE,

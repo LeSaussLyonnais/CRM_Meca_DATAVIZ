@@ -14,7 +14,6 @@ const TableContainerPDC = ({ semaineSelected }) => {
     const socketRef = useRef(null); // Ref to store the current WebSocket connection
 
     useEffect(() => {
-
         const setupWebSocket = () => {
             if (!selectedSite || !selectedWorkshop) {
                 console.error("selectedSite or selectedWorkshop is null");

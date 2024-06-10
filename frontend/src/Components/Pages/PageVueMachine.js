@@ -7,8 +7,10 @@ import { SiteContext } from '../ContexteSelectionSite';
 import '../../Styles/vuemachine.css'
 
 function PageVueMachine() {
-    const [SelectedMachine, setSelectedMachine] = useState({});
-    const [AllMachine, setAllMachine] = useState([]);
+    // const [SelectedMachine, setSelectedMachine] = useState({});
+    // const [AllMachine, setAllMachine] = useState([]);
+    const [SelectedPoste, setSelectedPoste] = useState({});
+    const [PostesDisponibles, setPostesDisponibles] = useState([]);
     const [AllOrdoFixe, setAllOrdoFixe] = useState([]);
     const [AllOrdoVariable, setAllOrdoVariable] = useState([]);
     const [AllRendementData, setAllRendementData] = useState([]);
@@ -25,6 +27,9 @@ function PageVueMachine() {
         setIsActive(true);
     }, []);
 
+    
+
+
     return (
         <>
             <div className={`header-ordonnancement ${isActive ? 'active' : ''}`}></div>
@@ -37,10 +42,10 @@ function PageVueMachine() {
                         </h1>
                     </div>
                     <SelectMachine
-                        SelectedMachine={SelectedMachine}
-                        setSelectedMachine={setSelectedMachine}
-                        AllMachine={AllMachine}
-                        setAllMachine={setAllMachine}
+                        SelectedPoste={SelectedPoste}
+                        setSelectedPoste={setSelectedPoste}
+                        PostesDisponibles={PostesDisponibles}
+                        setPostesDisponibles={setPostesDisponibles}
                     />
                 </div>
                 <hr className='text-dark hr-custom' />
@@ -51,7 +56,7 @@ function PageVueMachine() {
                         setAllOrdoFixe={setAllOrdoFixe}
                         AllOrdoVariable={AllOrdoVariable}
                         setAllOrdoVariable={setAllOrdoVariable}
-                        SelectedMachine={SelectedMachine}
+                        SelectedPoste={SelectedPoste}
                     />
                     <div
                         className='col-12 col-lg-4 d-flex justify-content-between align-items-center flex-column gap-2'
@@ -60,10 +65,10 @@ function PageVueMachine() {
                         <RendementMachine
                             AllRendementData={AllRendementData}
                             setAllRendementData={setAllRendementData}
-                            SelectedMachine={SelectedMachine}
+                            SelectedPoste={SelectedPoste}
                         />
                         <PDCMachine
-                            SelectedMachine={SelectedMachine}
+                            SelectedPoste={SelectedPoste}
                             AllPDCData={AllPDCData}
                             setAllPDCData={setAllPDCData}
                         />
