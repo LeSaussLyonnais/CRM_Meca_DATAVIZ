@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import ColorModifiedImage from '../ColorPngChange';
 import tour from '../../Assets/tour.png';
 import fraiseuse from '../../Assets/fraiseuse.png';
@@ -6,38 +6,43 @@ import soudure from '../../Assets/soudure.png';
 import peinture from '../../Assets/peinture.png';
 import { SiteContext } from '../ContexteSelectionSite';
 
+    
 const TableContainerPDC = ({ semaineSelected }) => {
     const [PDCsemaine, setPDCsemaine] = useState([]);
     const annee = '2024';
     const { selectedSite, selectedWorkshop } = useContext(SiteContext);
+    const socketRef = useRef(null); // Ref to store the current WebSocket connection
 
     useEffect(() => {
-        const fetchData = async () => {
+        const setupWebSocket = () => {
             if (!selectedSite || !selectedWorkshop) {
                 console.error("selectedSite or selectedWorkshop is null");
                 return;
             }
 
-            const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`);
+            // Clean up the previous WebSocket connection if exists
+            if (socketRef.current) {
+                socketRef.current.close();
+            }
+
+            // Effect hook pour gérer la connexion websocket
+            const socket = new WebSocket(`ws://127.0.0.1:8000/ws/charge/${selectedSite.COSECT}/${selectedWorkshop.Libelle_Atelier}/${annee}/${semaineSelected}/`); //${window.location.host}
 
             socket.onmessage = function (event) {
                 console.log('Received data:', event.data);
-                const parsedData = JSON.parse(event.data);
-                setPDCsemaine(parsedData);
-            };
+                setPDCsemaine(JSON.parse(event.data)); // Assuming the received data is JSON
+            }
 
-            socket.onopen = () => {
-                console.log('WebSocket connected');
-            };
+            socket.onclose = function (event) {
+                console.log('WebSocket closed:', event);
+            }
 
-            socket.onerror = (error) => {
-                console.error('WebSocket Error: ', error);
-            };
+            socket.onerror = function (error) {
+                console.error('WebSocket error:', error);
+            }
 
-            return () => {
-                socket.close();
-            };
-        };
+            socketRef.current = socket;
+        }
 
         const UpdateFetch = async () => {
             if (!selectedSite || !selectedWorkshop) {
@@ -73,9 +78,18 @@ const TableContainerPDC = ({ semaineSelected }) => {
 
         if (semaineSelected && selectedSite && selectedWorkshop) {
             UpdateFetch();
-            fetchData();
+            setupWebSocket();
         }
     }, [semaineSelected, selectedSite, selectedWorkshop]);
+
+    // Cleanup WebSocket connection when the component unmounts
+    useEffect(() => {
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.close();
+            }
+        }
+    }, []);
 
     return (
         <div className='d-flex flex-column justify-content-center align-items-center container-perso-content m-3 p-3'>

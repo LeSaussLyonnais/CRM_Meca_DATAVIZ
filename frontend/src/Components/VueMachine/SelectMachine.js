@@ -1,36 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import '../../Styles/vuemachine.css'; // Assurez-vous que le chemin du fichier CSS est correct
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import { SiteContext } from '../ContexteSelectionSite';
 
-export default function SelectMachine({ SelectedMachine, setSelectedMachine, AllMachine, setAllMachine }) {
-    const genereMachine = () => {
-        let machine = [];
-        for (let i = 1; i <= 6; i++) {
-            machine.push({ machine: `Machine ${i}`, value: `Machine ${i}` });
-        }
-        return machine;
-    }
-
-    const initData = () => {
-        setAllMachine(genereMachine());
-        setSelectedMachine(genereMachine()[0]);
-    }
+export default function SelectMachine({ SelectedPoste, setSelectedPoste, PostesDisponibles, setPostesDisponibles }) {
+    const { selectedSite, selectedWorkshop } = useContext(SiteContext);
+    const isFetching = useRef(false);
 
     useEffect(() => {
-        initData();
-    }, []);
+        const fetchPostes = async () => {
+            if (isFetching.current) return; // Évite les appels redondants
+            isFetching.current = true;
 
-    const handleChange = (event) => {
-        const findMachine = AllMachine.find(machine => machine.machine === event.target.value);
-        setSelectedMachine(findMachine);
-    }
+            try {
+                console.log(selectedWorkshop);
+                const response = await fetch('http://127.0.0.1:8000/BlogApp/Ordo_getPoste', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        atelier: selectedWorkshop.Libelle_Atelier,
+                    }),
+                });
+                const data = await response.json();
+
+                setPostesDisponibles(data.Postes);
+                setSelectedPoste(data.Postes[0]);
+            } catch (error) {
+                console.error('Error fetching postes:', error);
+            } finally {
+                isFetching.current = false;
+            }
+        };
+
+        if (selectedSite && selectedWorkshop) {
+            fetchPostes();
+        }
+    }, [selectedWorkshop, selectedSite, setPostesDisponibles, setSelectedPoste]);
+
+    const handlePosteClick = (event) => {
+        const findPoste = PostesDisponibles.find(poste => poste.COFRAIS === event.target.value);
+        setSelectedPoste(findPoste);
+    };
 
     return (
         <div className='col-5 d-flex flex-row justify-content-end align-items-center'>
-            <div className="form-group custom-select"> {/* Ajout de la classe custom-select */}
+            <div className="form-group custom-select">
                 <FormControl sx={{ m: 1, minWidth: 140 }}>
                     <InputLabel
                         id="demo-simple-select-autowidth-label"
@@ -40,7 +59,7 @@ export default function SelectMachine({ SelectedMachine, setSelectedMachine, All
                             fontWeight: 500,
                             fontStyle: 'normal',
                             '&.Mui-focused': {
-                                color: '#4972B7', // Change la couleur du label lorsqu'il devient petit et se déplace vers le haut
+                                color: '#4972B7',
                             },
                         }}
                     >
@@ -49,8 +68,8 @@ export default function SelectMachine({ SelectedMachine, setSelectedMachine, All
                     <Select
                         labelId="demo-simple-select-autowidth-label"
                         id="demo-simple-select-autowidth"
-                        value={SelectedMachine.machine}
-                        onChange={handleChange}
+                        value={SelectedPoste?.COFRAIS || ''}
+                        onChange={handlePosteClick}
                         autoWidth
                         label="Machine"
                         sx={{
@@ -59,14 +78,14 @@ export default function SelectMachine({ SelectedMachine, setSelectedMachine, All
                             fontWeight: 500,
                             fontStyle: 'normal',
                             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#4972B7', // Change la couleur de la bordure lorsqu'il est en focus
+                                borderColor: '#4972B7',
                             },
                         }}
                     >
-                        {AllMachine.map((machine, index) => (
+                        {PostesDisponibles && PostesDisponibles.map((poste, index) => (
                             <MenuItem
                                 key={index}
-                                value={machine.value}
+                                value={poste.COFRAIS}
                                 sx={{
                                     fontSize: '1rem',
                                     fontFamily: 'Poppins',
@@ -74,7 +93,7 @@ export default function SelectMachine({ SelectedMachine, setSelectedMachine, All
                                     fontStyle: 'normal',
                                 }}
                             >
-                                {machine.machine}
+                                {poste.COFRAIS}
                             </MenuItem>
                         ))}
                     </Select>

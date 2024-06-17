@@ -325,8 +325,12 @@ def get_plancharge_data_mdb(setup_id):
 
     charges = list(resultats)
 
+    ch_site = site.strip()
+    ch_atelier = atelier.strip()
+    ch_annee = str(annee).strip()
+    ch_semaine = str(semaine).strip()
     async_to_sync(channel_layer.group_send)(
-        "charge_"+site+"_"+atelier+"_"+str(annee)+"_"+str(semaine), 
+        "charge_"+ch_site+"_"+ch_atelier+"_"+ch_annee+"_"+ch_semaine, 
         {
             'type': 'send_new_data', 
             'text': charges
@@ -336,7 +340,11 @@ def get_plancharge_data_mdb(setup_id):
 
 @shared_task(name="get_ordo_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_ordo_data_mdb(setup_id):
-    setup_of = Setup_OF.objects.get(id=setup_id)
+    try:
+        setup_of = Setup_OF.objects.get(id=setup_id)
+    except Setup_OF.DoesNotExist:
+        logger.error(f"Setup_OF with id {setup_id} does not exist")
+        return
 
     # Do heavy computation with variables in setup model here.
     poste = setup_of.nom_poste
@@ -397,9 +405,9 @@ def get_ordo_data_mdb(setup_id):
         # Si vous souhaitez ajouter le résultat de la sous-requête dans 'ordo'
         ordo['PHASE_SUIVANTE'] = subquery_phase_suivante[0]['OF_Poste_ID'] if subquery_phase_suivante.exists() else None
 
-
+    ch_poste = poste.strip()
     async_to_sync(channel_layer.group_send)(
-        "ordo_"+poste, 
+        "ordo_"+ch_poste, 
         {
             'type': 'send_new_data', 
             'text': ordos

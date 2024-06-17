@@ -2,26 +2,34 @@ import React, { useEffect, useState, useContext } from 'react';
 import TableContainerPDC from '../PDC/TableContainerPDC';
 import SelectSemaine from '../PDC/SelectSemaine';
 import { SiteContext } from '../ContexteSelectionSite';
-import '../../Styles/plandecharge.css'
-
-
+import Sidebar from '../Sidebar';
+import BoutonSidebar from '../BoutonSidebar';
+import '../../Styles/plandecharge.css';
 
 function PagePlanDeCharge() {
-    const [PDCsemaine, setPDCsemaine] = useState([]); // Ici, définissez correctement PDCsemaine
+    const [PDCsemaine, setPDCsemaine] = useState([]);
     const [semaineSelected, setsemaineSelected] = useState(null);
     const { selectedSite, setSelectedSite, selectedWorkshop, setSelectedWorkshop } = useContext(SiteContext);
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const [isActive, setIsActive] = React.useState(false);
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
-    React.useEffect(() => {
+    const [isActive, setIsActive] = useState(false);
+
+    useEffect(() => {
         setIsActive(true);
     }, []);
 
     return (
         <>
-            <div className={`header-plandecharge ${isActive ? 'active' : ''}`}>
-            </div>
+            <div className={`header-plandecharge ${isActive ? 'active' : ''}`}></div>
+
+            <BoutonSidebar toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
             <div className='container-fluid d-flex justify-content-center align-items-center flex-column'>
                 <div className='col-12 px-5 m-3'>
                     <div className='col-10 col-lg-5 d-flex justify-content-center align-items-start flex-column'>
@@ -29,7 +37,7 @@ function PagePlanDeCharge() {
                         <h2 className='display-perso-4 px-2'>Indication de la charge sur la semaine sélectionnée</h2>
                     </div>
                     <SelectSemaine
-                        PDCsemaine={PDCsemaine} // Assurez-vous que PDCsemaine est défini ici
+                        PDCsemaine={PDCsemaine}
                         semaineSelected={semaineSelected}
                         setPDCsemaine={setPDCsemaine}
                         setsemaineSelected={setsemaineSelected}

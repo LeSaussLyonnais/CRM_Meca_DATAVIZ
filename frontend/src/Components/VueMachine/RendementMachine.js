@@ -10,7 +10,7 @@ import {
   Legend,
 } from 'chart.js/auto';
 
-export function RendementMachine({ AllRendementData, setAllRendementData, SelectedMachine }) {
+export function RendementMachine({ AllRendementData, setAllRendementData, SelectedPoste }) {
 
   const generateData = () => {
     const data = [];
@@ -97,7 +97,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
 
   useEffect(() => {
     setData();
-  }, [SelectedMachine]);
+  }, [SelectedPoste]);
 
   const setData = () => {
     const data = generateData();
@@ -108,7 +108,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
     <div className='col-12 container-perso-content d-flex flex-column justify-content-center align-items-start'>
       <div className='col-12 d-flex flex-column justify-content-center align-items-start px-5'>
         <p className='Title_machine'>
-          Rendement du machine : {SelectedMachine.machine}
+          Rendement du machine : {SelectedPoste.COFRAIS}
 
         </p>
         <p className='Subtitle_machine'>
