@@ -29,6 +29,18 @@ class SetupAdmin(admin.ModelAdmin):
         '__str__'
     ]
 
+@admin.register(Setup_Last10OF)
+class SetupAdmin(admin.ModelAdmin):
+    list_display = [
+        '__str__'
+    ]
+
+@admin.register(Setup_PDCMachine)
+class SetupAdmin(admin.ModelAdmin):
+    list_display = [
+        '__str__'
+    ]
+
 
 """
 Credentials SuperUser : 

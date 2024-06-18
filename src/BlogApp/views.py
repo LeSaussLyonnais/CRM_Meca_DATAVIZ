@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 from rest_framework.views import APIView
@@ -34,32 +35,6 @@ def index(request):
     '''
     #print(response.json())
     return render(request, "BlogApp/index.html") # ", context={'weather': weather}"
-
-
-
-@api_view(['POST'])
-def endpt_pdc_tache(request):
-    request_data = request.data
-
-    num_semaine = request_data.get('num_semaine')
-    num_annee = request_data.get('num_annee')
-    nom_atelier = request_data.get('nom_atelier')
-    nom_site = request_data.get('nom_site')
-    interval = TimeInterval.five_secs
-    title = f"Setup_{nom_site}_{nom_atelier}_{num_annee}_{num_semaine}"
-
-    setup_pdc, created = Setup.objects.get_or_create(
-        title=title, 
-        defaults={
-            'time_interval': interval,
-            'nom_site': nom_site, 
-            'nom_atelier': nom_atelier, 
-            'num_annee': num_annee, 
-            'num_semaine': num_semaine
-        }
-    )
-
-    return Response({'PDC_Semaine': "PDC Semaine "+str(num_semaine)+" generated"}, status=201)
 
 # @api_view(['POST'])
 class TachePDCView(View):
@@ -95,15 +70,6 @@ class TachePDCView(View):
             }
         )
 
-    def delete(self, request, *args, **kwargs):
-        # Supprimer la tâche périodique lorsque l'utilisateur quitte la vue
-        try:
-            setup_pdc = Setup.objects.get(title=self.title)
-            setup_pdc.delete()
-            return HttpResponse(f"Setup {self.num_semaine} supprimée")
-        except PeriodicTask.DoesNotExist:
-            return HttpResponse(f"Setup {self.num_semaine} non trouvée", status=404)
-
 
 class TacheListeOrdoView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -128,6 +94,94 @@ class TacheListeOrdoView(View):
                 'nom_poste': self.nom_poste
             }
         )
+
+
+class TacheLast10OFView(View):
+    def dispatch(self, request, *args, **kwargs):
+        # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
+        self.nom_poste = kwargs.get('nom_poste')
+        self.interval = TimeInterval.five_secs
+        self.title = f"Setup_Last10OF_{self.nom_poste}"
+        # Utiliser get_or_create pour éviter de dupliquer l'objet
+        self.setup_last10OF, created = Setup_Last10OF.objects.get_or_create(
+            title=self.title, 
+            defaults={
+                'time_interval': self.interval,
+                'nom_poste': self.nom_poste
+            }
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, 'BlogApp/Last10OF.html',
+            context={
+                'nom_poste': self.nom_poste
+            }
+        )
+
+
+class TachePDCMachineView(View):
+    def dispatch(self, request, *args, **kwargs):
+        # Créer la tâche périodique uniquement lorsque l'utilisateur accède à la vue
+        self.num_semaine = kwargs.get('num_semaine')
+        self.num_annee = kwargs.get('num_annee')
+        self.nom_poste = kwargs.get('nom_poste')
+        self.interval = TimeInterval.five_secs
+        self.title = f"Setup_PDCMachine_{self.nom_poste}_{self.num_annee}_{self.num_semaine}"
+        # Utiliser get_or_create pour éviter de dupliquer l'objet
+        self.setup_pdc_machine, created = Setup_PDCMachine.objects.get_or_create(
+            title=self.title, 
+            defaults={
+                'time_interval': self.interval,
+                'nom_poste': self.nom_poste,
+                'num_annee': self.num_annee, 
+                'num_semaine': self.num_semaine
+            }
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, 'BlogApp/PDCMachine.html',
+            context={
+                'nom_site': self.nom_site,
+                'nom_atelier': self.nom_atelier,
+                'num_annee': self.num_annee, 
+                'num_semaine': self.num_semaine
+            }
+        )
+
+################################################################################################
+###################################### Section Vues REACT ######################################
+################################################################################################
+
+@api_view(['POST'])
+def endpt_pdc_tache(request):
+    """
+    Fonction pour générer la tâche get ordo data mdb
+    """
+    request_data = request.data
+
+    num_semaine = request_data.get('num_semaine')
+    num_annee = request_data.get('num_annee')
+    nom_atelier = request_data.get('nom_atelier')
+    nom_site = request_data.get('nom_site')
+    interval = TimeInterval.five_secs
+    title = f"Setup_{nom_site}_{nom_atelier}_{num_annee}_{num_semaine}"
+
+    setup_pdc, created = Setup.objects.get_or_create(
+        title=title, 
+        defaults={
+            'time_interval': interval,
+            'nom_site': nom_site, 
+            'nom_atelier': nom_atelier, 
+            'num_annee': num_annee, 
+            'num_semaine': num_semaine
+        }
+    )
+
+    return Response({'PDC_Semaine': "PDC Semaine "+str(num_semaine)+" generated"}, status=201)
 
 
 @api_view(['POST'])
@@ -170,7 +224,55 @@ def endpt_ordo_tache(request):
         }
     )
 
-    return Response({'Ordo_Poste': f"Ordo Poste {nom_poste} generated"}, status=201)    
+    return Response({'Ordo_Poste': f"Ordo Poste {nom_poste} generated"}, status=201)
+
+
+@api_view(['POST'])
+def endpt_last10of_tache(request):
+    request_data = request.data
+
+    nom_poste = request_data.get('nom_poste')
+    if not nom_poste:
+        return Response({'error': 'nom_poste is required'}, status=400)
+
+    interval = TimeInterval.five_secs
+    title = f"Setup_Last10OF_{nom_poste}"
+
+    setup_last10of, created = Setup_Last10OF.objects.get_or_create(
+        title=title, 
+        defaults={
+            'time_interval': interval,
+            'nom_poste': nom_poste
+        }
+    )
+
+    return Response({'Last10OF_Poste': f"Last 10 OF Poste {nom_poste} generated"}, status=201)
+
+
+@api_view(['POST'])
+def endpt_pdc_machine_tache(request):
+    request_data = request.data
+
+    num_semaine = request_data.get('num_semaine')
+    num_annee = request_data.get('num_annee')
+    nom_poste = request_data.get('nom_poste')
+    if not nom_poste:
+        return Response({'error': 'nom_poste is required'}, status=400)
+
+    interval = TimeInterval.five_secs
+    title = f"Setup_PDCMachine_{nom_poste}_{num_annee}_{num_semaine}"
+
+    setup_pdc_machine, created = Setup_PDCMachine.objects.get_or_create(
+        title=title, 
+        defaults={
+            'time_interval': interval,
+            'nom_poste': nom_poste,
+            'num_annee': num_annee, 
+            'num_semaine': num_semaine
+        }
+    )
+
+    return Response({'PDC_Machine': f"PDC Machine {nom_poste} generated"}, status=201)     
 
 
 #Vues React
@@ -178,7 +280,9 @@ def endpt_ordo_tache(request):
 def endpt_getsite(request):
     request_data = request.data
 
-    sites = Site.objects.values(
+    sites = Site.objects.filter(
+        ~Q(Libelle_Site='Site XXX'), Q(Libelle_Site='Site XXX') | ~Q(Libelle_Site='Site XXX'), ~Q(Libelle_Site='Site XXX')
+    ).values(
         'COSECT',
         'Libelle_Site'
     )
