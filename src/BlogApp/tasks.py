@@ -16,6 +16,7 @@ import pypyodbc
 import pandas as pd
 import datetime
 from datetime import date
+from dateutil.relativedelta import relativedelta
 import os
 import subprocess
 
@@ -193,7 +194,6 @@ def get_ordo_data_erp():
     formatted_date_today = date_today.strftime('%Y%m%d%H%M%S')
     date_limit = date_today + datetime.timedelta(days=42)
     formatted_date_limit = date_limit.strftime('%Y%m%d')
-    print(formatted_date_limit)
 
     # Create a connection object.
     connection_object: pypyodbc.Connection = pypyodbc.connect('DRIVER={HFSQL}; \
@@ -209,7 +209,6 @@ def get_ordo_data_erp():
 
     # Define the Select Query.
     sql_select = "SELECT GAMME.GACLEUNIK, \
-                    CHARGE.DAT as DATE_CHARGE, \
                     CHARGRES.DAT as DATE_ORDO, \
                     CHARGRES.HEUREDEB as HEURE_ORDO, \
                     CLIENT.NOM as CLIENT_NOM, \
@@ -234,8 +233,9 @@ def get_ordo_data_erp():
                     LEFT JOIN CHARGRES ON GAMME.GACLEUNIK = CHARGRES.GACLEUNIK \
                     LEFT JOIN CHARGE ON GAMME.GACLEUNIK = CHARGE.GACLEUNIK \
                     WHERE AFFAIRE.TYPEAF = 1 \
-                    AND DATE_CHARGE >= '"+formatted_date_today+"' \
-                    AND DATE_CHARGE <= '"+formatted_date_limit+"'" # Voir pour enlever la borne inférieure en prod sur BDD CRM et mettre DATE_CHARGE IS NOT NULL
+                    AND CHARGE.DAT >= '"+formatted_date_today+"' \
+                    AND CHARGE.DAT <= '"+formatted_date_limit+"'" # Voir pour enlever la borne inférieure en prod sur BDD CRM et mettre DATE_CHARGE IS NOT NULL
+                    # CHARGE.DAT as DATE_CHARGE, \
     cursor_object.execute(sql_select)
 
     # Define the column names.
@@ -256,7 +256,7 @@ def get_ordo_data_erp():
     # ordo_df['dateordoold'] = ordo_df['dateordoold'].dt.tz_localize('UTC', ambiguous='NaT', nonexistent='shift_forward')
 
     # Traiter les valeurs NaT avant d'utiliser le DataFrame
-    ordo_df['date_charge'] = ordo_df['date_charge'].astype(object).where(ordo_df['date_charge'].notnull(), None)
+    # ordo_df['date_charge'] = ordo_df['date_charge'].astype(object).where(ordo_df['date_charge'].notnull(), None)
     ordo_df['date_ordo'] = ordo_df['date_ordo'].astype(object).where(ordo_df['date_ordo'].notnull(), None)
     ordo_df['heure_ordo'] = ordo_df['heure_ordo'].astype(object).where(ordo_df['heure_ordo'].notnull(), None)
     # ordo_df['dateordoold'] = ordo_df['dateordoold'].astype(object).where(ordo_df['dateordoold'].notnull(), None)    
@@ -294,7 +294,7 @@ def get_ordo_data_erp():
         # Créer la Charge correspondante
         of_obj, of_created = Ordre_Frabrication.objects.get_or_create(
             GACLEUNIK=ordo['gacleunik'],
-            DATE_CHARGE=ordo['date_charge'],
+            # DATE_CHARGE=ordo['date_charge'],
             NAF=ordo['naf'],
             RANG=ordo['rang'],
             OF_Poste_ID=poste
@@ -304,7 +304,7 @@ def get_ordo_data_erp():
         poste.COFRAIS = ordo['cofrais']
         of_obj.OF_Poste_ID = poste
         of_obj.GACLEUNIK = ordo['gacleunik']
-        of_obj.DATE_CHARGE = ordo['date_charge']
+        # of_obj.DATE_CHARGE = ordo['date_charge']
         of_obj.DATE_ORDO = ordo['date_ordo']
         of_obj.HEURE_ORDO = ordo['heure_ordo']
         # of_obj.DATEORDOOLD = ordo['dateordoold']
@@ -337,7 +337,7 @@ def get_last10of_data_erp():
 
     # Variables dates
     date_today = datetime.datetime.today()
-    date_limit = date_today + datetime.timedelta(days=42)
+    date_limit = date_today - relativedelta(years=1)
     formatted_date_limit = date_limit.strftime('%Y%m%d')
     print(formatted_date_limit)
 
@@ -355,7 +355,6 @@ def get_last10of_data_erp():
 
     # Define the Select Query.
     sql_select = "SELECT GAMME.GACLEUNIK, \
-                    CHARGE.DAT as DATE_CHARGE, \
                     CHARGRES.DAT as DATE_ORDO, \
                     CHARGRES.HEUREDEB as HEURE_ORDO, \
                     GAMME.DATEORDOOLD, \
@@ -385,9 +384,11 @@ def get_last10of_data_erp():
                     AND OPFINIE like 'O' \
                     AND GAMME.DATEORDOOLD IS NOT NULL \
                     AND GAMME.DATEORDOOLD <> '00000000000000000' \
+                    AND GAMME.DATEORDOOLD > '"+formatted_date_limit+"' \
                     AND CFRAIS.COSECT IS NOT NULL"
+                    # CHARGE.DAT as DATE_CHARGE, \
     cursor_object.execute(sql_select)
-
+                    
 
     # Define the column names.
     #columns = [column[0] for column in cursor_object.statistics]
@@ -407,7 +408,7 @@ def get_last10of_data_erp():
     last10of_df['dateordoold'] = last10of_df['dateordoold'].dt.tz_localize('UTC', ambiguous='NaT', nonexistent='shift_forward')
 
     # Traiter les valeurs NaT avant d'utiliser le DataFrame
-    last10of_df['date_charge'] = last10of_df['date_charge'].astype(object).where(last10of_df['date_charge'].notnull(), None)
+    # last10of_df['date_charge'] = last10of_df['date_charge'].astype(object).where(last10of_df['date_charge'].notnull(), None)
     last10of_df['date_ordo'] = last10of_df['date_ordo'].astype(object).where(last10of_df['date_ordo'].notnull(), None)
     last10of_df['heure_ordo'] = last10of_df['heure_ordo'].astype(object).where(last10of_df['heure_ordo'].notnull(), None)
     last10of_df['dateordoold'] = last10of_df['dateordoold'].astype(object).where(last10of_df['dateordoold'].notnull(), None)    
@@ -446,7 +447,7 @@ def get_last10of_data_erp():
         # Créer la Charge correspondante
         of_obj, of_created = Ordre_Frabrication.objects.get_or_create(
             GACLEUNIK=last10of['gacleunik'],
-            DATE_CHARGE=last10of['date_charge'],
+            # DATE_CHARGE=last10of['date_charge'],
             DATEORDOOLD=last10of['dateordoold'],
             NAF=last10of['naf'],
             RANG=last10of['rang'],
@@ -457,7 +458,7 @@ def get_last10of_data_erp():
         poste.COFRAIS = last10of['cofrais']
         of_obj.OF_Poste_ID = poste
         of_obj.GACLEUNIK = last10of['gacleunik']
-        of_obj.DATE_CHARGE = last10of['date_charge']
+        # of_obj.DATE_CHARGE = last10of['date_charge']
         of_obj.DATE_ORDO = last10of['date_ordo']
         of_obj.HEURE_ORDO = last10of['heure_ordo']
         of_obj.DATEORDOOLD = last10of['dateordoold']
@@ -548,7 +549,7 @@ def get_ordo_data_mdb(setup_id):
         OF_Poste_ID=poste,
         # DATE_ORDO__gt=date_today
     ).exclude(
-        Q(DATE_ORDO=None) | Q(DATE_CHARGE=None)
+        Q(DATE_ORDO=None)
     ).values(
         'GACLEUNIK', 
         'DATE_ORDO', 
@@ -627,6 +628,8 @@ def get_last10OF_data_mdb(setup_id):
     resultats = Ordre_Frabrication.objects.filter(
         OF_Poste_ID=poste,
         OPFINIE='O'
+    ).exclude(
+        Q(DATEORDOOLD=None)
     ).values(
         'NAF',
         'RANG', 
@@ -644,10 +647,20 @@ def get_last10OF_data_mdb(setup_id):
 
     # Convertir les objets datetime en chaînes de caractères
     for of in last10ofs:
+        if 'GA_NBHR' in of and 'TOTAL_TEMPS' in of:
+            ga_nbhr = of['GA_NBHR']
+            total_temps = of['TOTAL_TEMPS']
+            if total_temps != 0:  # Eviter la division par zéro
+                of['VAL_FINALE'] = ((ga_nbhr * 100) / total_temps) - 100
+            else:
+                of['VAL_FINALE'] = 0
+        else:
+            of['VAL_FINALE'] = 0 
+
         if 'DATEORDOOLD' in of and isinstance(of['DATEORDOOLD'], datetime.datetime):
             of['DATEORDOOLD'] = of['DATEORDOOLD'].isoformat()
 
-    print(last10ofs)
+    # print(last10ofs)
 
     ch_poste = poste.strip()
     async_to_sync(channel_layer.group_send)(
@@ -668,11 +681,11 @@ def get_pdc_machine_data_mdb(setup_id):
 
     poste = setup_pdc_machine.nom_poste
     annee = setup_pdc_machine.num_annee
-    semaine_min = setup_pdc_machine.num_semaine
-    semaine_max = semaine_min + 6
+    semaine = setup_pdc_machine.num_semaine
+    semaine_max = semaine + 6
 
     resultats = Charge.objects.filter(
-        SEMAINE__gte=semaine_min,
+        SEMAINE__gte=semaine,
         SEMAINE__lte=semaine_max,
         ANNEE=annee,
         Poste_ID=poste,
@@ -689,13 +702,15 @@ def get_pdc_machine_data_mdb(setup_id):
         'DESIGN',
         'Libelle_Atelier',
         'COSECT'
+    ).order_by(
+        'SEMAINE',
     )
 
     charges_machine = list(resultats)
 
     ch_poste = poste.strip()
     ch_annee = str(annee).strip()
-    ch_semaine_min = str(semaine_min).strip()
+    ch_semaine = str(semaine).strip()
     async_to_sync(channel_layer.group_send)(
         "charge_machine_"+ch_poste+"_"+ch_annee+"_"+ch_semaine, 
         {

@@ -159,7 +159,7 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
 
     return (
         <div
-            className='col-12 col-lg-8 container-perso-content d-flex flex-column justify-content-between align-items-start py-4 px-5 overflow-auto'
+            className='col-12 col-lg-8 container-perso-content d-flex flex-column justify-content-start align-items-start pb-4 px-5 overflow-auto'
             style={{ height: '65vh' }}
         >
             <div className='col-12 col-lg-10 d-flex justify-content-center align-items-start flex-column'>
@@ -167,8 +167,8 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
                 <p className='Subtitle_machine'>Liste fixe pour les 3 prochaines semaines et variable pour les 3 suivantes</p>
             </div>
             <hr className='text-dark px-5 w-100' />
-            <table className='table table-hover table-perso-1 mt-4'>
-                <thead className='thead-perso-1'>
+            <table className='table table-hover table-perso-1'>
+                <thead className='thead-perso-1 '>
                     <tr className='text-center'>
                         {ListOrdoHeader.map((header, index) => (
                             header === "Debut Ordo" ?
@@ -178,10 +178,6 @@ const ListOrdo = ({ AllOrdoVariable, setAllOrdoVariable, SelectedPoste }) => {
                         ))}
                     </tr>
                 </thead>
-                <div className='col-12 d-flex justify-content-center align-items-start flex-column mt-2 ps-2'>
-                    <p className='display-perso-5 mb-0'>Ordonnancement fixe</p>
-                    <hr className='text-dark px-5 w-100' />
-                </div>
 
                 <tbody>
                     {AllOrdoFixe.map((ordo, index) => (

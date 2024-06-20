@@ -123,7 +123,7 @@ class Poste(models.Model):
 
 class Ordre_Frabrication(models.Model):
     GACLEUNIK = models.CharField(max_length=50, default='XXX', blank=True) # , unique=True
-    DATE_CHARGE = models.DateField(blank=True, null=True)
+    # DATE_CHARGE = models.DateField(blank=True, null=True)
     DATE_ORDO = models.DateField(blank=True, null=True)
     HEURE_ORDO = models.TimeField(blank=True, null=True)
     DATEORDOOLD = models.DateTimeField(blank=True, null=True)

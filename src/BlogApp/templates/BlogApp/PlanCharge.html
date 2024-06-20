@@ -33,14 +33,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="chrg in charge" :key="chrg.id">
-                                <td class="align-middle">{{ chrg.COSECT }}</td>
-                                <td class="align-middle">{{ chrg.Libelle_Atelier }}</td>
-                                <td class="align-middle">{{ chrg.ANNEE }}</td>
-                                <td class="align-middle">{{ chrg.SEMAINE }}</td>
-                                <td class="align-middle">{{ chrg.COFRAIS }}</td>
-                                <td class="align-middle">{{ chrg.DESIGN }}</td>
-                                <td class="align-middle">{{ chrg.VDUREE }}</td>
+                            <tr v-for="chrg_machine in charge_machine" :key="chrg.id">
+                                <td class="align-middle">{{ chrg_machine.COSECT }}</td>
+                                <td class="align-middle">{{ chrg_machine.Libelle_Atelier }}</td>
+                                <td class="align-middle">{{ chrg_machine.ANNEE }}</td>
+                                <td class="align-middle">{{ chrg_machine.SEMAINE }}</td>
+                                <td class="align-middle">{{ chrg_machine.COFRAIS }}</td>
+                                <td class="align-middle">{{ chrg_machine.DESIGN }}</td>
+                                <td class="align-middle">{{ chrg_machine.VDUREE }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -58,21 +58,20 @@
                 data(){
                     return {
                         ch: '69 la trick',
-                        charge: null
+                        charge_machine: null
                     }
                 }, created(){
-                    const nomSite = "{{ nom_site }}";
-                    const nomAtelier = "{{ nom_atelier }}";
+                    const nomSite = "{{ nom_poste }}";
                     const numAnnee = "{{ num_annee }}";
                     const numSemaine = "{{ num_semaine }}";
-                    const socket = new WebSocket(`ws://${window.location.host}/ws/charge/${nomSite}/${nomAtelier}/${numAnnee}/${numSemaine}/`);
+                    const socket = new WebSocket(`ws://${window.location.host}/ws/charge/${nomPoste}/${numAnnee}/${numSemaine}/`);
 
                     
                     let _this = this;
 
                     socket.onmessage = function(event){
-                        _this.charge = JSON.parse(event.data);
-                        console.log(_this.charge);
+                        _this.charge_machine = JSON.parse(event.data);
+                        console.log(_this.charge_machine);
                     }
                 }
             }

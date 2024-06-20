@@ -145,8 +145,7 @@ class TachePDCMachineView(View):
         return render(
             request, 'BlogApp/PDCMachine.html',
             context={
-                'nom_site': self.nom_site,
-                'nom_atelier': self.nom_atelier,
+                'nom_poste': self.nom_poste,
                 'num_annee': self.num_annee, 
                 'num_semaine': self.num_semaine
             }
