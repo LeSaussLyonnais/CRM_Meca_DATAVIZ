@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 const SelectSemaine = ({ semaineSelected, setsemaineSelected }) => {
+    
     const getWeekNumber = (date) => {
         const firstJan = new Date(date.getFullYear(), 0, 1);
         const pastDaysOfYear = (date - firstJan) / 86400000;

@@ -40,9 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
-    'channels_rabbitmq',
     'django_celery_beat',
-    # 'import_export',  # Pas utile finalement
     'rest_framework', 
     'BlogApp.apps.BlogappConfig' #Definition de notre application BlogApp avec sa configuration particuliere definie dans le fichier apps
 ]

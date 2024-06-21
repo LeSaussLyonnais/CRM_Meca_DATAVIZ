@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { SiteContext } from '../ContexteSelectionSite';
+
 // import { LinearScale } from 'chart.js/auto';
 import {
   CategoryScale,
@@ -12,10 +14,8 @@ import {
 
 export function RendementMachine({ AllRendementData, setAllRendementData, SelectedPoste }) {
 
+
   const generateData = () => {
-    const data = [];
-    const datainf = [];
-    const datasup = [];
 
     for (let i = 0; i < 10; i++) {
       const value = Math.floor(Math.random() * (150 - 50 + 1)) + 50;
@@ -27,11 +27,6 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
         datainf.push(0);
         datasup.push(value - 100);
         data.push(100);
-      }
-      var AllData = {
-        data: data,
-        datainf: datainf,
-        datasup: datasup,
       }
     }
     // console.log(data);
@@ -90,19 +85,105 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
       },
     },
   };
+  const { selectedSite, selectedWorkshop } = useContext(SiteContext);
+  const socketRef = useRef(null); // Ref to store the current WebSocket connection
 
   useEffect(() => {
-    setData();
-  }, []);
 
-  useEffect(() => {
-    setData();
+    const setupWebSocket = () => {
+      if (!selectedSite || !selectedWorkshop || !SelectedPoste.COFRAIS) {
+        console.error("selectedSite, selectedWorkshop, or SelectedPoste is null or SelectedPoste.COFRAIS is undefined");
+        return;
+      } //|| !SelectedPoste || !SelectedPoste.COFRAIS
+
+      // Clean up the previous WebSocket connection if exists
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+
+      // Effect hook pour gérer la connexion websocket
+      const socket = new WebSocket(`ws://127.0.0.1:8000/ws/last10of/${SelectedPoste.COFRAIS}/`); //${window.location.host}
+
+      socket.onmessage = function (event) {
+        console.log('Received data:', event.data);
+        let tempdata = JSON.parse(event.data);
+        let data = [];
+        let datainf = [];
+        let datasup = [];
+        console.log(tempdata);
+        tempdata.map(of => {
+          if (of.VAL_FINALE >= 0) {
+            datasup.push(of.VAL_FINALE);
+            datainf.push(0);
+            data.push(100);
+          }
+          else {
+            datasup.push(0);
+            datainf.push(Math.abs(of.VAL_FINALE));
+            data.push(100 - Math.abs(of.VAL_FINALE));
+          }
+        })
+        let AllData = {
+          data: data,
+          datainf: datainf,
+          datasup: datasup,
+        };
+        setAllRendementData(AllData); // Assuming the received data is JSON
+      }
+
+      socket.onclose = function (event) {
+        console.log('WebSocket closed:', event);
+      }
+
+      socket.onerror = function (error) {
+        console.error('WebSocket error:', error);
+      }
+
+      socketRef.current = socket;
+    }
+
+    const UpdateFetch = async () => {
+      if (!selectedSite || !selectedWorkshop || !SelectedPoste.COFRAIS) {
+        console.error("selectedSite, selectedWorkshop, or SelectedPoste is null or SelectedPoste.COFRAIS is undefined");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/BlogApp/Last10OF_Tache', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nom_poste: SelectedPoste.COFRAIS,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('UpdateFetch response data:', data);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    if (SelectedPoste && selectedSite && selectedWorkshop) {
+      UpdateFetch();
+      setupWebSocket();
+    }
   }, [SelectedPoste]);
-
-  const setData = () => {
-    const data = generateData();
-    setAllRendementData(data);
-  }
+  // Cleanup WebSocket connection when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    }
+  }, []);
 
   return (
     <div className='col-12 container-perso-content d-flex flex-column justify-content-center align-items-start'>
