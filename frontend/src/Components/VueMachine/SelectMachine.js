@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+﻿import React, { useState, useEffect, useContext, useRef } from 'react';
 import '../../Styles/vuemachine.css'; // Assurez-vous que le chemin du fichier CSS est correct
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import { SiteContext } from '../ContexteSelectionSite';
+import urlAPI from '../../config.js';
+import urlWS from '../../configWS.js';
 
 export default function SelectMachine({ SelectedPoste, setSelectedPoste, PostesDisponibles, setPostesDisponibles }) {
     const { selectedSite, selectedWorkshop } = useContext(SiteContext);
@@ -17,7 +19,7 @@ export default function SelectMachine({ SelectedPoste, setSelectedPoste, PostesD
 
             try {
                 console.log(selectedWorkshop);
-                const response = await fetch('http://192.168.0.117:8000/BlogApp/Ordo_getPoste', {
+                const response = await fetch(urlAPI+'BlogApp/Ordo_getPoste', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

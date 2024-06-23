@@ -1,6 +1,7 @@
-//Creer moi un composant vide
+﻿//Creer moi un composant vide
 import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa";
+import urlAPI from '../../config.js';
 
 
 const ModalAjout = ({ show , setshow, site, AllDispoPoste, setNewAteliers }) => {
@@ -51,7 +52,7 @@ const ModalAjout = ({ show , setshow, site, AllDispoPoste, setNewAteliers }) => 
             }
 
             try {
-                const response = await fetch('http://192.168.0.117:8000/BlogApp/AjoutAtelier', {
+                const response = await fetch(urlAPI+'BlogApp/AjoutAtelier', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',

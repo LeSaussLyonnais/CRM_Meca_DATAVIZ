@@ -1,5 +1,8 @@
-import React, { useEffect, useContext, useState, useRef } from 'react';
+﻿import React, { useEffect, useContext, useState, useRef } from 'react';
 import { SiteContext } from '../ContexteSelectionSite';
+import urlAPI from '../../config.js';
+import urlWS from '../../configWS.js';
+
 const PDCMachine = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
   const { selectedSite, selectedWorkshop } = useContext(SiteContext);
   const socketRef = useRef(null); // Ref to store the current WebSocket connection
@@ -28,7 +31,7 @@ const PDCMachine = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
       }
 
       // Effect hook pour gérer la connexion websocket
-      const socket = new WebSocket(`ws://192.168.0.117:8000/ws/charge_machine/${SelectedPoste.COFRAIS}/${currentyear}/${currentWeekNumber}/`); //${window.location.host}
+      const socket = new WebSocket(urlWS+`ws/charge_machine/${SelectedPoste.COFRAIS}/${currentyear}/${currentWeekNumber}/`); //${window.location.host}
 
       socket.onmessage = function (event) {
         console.log('Received data:', event.data);
@@ -53,7 +56,7 @@ const PDCMachine = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
       }
 
       try {
-        const response = await fetch('http://192.168.0.117:8000/BlogApp/PDCMachine_Tache', {
+        const response = await fetch(urlAPI+'BlogApp/PDCMachine_Tache', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

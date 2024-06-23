@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+﻿import React, { useContext, useEffect, useState } from 'react';
 import { SiteContext } from '../ContexteSelectionSite';
 import '../../Styles/selectionatelier.css';
 import BasPageImage from '../../Assets/BasPage.png';
@@ -6,6 +6,7 @@ import ColorModifiedImage from '../ColorPngChange';
 import { CiCirclePlus } from "react-icons/ci";
 import ModalAjout from '../Selection/ModalAjout';
 import { TfiTrash } from "react-icons/tfi";
+import urlAPI from '../../config.js';
 
 
 function PageSelection() {
@@ -51,7 +52,7 @@ function PageSelection() {
 
   const fetchPostes = async () => {
     try {
-      const response = await fetch('http://192.168.0.117:8000/BlogApp/PopupAjoutAtelier', {
+      const response = await fetch(urlAPI+'BlogApp/PopupAjoutAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +71,7 @@ function PageSelection() {
 
   const fetchSite = async () => {
     try {
-      const response = await fetch('http://192.168.0.117:8000/BlogApp/getSite', {
+      const response = await fetch(urlAPI+'BlogApp/getSite', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ function PageSelection() {
   }
   const fetchAtelier = async () => {
     try {
-      const response = await fetch('http://192.168.0.117:8000/BlogApp/getAtelier', {
+      const response = await fetch(urlAPI+'BlogApp/getAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +108,7 @@ function PageSelection() {
   }
   const fetchDeleteAtelier = async (atelier) => {
     try {
-      const response = await fetch('http://192.168.0.117:8000/BlogApp/DeleteAtelier', {
+      const response = await fetch(urlAPI+'BlogApp/DeleteAtelier', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
