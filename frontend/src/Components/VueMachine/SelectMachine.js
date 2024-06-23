@@ -17,7 +17,7 @@ export default function SelectMachine({ SelectedPoste, setSelectedPoste, PostesD
 
             try {
                 console.log(selectedWorkshop);
-                const response = await fetch('http://127.0.0.1:8000/BlogApp/Ordo_getPoste', {
+                const response = await fetch('http://192.168.0.117:8000/BlogApp/Ordo_getPoste', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

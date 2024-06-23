@@ -51,7 +51,7 @@ function PageSelection() {
 
   const fetchPostes = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/BlogApp/PopupAjoutAtelier', {
+      const response = await fetch('http://192.168.0.117:8000/BlogApp/PopupAjoutAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ function PageSelection() {
 
   const fetchSite = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/BlogApp/getSite', {
+      const response = await fetch('http://192.168.0.117:8000/BlogApp/getSite', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ function PageSelection() {
   }
   const fetchAtelier = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/BlogApp/getAtelier', {
+      const response = await fetch('http://192.168.0.117:8000/BlogApp/getAtelier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ function PageSelection() {
   }
   const fetchDeleteAtelier = async (atelier) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/BlogApp/DeleteAtelier', {
+      const response = await fetch('http://192.168.0.117:8000/BlogApp/DeleteAtelier', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

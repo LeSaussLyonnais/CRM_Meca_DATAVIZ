@@ -102,7 +102,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
       }
 
       // Effect hook pour gérer la connexion websocket
-      const socket = new WebSocket(`ws://127.0.0.1:8000/ws/last10of/${SelectedPoste.COFRAIS}/`); //${window.location.host}
+      const socket = new WebSocket(`ws://192.168.0.117:8000/ws/last10of/${SelectedPoste.COFRAIS}/`); //${window.location.host}
 
       socket.onmessage = function (event) {
         console.log('Received data:', event.data);
@@ -149,7 +149,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/BlogApp/Last10OF_Tache', {
+        const response = await fetch('http://192.168.0.117:8000/BlogApp/Last10OF_Tache', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

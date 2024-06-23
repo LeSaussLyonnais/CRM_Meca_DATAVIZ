@@ -14,21 +14,21 @@ app.conf.broker_connection_retry_on_startup = True
 
 
 app.conf.beat_schedule = {
-    # 'get_plancharge_data_erp_15min': {
-    #     'task': 'BlogApp.tasks.get_plancharge_data_erp',
-    #     'schedule': 50.0,
-    #     # 'schedule': crontab(minute='*/15')  # Toutes les 5 minutes
-    # },
-    # 'get_ordo_data_erp_15min': {
-    #     'task': 'BlogApp.tasks.get_ordo_data_erp',
-    #     'schedule': 50.0,
-    #     # 'schedule': crontab(minute='*/5')  # Toutes les 5 minutes
-    # },
-    # 'get_last10of_data_erp_15min': {
-    #     'task': 'BlogApp.tasks.get_last10of_data_erp',
-    #     'schedule': 50.0,
-    #     # 'schedule': crontab(minute='*/5')  # Toutes les 5 minutes
-    # }
+    'get_plancharge_data_erp_15min': {
+        'task': 'BlogApp.tasks.get_plancharge_data_erp',
+        'schedule': 1000.0,
+        # 'schedule': crontab(minute='*/15')  # Toutes les 5 minutes
+    },
+    'get_ordo_data_erp_15min': {
+        'task': 'BlogApp.tasks.get_ordo_data_erp',
+        'schedule': 1000.0,
+        # 'schedule': crontab(minute='*/5')  # Toutes les 5 minutes
+    },
+    'get_last10of_data_erp_15min': {
+        'task': 'BlogApp.tasks.get_last10of_data_erp',
+        'schedule': 1000.0,
+        # 'schedule': crontab(minute='*/5')  # Toutes les 5 minutes
+    }
 }
 
 @app.task(bind=True)
