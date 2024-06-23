@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+﻿import React, { useContext, useEffect, useState } from 'react';
 import sedeconnecter from '../Assets/sedeconnecter.png';
 import accueil from '../Assets/accueil.png'; // Importer l'image accueil
 import { SiteContext } from './ContexteSelectionSite';
 import '../Styles/sidebar.css';
+import urlAPI from '../config.js';
 
 function Sidebar({ isOpen, toggleSidebar }) {
     const [SitesDisponibles, setSitesDisponibles] = useState([]);
@@ -25,7 +26,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
     const fetchSite = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/BlogApp/getSite', {
+            const response = await fetch(urlAPI+'BlogApp/getSite', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
     const fetchAtelier = async (site) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/BlogApp/getAtelier', {
+            const response = await fetch(urlAPI+'BlogApp/getAtelier', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

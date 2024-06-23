@@ -1,6 +1,8 @@
-import React, { useEffect, useContext, useState, useRef } from 'react';
+﻿import React, { useEffect, useContext, useState, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { SiteContext } from '../ContexteSelectionSite';
+import urlAPI from '../../config.js';
+import urlWS from '../../configWS.js';
 
 // import { LinearScale } from 'chart.js/auto';
 import {
@@ -102,7 +104,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
       }
 
       // Effect hook pour gérer la connexion websocket
-      const socket = new WebSocket(`ws://127.0.0.1:8000/ws/last10of/${SelectedPoste.COFRAIS}/`); //${window.location.host}
+      const socket = new WebSocket(urlWS+`ws/last10of/${SelectedPoste.COFRAIS}/`); //${window.location.host}
 
       socket.onmessage = function (event) {
         console.log('Received data:', event.data);
@@ -149,7 +151,7 @@ export function RendementMachine({ AllRendementData, setAllRendementData, Select
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/BlogApp/Last10OF_Tache', {
+        const response = await fetch(urlAPI+'BlogApp/Last10OF_Tache', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
