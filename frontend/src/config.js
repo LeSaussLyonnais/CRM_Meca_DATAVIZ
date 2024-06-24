@@ -5,7 +5,7 @@ let urlAPI;
 
 if (window.location.href.includes("localhost")) {
 
-  urlAPI = "http://localhost:8000/";
+  urlAPI = "http://127.0.0.1:8000/";
 
 } else {
 

@@ -3,7 +3,7 @@ let urlWS;
 
 if (window.location.href.includes("localhost")) {
 
-  urlWS = "ws://localhost:8000/";
+  urlWS = "ws://127.0.0.1:8000/";
 
 } else {
 
