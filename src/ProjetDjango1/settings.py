@@ -153,7 +153,8 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('192.168.31.4', 6379)] 
+            'hosts': [('localhost', 6379)] 
+            # 'hosts': [('192.168.31.4', 6379)] 
         }
     }
 }
@@ -163,13 +164,16 @@ CHANNEL_LAYERS = {
 #CELERY_BROKER_URL = f'redis://:@redis:6379/0'
 #CELERY_RESULT_BACKEND = f'redis://:@redis:6379/0'
 #CELERY_TIMEZONE = 'Europe/Paris'
-# CELERY_BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_BROKER_URL = 'redis://192.168.31.4:6379/0'
-CELERY_RESULT_BACKEND = 'redis://192.168.31.4:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_BROKER_URL = 'redis://192.168.31.4:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://192.168.31.4:6379/0'
 
 # Paramétrage de la périodicité d'éxecution des tâches par Celery
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use the database to store session data
 
 
 # Password validation

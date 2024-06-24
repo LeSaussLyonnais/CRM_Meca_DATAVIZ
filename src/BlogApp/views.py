@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from django.utils.crypto import get_random_string
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -155,6 +156,12 @@ class TachePDCMachineView(View):
 ###################################### Section Vues REACT ######################################
 ################################################################################################
 
+# def get_or_create_user_session_id(request):
+#     if 'user_session_id' not in request.session:
+#         request.session['user_session_id'] = get_random_string(32)
+#     return request.session['user_session_id']
+
+
 @api_view(['POST'])
 def endpt_pdc_tache(request):
     """
@@ -167,6 +174,7 @@ def endpt_pdc_tache(request):
     nom_atelier = request_data.get('nom_atelier')
     nom_site = request_data.get('nom_site')
     interval = TimeInterval.five_secs
+    # user_session_id = get_or_create_user_session_id(request)
     title = f"Setup_{nom_site}_{nom_atelier}_{num_annee}_{num_semaine}"
 
     setup_pdc, created = Setup.objects.get_or_create(

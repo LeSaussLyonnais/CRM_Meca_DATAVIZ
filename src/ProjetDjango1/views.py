@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from datetime import datetime
-from BlogApp.tasks import get_weather_data
 
 def index(request):
     date = datetime.today()

@@ -24,51 +24,8 @@ channel_layer = get_channel_layer()
 
 from .models import * # Parce que l'on veut sauvegarder la data récupérée par la tâche dans la base de donnée dans notre modèle Weather
 
-@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
-def get_weather_data():
-    url = 'https://api.openweathermap.org/data/2.5/forecast?lat=43.60&lon=1.433333&appid=86a1d03a37f156f8b34f6be197056295&units=metric'
-    #url = 'https://api.openweathermap.org/data/2.5/weather?lat=43.60&lon=1.433333&appid=86a1d03a37f156f8b34f6be197056295'
-    # Faut que je prenne une API qui me donne une liste de résultats pas juste les donnée d'un lieu à un seul instant
-    open_weather_data = requests.get(url).json()
-    data = open_weather_data["list"]
-    #data_wthr = data['weather']
 
-    weathers = [] # On défini une liste de météos (par lieu)
-
-    for wthr in data:
-        obj, created = Weather.objects.get_or_create(dt_txt=wthr['dt_txt']) # "dt_txt=wthr['dt_txt']"
-
-        
-        obj.dt_txt = wthr['dt_txt']
-        
-        
-        if obj.temp > wthr['main'].get('temp'):
-            state = 'fall'
-        elif obj.temp == wthr['main'].get('temp'):
-            state = 'same'
-        elif obj.temp < wthr['main'].get('temp'):
-            state = 'raise'
-        
-        obj.temp = wthr['main'].get('temp') # Là on fait un .get('xxx') parceque la clé 'main' n'est pas une liste dans le JSON
-
-        obj.icon = wthr['weather'][0]['icon'] # Là on fait un [0]['xxx'] parceque la clé 'weather' est une liste dans le JSON
-        
-        
-        #obj.dt = wthr['dt']
-        #for wthr in data_wthr:
-        #    obj.weather = wthr['main']
-        
-        obj.save() # Pour sauvegarder l'objet 'obj' dans la base de donnée via notre modèle 'Weather'
-
-        new_data = model_to_dict(obj)
-        new_data.update({'state': state})
-
-        weathers.append(new_data)
-        #print(weathers)
-
-    async_to_sync(channel_layer.group_send)('weathers', {'type': 'send_new_data', 'text': weathers})
-
-@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_plancharge_data_erp", queue="worker1_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud + Ajouter la queue ici
 def get_plancharge_data_erp():
     os.environ['ODBCINI'] = '/etc/odbc.ini'
 
@@ -180,7 +137,7 @@ def get_plancharge_data_erp():
         charge_obj.save() # Pour sauvegarder les objets dans la base de donnée via nos modèles 'PlanChargeAtelier'
 
 
-@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_ordo_data_erp", queue="worker1_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_ordo_data_erp():
     # Define the Components of the Connection String.
     server = '192.168.0.21'
@@ -326,7 +283,7 @@ def get_ordo_data_erp():
         of_obj.save()
 
 
-@shared_task # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_last10of_data_erp", queue="worker1_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_last10of_data_erp():
     # Define the Components of the Connection String.
     server = '192.168.0.21'
@@ -485,7 +442,7 @@ def get_last10of_data_erp():
 ############################ Section Taches requete db Django ##################################
 ################################################################################################
 
-@shared_task(name="get_plancharge_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_plancharge_data_mdb", queue="worker2_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_plancharge_data_mdb(setup_id):
 
     setup = Setup.objects.get(id=setup_id)
@@ -531,7 +488,7 @@ def get_plancharge_data_mdb(setup_id):
     )
 
 
-@shared_task(name="get_ordo_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_ordo_data_mdb", queue="worker2_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_ordo_data_mdb(setup_id):
     try:
         setup_of = Setup_OF.objects.get(id=setup_id)
@@ -613,7 +570,7 @@ def get_ordo_data_mdb(setup_id):
     )
 
 
-@shared_task(name="get_last10OF_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_last10OF_data_mdb", queue="worker2_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_last10OF_data_mdb(setup_id):
     try:
         setup_last10of = Setup_Last10OF.objects.get(id=setup_id)
@@ -672,7 +629,7 @@ def get_last10OF_data_mdb(setup_id):
     )
 
 
-@shared_task(name="get_pdc_machine_data_mdb") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
+@shared_task(name="get_pdc_machine_data_mdb", queue="worker2_queue") # Pour indiquer à Celery que c'est la tâche à éxecuter en backgroud
 def get_pdc_machine_data_mdb(setup_id):
 
     setup_pdc_machine = Setup_PDCMachine.objects.get(id=setup_id)
