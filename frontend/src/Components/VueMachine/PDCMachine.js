@@ -64,7 +64,7 @@ const PDCMachine = ({ SelectedPoste, AllPDCData, setAllPDCData }) => {
           body: JSON.stringify({
             nom_poste: SelectedPoste.COFRAIS,
             num_annee: currentyear,
-            num_semaine: currentWeekNumber
+            num_semaine: currentWeekNumber,
           }),
         });
 

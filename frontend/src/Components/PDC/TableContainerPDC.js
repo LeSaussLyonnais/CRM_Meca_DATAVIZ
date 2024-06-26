@@ -11,9 +11,22 @@ import urlAPI from '../../config.js';
     
 const TableContainerPDC = ({ semaineSelected }) => {
     const [PDCsemaine, setPDCsemaine] = useState([]);
-    const annee = '2024';
+    
+    const getWeekNumber = (date) => {
+        const firstJan = new Date(date.getFullYear(), 0, 1);
+        const pastDaysOfYear = (date - firstJan) / 86400000;
+        return Math.ceil((pastDaysOfYear + firstJan.getDay() + 1) / 7);
+    };
+    
+    const current_date = new Date();
+    const annee = current_date.getFullYear();
+    const currentWeekNumber = getWeekNumber(current_date);
     const { selectedSite, selectedWorkshop } = useContext(SiteContext);
     const socketRef = useRef(null); // Ref to store the current WebSocket connection
+
+    
+
+    
 
     useEffect(() => {
         const setupWebSocket = () => {
@@ -63,6 +76,7 @@ const TableContainerPDC = ({ semaineSelected }) => {
                         nom_atelier: selectedWorkshop.Libelle_Atelier,
                         num_annee: annee,
                         num_semaine: semaineSelected,
+                        num_current_semaine: currentWeekNumber,
                     }),
                 });
 

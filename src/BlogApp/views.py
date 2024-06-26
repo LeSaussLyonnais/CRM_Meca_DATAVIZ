@@ -173,6 +173,10 @@ def endpt_pdc_tache(request):
     num_annee = request_data.get('num_annee')
     nom_atelier = request_data.get('nom_atelier')
     nom_site = request_data.get('nom_site')
+    num_current_semaine = request_data.get('num_current_semaine')
+    
+    # num_setup = num_semaine - num_current_semaine
+    
     interval = TimeInterval.five_secs
     # user_session_id = get_or_create_user_session_id(request)
     title = f"Setup_{nom_site}_{nom_atelier}_{num_annee}_{num_semaine}"
@@ -184,9 +188,18 @@ def endpt_pdc_tache(request):
             'nom_site': nom_site, 
             'nom_atelier': nom_atelier, 
             'num_annee': num_annee, 
-            'num_semaine': num_semaine
+            'num_semaine': num_semaine,
+            # 'num_current_semaine': num_current_semaine,
         }
     )
+    
+    try:
+        setup_pdc_too_old = Setup.objects.get(
+            num_semaine__lt=num_current_semaine,
+        )
+        setup_pdc_too_old.delete()
+    except Setup.DoesNotExist:
+        pass
 
     return Response({'PDC_Semaine': "PDC Semaine "+str(num_semaine)+" generated"}, status=201)
 
@@ -278,6 +291,14 @@ def endpt_pdc_machine_tache(request):
             'num_semaine': num_semaine
         }
     )
+
+    try:
+        setup_pdc_machine_too_old = Setup_PDCMachine.objects.get(
+            num_semaine__lt=num_semaine,
+        )
+        setup_pdc_machine_too_old.delete()
+    except Setup_PDCMachine.DoesNotExist:
+        pass
 
     return Response({'PDC_Machine': f"PDC Machine {nom_poste} generated"}, status=201)     
 
@@ -436,28 +457,6 @@ def endpt_delatelier(request):
     #     return Response({'error_atelier_del': f"Setup {atelier_del.Libelle_Atelier} non trouvé"}, status=404)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
-
-
-
-class WeatherView(APIView):
-    def get(self, request):
-        '''
-        output = [{"dt_txt": output.dt_txt,
-                    "temp": output.temp,
-                    "icon": output.icon}
-                    for output in Weather.objects.all()]
-        '''
-        output = Weather.objects.all()
-        serializer = WeatherSerializer(output, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer = WeatherSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
-
-
 
 
 @api_view(['POST'])

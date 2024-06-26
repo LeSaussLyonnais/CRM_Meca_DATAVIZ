@@ -14,6 +14,7 @@ class PlanChargeConsumer(AsyncWebsocketConsumer):
         self.atelier = self.scope.get("url_route").get("kwargs").get("nom_atelier")
         self.annee = self.scope.get("url_route").get("kwargs").get("num_annee")
         self.semaine = self.scope.get("url_route").get("kwargs").get("num_semaine")
+        # self.current_semaine = self.scope.get("url_route").get("kwargs").get("num_current_semaine")
 
         self.ch_site = self.site.strip()
         self.ch_atelier = self.atelier.strip()
@@ -60,6 +61,8 @@ class PlanChargeConsumer(AsyncWebsocketConsumer):
     
     @database_sync_to_async
     def delete_setup_pdc(self):
+        # num_setup = int(self.semaine) - int(self.current_semaine)
+
         try:
             setup_pdc = Setup.objects.get(
                 title=f"Setup_{self.site}_{self.atelier}_{self.annee}_{self.semaine}"
